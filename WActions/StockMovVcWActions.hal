@@ -1,0 +1,23 @@
+global
+function Boolean StockMovDClassActiveEditField(Integer wn,string fieldname,Integer fn,Integer wnst,Integer rownr,Integer changed)
+begin
+  Boolean res;
+  record StockMovVc StockMovr;
+  record StockMovVc StockMov2r;
+  row StockMovVc StockMovrw;
+  Integer orwcnt,rwcnt;
+ 
+  res = inner.StockMovDClassActiveEditField(wn,fieldname,fn,wnst,rownr,changed);
+  GetWindowRecord(wn,StockMovr);    
+  GetPrevWindowRecord(wn,StockMov2r);
+
+  //payout-19; edz:
+  switch (fieldname) begin
+    case "LangCode": 
+      res = true;
+  end;
+  //:edz
+  
+  StockMovDClassActiveEditField = res;
+  return;
+end;

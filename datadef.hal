@@ -1,0 +1,52 @@
+SourceFile("halcust/level0",0);
+SourceFile("halcust/level0/Documents",0);
+SourceFile("halcust/level0/Maint",0);
+SourceFile("halcust/level0/Reports",0);
+SourceFile("halcust/level0/Tools",0);
+SourceFile("halcust/level0/WActions",0);
+SourceFile("halcust/Maint",3);
+SourceFile("halcust/WActions",3);
+SourceFile("halcust/latvian",3);
+SourceFile("halcust/english",3);
+SourceFile("halcust/Tools",3);
+SourceFile("halcust/RActions",3);
+
+begin
+
+//==========MASTER BEGIN==========
+
+  RecordAddBegin(StockMovVc,"stockmov1");
+  RecordField(LangCode,M4Code,5,0);
+  EndRecordAdd;
+
+  RecordAddBegin(BarcodeVc,"BarcodeVc2");
+  RecordField(OrigItemcode,M4Code,20,INVc);//payout-21; edz
+  //payout-21; edz:
+  KeyBegin(OrigItemcode);
+  KeySegment(OrigItemcode);
+  KeySegment(Barcode);
+  //:edz
+  EndRecordAdd;
+  
+  RecordAddBegin(ORVc,"ORVc3");
+  RecordField(PY_PlanShip,M4Date,0,0);//payout-21; edz
+  //payout-21; edz:
+  KeyBegin(PY_PlanShip);
+  KeySegment(PY_PlanShip);
+  KeySegment(SerNr);
+  //:edz
+  EndRecordAdd;
+
+//==========MASTER END==========
+
+//==========CUSTOM BEGIN==========
+
+  BlockBegin(PY_SettingsBlock,-,"");
+  RecordField(PY_ColVAR,M4Code,5,VARGVc);//payout-21; edz
+  RecordField(PY_VARLang,M4Code,5,0);//payout-21; edz
+  EndBlock;
+
+//==========CUSTOM END==========
+
+  return;
+end;

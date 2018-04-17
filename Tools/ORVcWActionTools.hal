@@ -1,0 +1,23 @@
+//payout-20; edz:
+global
+procedure PY_PasteRecipe(record ORVc ORr,integer rownr)
+begin
+  row ORVc ORrw;
+  record RecVc Recr;
+  
+  MatRowGet(ORr,rownr,ORrw);
+  if (nonblank(ORrw.ArtCode)) then begin
+    Recr.Code = ORrw.ArtCode;
+    if (ReadFirstMain(Recr,1,true)) then begin
+      ORrw.Recepy = ORrw.ArtCode;
+    end else begin
+      ORrw.Recepy = "";
+    end;
+  end else begin
+    ORrw.Recepy = "";
+  end;
+  MatRowPut(ORr,rownr,ORrw);
+  
+  return;
+end;
+//:edz

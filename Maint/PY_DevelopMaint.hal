@@ -1,0 +1,45 @@
+//<halrule>server-only</halrule>
+//payout-21; auth: edz
+event startup
+begin
+
+  SetLangMode(LangLatvian,"LAT",0);
+
+  Maintenance("Amoralle - Sv´tru kodi",PY_BarcodeVClass,PY_BarcodeMn,modTC);
+  
+  return;
+end;
+
+event definewindows
+begin
+  real v,vs;
+
+  SetLangMode(LangLatvian,"LAT",0);
+  
+  WindowBegin("PAYYAP - Sv´tru kodi",PY_BarcodeVClass,CGMnt,RcType);
+  UseView(RcVc);
+  SetWRect(100,100,400,200);
+  EndWindow;
+  
+  return;
+end;
+
+global
+updating procedure PY_BarcodeMn(record RcVc RepSpec)
+begin
+  record BarcodeVc Barcoder,Barcode2r;
+  longint pos;
+  string 255 def;
+
+  Barcoder.Barcode = "";
+  while (LoopMain(Barcoder,1,true)) begin
+    pos = -1;
+    def = "";
+    GetNextSubstring(Barcoder.Itemcode,pos,".",def);
+    RecordCopy(Barcode2r,Barcoder);
+    Barcoder.OrigItemcode = def;
+    RecordUpdate(Barcode2r,Barcoder,true);
+  end;
+  
+  return;
+end;

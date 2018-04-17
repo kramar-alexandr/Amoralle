@@ -1,0 +1,42 @@
+remote function Boolean ReadFirstItem(string,var record INVc,Boolean,Boolean);
+
+//payout-21; edz:
+function Boolean PY_BarcodeDClassItemcodeEFAfter(Integer wn,Integer fn,Integer changed)
+begin
+  Boolean res;
+  record BarcodeVc Barcoder;
+  string 255 def;
+  longint pos;
+
+  if (changed!=0) then begin
+    DeselectWindow(wn,false);
+    GetWindowRecord(wn,Barcoder);
+    pos = -1;
+    def = "";
+    GetNextSubstring(Barcoder.Itemcode,pos,".",def);
+    Barcoder.OrigItemcode = def;
+    PutWindowRecord(wn,Barcoder);
+  end;
+  
+  PY_BarcodeDClassItemcodeEFAfter = res;
+  return;
+end;
+//:edz
+  
+global
+function Boolean BarcodeDClassAfterEditField(Integer wn,string fieldname,Integer fn, Integer rownr,Integer changed)
+begin
+  Boolean res;
+
+  if (changed!=0) then begin
+    res = inner.BarcodeDClassAfterEditField(wn,fieldname,fn,rownr,changed);
+  end;
+
+  switch (fieldname) begin
+    case "Itemcode": res = PY_BarcodeDClassItemcodeEFAfter(wn,fn,changed);
+  end;
+  
+  BarcodeDClassAfterEditField = res;
+  return;
+end;
+

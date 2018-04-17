@@ -1,0 +1,23 @@
+SetLangMode(LangEnglish,"ENG",0);
+
+window PY_SettingsTClass:2
+  wtag("language","ENG"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,v,vs;
+  Integer tilenr;
+
+  WindowBegin("Amoralle - Settings",PY_SettingsTClass,CGSbl,-);
+  SetWRect(64,80,700,580);
+  SetBlid(PY_SettingsBlock);
+  vs = 20;
+  Tile(0,50,false,"",-);
+  TileButton(1,"Varieties");
+  //TileButton(2,"");   
+  Tile(1,110,true,"1",PY_ColVAR);
+  EditField(h=300,v=6,50,"Colour Variety Type",Normal,PY_ColVAR,false,VARGSClass);//payout-21; edz
+  EditField(h=300,v+=vs,50,"Quotation variety language",Normal,PY_VARLang,false,LangSClass);//payout-21; edz
+  //Tile(2,90,true,"2",-);  
+  EndWindow;
+  
+  return;
+end;

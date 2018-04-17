@@ -1,0 +1,36 @@
+remote procedure PY_PasteRecipe(record ORVc,integer);
+
+//payout-20; edz:
+function Boolean PY_ORDClassArtCodeEFAfter(Integer wn,Integer rownr,Integer changedf)
+begin  
+  record ORVc ORr;
+
+  if (changedf!=0) then begin
+    DeselectWindow(wn,false);
+    GetWindowRecord(wn,ORr);
+    PY_PasteRecipe(ORr,rownr);
+    PutWindowRecord(wn,ORr);
+  end;
+  
+  PY_ORDClassArtCodeEFAfter = true;
+  return;
+end;
+//:edz
+
+global
+function Boolean ORDClassAfterEditField(Integer wn,string fieldname,Integer fn,Integer rownr,Integer changed)
+begin
+  Boolean res;
+ 
+  res = inner.ORDClassAfterEditField(wn,fieldname,fn,rownr,changed);
+
+  //payout-20; edz:
+  switch (fieldname) begin
+    case "ArtCode": res = PY_ORDClassArtCodeEFAfter(wn,rownr,changed);
+    case "Quant": res = PY_ORDClassArtCodeEFAfter(wn,rownr,changed);
+  end;
+  //:edz
+  
+  ORDClassAfterEditField = res;
+  return;
+end;

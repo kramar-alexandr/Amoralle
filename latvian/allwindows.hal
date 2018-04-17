@@ -1,0 +1,838 @@
+external inner procedure SetupColumWithKeypadWindow(var real,var real,var real,var real,var real,var real,var real);
+external inner function Integer POSFontSize();
+external inner function string 255 F_Label(string);
+external inner procedure SplitButton(LongInt,LongInt,LongInt,LongInt,LongInt,string,string,string,string,LongInt);
+external inner procedure POSKeyPad(LongInt,LongInt,LongInt,LongInt,LongInt,string,LongInt);
+ external inner function string 255 GetChangePaswordLink();
+remote inner function UUID GetServerUUIDRemote();
+external inner function string 255 RemainingEinvoicesQuantity;
+external inner function Boolean DisplayAdditionalFields();
+remote inner function Integer MailAcceptanceStatus(LongInt);
+external inner function Boolean IsMoveToCloud(record SetupStatusBlock);
+external inner function Boolean IsMoveToCloudB();
+external outer function Boolean IsCloudControllerClient();
+external inner function string 255 GetCurrentStoreName();
+external inner function Boolean CompaniesInClientMode();
+external inner function Boolean ProductInDemoMode();
+remote inner function string 255 GetCompanyShortCode(string);
+external inner function Boolean AnyModuleAvailable();
+external inner function Boolean AcceptanceStatusColumnTest(string);
+external inner function Integer FlipCharCode(Integer,Integer);
+external inner procedure RateField(real,real,real,string,integer,string,boolean,real,real,string,boolean);
+external inner function boolean AddBicToMasterWindow(integer,var real,var real,real,real,real,real);
+external inner function Boolean IsIntEnabActive(var string,var string,var Boolean,var string);
+external inner function Boolean TouchScreenLookVertical();
+external inner procedure SysEClass_Tool(Integer,var real,var real);
+external inner procedure GTransEClass_Tool(Integer,var real,var real);
+external inner procedure GTrans2EClass_Tool(Integer,var real,var real,var real);
+external inner procedure GBaseEClass_Tool(Integer,var real,var real);
+external inner procedure TransGenVClass_Tool(Integer,var real,var real);
+external inner procedure GetCurUser(var record UserVc);
+external inner function string 60 UserDefined(string,string);
+external inner function string 60 RestPMCashModePayMode();
+external outer function string 255 MasterBannerURL();
+external inner procedure ItemStatusUserSettings(string,var Boolean,var Boolean,var Boolean,var Boolean,var Boolean,var Boolean,var Boolean,var Boolean,var Boolean,var Boolean,var Boolean,var Boolean,var Boolean,var Boolean);
+external inner function Boolean AllowedInCountry(integer);
+external inner function Integer ResourceWindowResourceType();
+external inner function Boolean ResPlan_Rental();
+external inner function Boolean ResPlan_ProdOperations();
+external inner function Boolean ReadPOSButtons(string,string,longint,var string,var string,var string,var record POSButtonsVc);
+external inner function Boolean ReadNPTSWindowData(string,string,longint,string,string,Date,Time,var Boolean,var string,var string,var string,var record POSButtonsVc);
+external inner function Boolean TouchScreenLook();
+external inner procedure ExtractObj(string,var Integer,var string);
+external inner function Boolean IsSessionOpen(string,string,Date,Time);
+external inner procedure CntNPTSPaymentCurrencies(var Array string,var Array string,var Array Integer,var Array string,var Integer);
+remote inner procedure CntPOSCurrencies(var Array string,var Array Boolean,var Integer);
+external inner function Boolean CheckOffLineRecords(Boolean);
+external inner function string 60 TileUserDefined(string,Integer,var Integer);
+external inner function Boolean CUVATNrColumn;
+external inner function Integer GetInternetEnablerCountry();
+external inner function Integer CntVarietyCode(Integer,var Array string);
+external inner function Integer VarietyMatMax(Integer);
+external inner function Boolean UseTaxTemplatesforTaxCalc();
+remote inner procedure TablesViewWClassDo(record LocalMachineBlock,string,Array string,Array string,Array string,Array string,Array Integer,var Integer,var LongInt);
+external inner function string 20 GetMenuCode(string);
+external inner procedure DrawModifierButtons(var Integer);
+remote inner procedure ForkLiftQueueArray(string,string,var Array string,var Array string,var Array string,var Array string,var Array val,var Array Integer,var Array string,var Integer,Boolean,LongInt,LongInt,string);
+
+external inner function Boolean DisplayLoginButtons();
+external inner function Integer LoginShortcutsLines(Integer);
+external inner function Integer LoginShortcutsPos(Real,Integer);
+
+external inner procedure DefineTTRRowTypes(Integer);
+external inner function real ItemButtons(string,Integer);
+external inner procedure HWStoreWClassAddProducts(Integer);
+external inner function Boolean HasYodlee();
+external inner function Boolean HasAvalara();
+external inner function Boolean HasCharts();
+external inner function Boolean HasDetailedCharts();
+external inner function Boolean HasNewRegistration();
+external inner function Boolean ActivityIsForAcceptanceOrFYI(record ActVc,Boolean,Boolean);
+// TravelLog
+external inner function Integer LoginShortcuts();
+external inner function Boolean TestConfigurationEnabler(string);
+remote inner function Integer CustomerSalesPaymentTermType(string);
+// POS Standalone
+external inner function Boolean DefCustCodeSetup();
+
+external inner function Boolean HasInAppsAvailable();
+external inner function Integer CountCountries();
+
+// Language functions LAT
+external inner function Boolean DisplayLoginKeyPad_LAT();
+external inner function string 255 VATZoneEditFieldLabel_LAT(Integer);
+external inner function real VATZoneButtonsLabelsLAT(real,real,real,real);
+external inner procedure LoginButtons2_LAT(Real,Real);
+external inner procedure FORMDEF_LAT();
+external inner function string 255 DemoMsgWClassTitle_LAT(Boolean,Boolean);
+external inner procedure TBEClassDef_LAT();
+external inner function string 255 VATZoneNameLAT();
+external inner procedure TSERW_LAT();
+external inner procedure TSERWNT_LAT();
+external inner procedure TSERWTouch_LAT();
+external inner procedure TSERWTEST_LAT();
+external inner procedure INVFORM_LAT(Boolean);
+external inner procedure DisplayRecordDetails_LAT(LongInt,LongInt,string,date,time,string,string,string,string,string,string,string,string,string,string,string,Integer,string,string,string,val,string,Boolean,string,string);
+external inner procedure DrawPOSInterface_LAT(string,string,record POSButtonsVc,string,Integer);
+external inner procedure DisplayRecordDetailsCustDisplay_LAT(LongInt,LongInt,string,date,time,string,string,string,string,string,string,Integer,string,string,string,val);
+external inner function string 255 ResDayWClassWindowTitle_LAT();
+external inner function string 255 ResMonWClassWindowTitle_LAT();
+external inner function string 255 RTMonWClassWindowTitle_LAT();
+external inner procedure SetupNightAuditWindowControls_LAT(Boolean);
+external inner procedure CURClassDefinitionLAT();
+external inner function real DrawPaymentModesButtons_IV_LAT(real);
+external inner function real FunctionButtons_LAT(string);
+external inner procedure CreditCardWindowHeader_LAT(Boolean,Boolean,Real);
+external inner procedure CreditCardWindowButtons_LAT(string,string,real);
+external inner procedure CreditCardWindowInvoiceDetail_LAT(Real);
+external inner procedure CreditCardWindowDeliveryDetail_LAT(Real);
+external inner function real DrawPaymentModesButtons_LAT();
+external inner procedure DrawBarMenuTiles_LAT(string);
+external inner procedure DrawRestPMOtherPay_LAT();
+external inner procedure DisplayRecordDetailsRA_LAT(LongInt,LongInt,string,date,time,string,string,string,string,string,string,Integer,string,LongInt,Date,string,LongInt,string);
+external inner procedure DrawModifierButtons2_LAT(var integer,var integer);
+external inner procedure OKCancel_LAT();
+external inner procedure DefineElearningURLCacheLClass_LAT();
+external inner procedure DefineElearningURLCacheDClass_LAT();
+external inner function real TravelLogDeductions_LAT(real,real);
+external inner procedure LoginButtons_LAT(Real);
+external inner procedure FORMDEF2_LAT();
+external inner procedure FORMDEF3_LAT();
+external inner procedure ARS2RClass_LAT();
+external inner procedure ALLVATRClass_LAT();
+
+external inner function Boolean IsStandardUnused();
+external inner function Boolean IsEnterprise();
+external inner function Boolean StandardHansa();
+external inner function Boolean HasATOL();
+
+external inner function Boolean HasAccPeriods();
+external inner function Boolean HasAccessGroups();
+external inner function Boolean HasAddFee();
+external inner function Boolean HasApprovals();
+external inner function Boolean HasCCPayments();
+external inner function Boolean HasAdvancedAccounting();
+external inner function Boolean HasAdvancedCRM();
+external inner function Boolean HasAdvancedPricing();
+external inner function Boolean HasAdvancedProduction();
+external inner function Boolean HasAdvancedStock();
+external inner function Boolean HasAged();
+external inner function Boolean HasBar();
+external inner function Boolean HasBase2();
+external inner function Boolean HasBranch();
+external inner function Boolean HasBuyBack();
+external inner function Boolean HasCategories();
+//external inner function Boolean HasConsigmentStock();
+external inner function Boolean HasCommunicator();
+external inner function Boolean HasConsignmentStock();
+external inner function Boolean HasContactClassification();
+external inner function Boolean HasContactRelations();
+external inner function Boolean HasConsolidation();
+external inner function Boolean HasCountryPerCustomer();
+external inner function Boolean HasCreditLimit();
+external inner function Boolean HasCustItem();
+external inner function Boolean HasCustomerSearchKey();
+external inner function Boolean HasCustomerStatusReport();
+external inner function Boolean HasDownpayments();
+external inner function Boolean HasDefineColumns();
+external inner function Boolean HasDeliveryAddress();
+external inner function Boolean HasDepartments();
+external inner function Boolean HasETaxDocuments();
+external inner function Boolean HasEInvoicing();
+external inner function Boolean HasEndorsedChecks();
+external inner function Boolean HasExtraNLComment();
+external inner function Boolean HasExtTax();
+external inner function Boolean HasFavouriteActTypes();
+external inner function Boolean HasFiscalPrinter();
+external inner function Boolean HasFormEditor();
+external inner function Boolean HasFreightAdvanced();
+external inner function Boolean HasHideCostPrice();
+external inner function Boolean HasHotelInterface();
+external inner function Boolean HasGuestUserDefined();
+external inner function Boolean HasJewelleryInterface();
+external inner function Boolean HasIncomeAndExpenseBook();
+external inner function Boolean HasIOUChecks();
+external inner function Boolean HasItemClassification();
+external inner function Boolean HasItemGroups();
+external inner function Boolean HasKPIs();
+external inner function Boolean HasLanguages();
+external inner function Boolean HasLimitedAccess();
+external inner function Boolean HasLocalMachines();
+external inner function Boolean HasLoyaltyCards();
+external inner function Boolean HasMailTags();
+external inner function Boolean HasMainPartner();
+external inner function Boolean HasMultiCurrency();
+external inner function Boolean HasMultiLocations();
+external inner function Boolean HasNLBudget();
+external inner function Boolean HasNLBudgetClass();
+external inner function Boolean HasObjects();
+external inner function Boolean HasInvoiceOfficialSerNr();
+external inner function Boolean HasOfficialSerNr();
+external inner function Boolean HasOrderClasses();
+external inner function Boolean HasPreferedOfficialSerNr();
+external inner function Boolean HasNumberSeries();
+external inner function Boolean HasPersons();
+external inner function Boolean HasPocketScreen();
+external inner function Boolean HasPositions();
+external inner function Boolean HasPrepayments();
+external inner function Boolean HasProjects();
+external inner function Boolean HasPriceLists();
+external inner function Boolean HasQualityControl();
+external inner function Boolean HasReconLevel2();
+external inner function Boolean HasReminderLevel();
+external inner function Boolean HasRemoteBackup();
+external inner function Boolean HasResourceDisplayGroups();
+external inner function Boolean HasRussianPrepayment();
+external inner function Boolean HasRetGoodsToSupp();
+external inner function Boolean HasReturnedGoods();
+external inner function Boolean HasRoomPackages();
+external inner function Boolean HasRoomTypes();
+external inner function Boolean HasRoute();
+external inner function Boolean HasSalesman();
+external inner function Boolean HasSalesmanBonus();
+external inner function Boolean HasSalesGroup();
+external inner function Boolean HasSecondQuantity();
+external inner function Boolean HasSerialNumbers();
+external inner function Boolean HasServerInCloud();
+external inner function Boolean HasSettlementDiscount();
+external inner function Boolean HasSimulations();
+external inner function Boolean hasSimAccruals();
+external inner function Boolean HasSkypeConnection();
+external inner function Boolean HasSIPServerConnection();
+external inner function Boolean HasStrAsSignFType();
+external inner function Boolean HasTouchScreenDevice();
+external inner function Boolean HasTaxMatrix();
+external inner function Boolean HasTestFeatures();
+external inner function Boolean HasMetroTestFeatures();
+external inner function Boolean HasWorkOrders();
+external inner function Boolean HasThrouLocation();
+external inner function Boolean HasTouchScreenLook();
+external inner function Boolean HasTREO();
+external inner function Boolean HasVarieties();
+external inner function Boolean HasVATZone();
+external inner function Boolean HasWithholdingTax();
+external inner function Boolean HasWithholdingTaxAdvanced();
+external inner function Boolean HasWorkOrders();
+external inner function Boolean HasWorkflowOverview();
+
+external inner function Boolean HasStandardCRM();
+external inner function Boolean HasStandardOrganizer();
+external inner function Boolean HasStandardCommunicator();
+
+external inner function Boolean HasEMail();
+external inner function Boolean HasExternalEMail();
+
+external inner function Boolean HasModAT2();
+external inner function Boolean HasModBA();
+external inner function Boolean HasModCheck();
+external inner function Boolean HasModCL();
+external inner function Boolean HasModCO();
+external inner function Boolean HasModCons();
+external inner function Boolean HasModCourses();
+external inner function Boolean HasModCredMan();
+external inner function Boolean HasModCRM();
+external inner function Boolean HasModEDI();
+external inner function Boolean HasModExp();
+external inner function Boolean HasModHotel();
+external inner function Boolean HasModHRM();
+external inner function Boolean HasModIN();
+external inner function Boolean HasModIntStock();
+external inner function Boolean HasModNL();
+external inner function Boolean HasPaymentGateway();
+external inner function Boolean HasModPO();
+external inner function Boolean HasModPOS();
+external inner function Boolean HasModPL();
+external inner function Boolean HasModPOProg();
+external inner function Boolean HasModPP();
+external inner function Boolean HasModProd();
+external inner function Boolean HasModQT();
+external inner function Boolean HasModRent();
+external inner function Boolean HasModRest();
+external inner function Boolean HasModRsrt();
+external inner function Boolean HasModSO();
+external inner function Boolean HasModSL();
+external inner function Boolean HasModSVO();
+external inner function Boolean HasModTS();
+external inner function Boolean HasModWHM();
+external inner function Boolean HasModDI();
+external inner function Boolean UsePostOKButton();
+external inner function Boolean HasBankImport();
+external inner function Boolean HasPLIntegratedWithNL();
+external inner function Boolean HasSLIntegratedWithNL();
+external inner function Boolean HasIntegratedNL();
+external inner function Boolean HasConsStockMoveInvoices();
+
+SetLangMode(LangLatvian,"LAT",0);
+
+window StockMovDClass:1
+  wtag("language","LAT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h1,h2,h3,h4,v,vm,vs;
+  Integer tilenr,f,flipnr;
+  
+  WindowBegin("Noliktavas kust´ba",StockMovDClass,CGview,-);
+  if (HasJewelleryInterface) then begin
+    SetWRect(20,80,850,400);
+  end else begin
+  SetWRect(20,80,700,400);
+  end;
+  Sizeable(-1,-1,0,0);
+  UseView(StockMovVc);
+  ActiveFieldOnNew("SentTransDate");      
+  Tile(0,90,false,"",TransDate);
+  v = 6; vs = 20; h = 110; h2 = 300; h3 = 500; h4 = 620;
+  EditField(h,v,80, "Nr.",Normal,SerNr,false,TSerSClass);
+  CheckBox(h2,v,0,"Rezerv•ts",Reserved);
+  EditField(h3,v,80,"Iemesls",Normal,Reason,false,StandProblemsSClass);
+  EditField(h,v+=vs,80,"Pas. datums",Normal,OrdTransDate,false,PasteCurDate);
+  if (HasMultiLocations) then begin
+    if (IsEnterprise) then begin
+  EditField(h2,v,80,"Nosðt´äanas dat.",Normal,SentTransDate,false,PasteCurDate);
+    end;
+  end;
+  EditField(h3,v,80,"SaÀemäanas dat.",Normal,TransDate,false,PasteCurDate);
+  if (HasMultiLocations) then begin
+  EditField(h,v+=vs,80, "No noliktavas",Normal,FrLocation,false,LocationSClass);
+    if (IsEnterprise) then begin
+  EditField(h2,v,80,"Caur noliktavu",Normal,ThrouLocation,false,LocationSClass);
+    end;
+  EditField(h3,v,80,"Uz noliktavu",Normal,ToLocation,false,LocationSClass);
+  end;
+  if (HasConsStockMoveInvoices) then begin
+    EditField(h,v+=vs,80, "R•úina Nr.",ViewOnly,InvoiceNr,false,0);
+    EditField(h2,v,80,"R•úina datums",ViewOnly,InvDate,false,0);
+    //payout-19; edz:
+    //if (HasLocalization("PRT")) then begin 
+    //EditField(h3,v,80,"R•úina ofici‚lais Nr.",ViewOnly,InvoiceOfficialSerNr,false,0);
+    //end;   
+    EditField(h3,v,80,"Valoda",Normal,LangCode,false,LangSClass);
+    //:edz
+  end;
+  tilenr = 1;
+  if (HasPositions or HasModWHM or HasLocalization("PRT")) then begin  
+    TileButton(tilenr,"Vietas"); tilenr = tilenr + 1;
+  end;
+  if (HasObjects) then begin
+    TileButton(tilenr,"Objekti"); tilenr = tilenr + 1;
+  end else begin
+    TileButton(tilenr,"Koment‚rs"); tilenr = tilenr + 1;
+  end;
+  TileButton(tilenr,"Artikuli"); tilenr = tilenr + 1;
+  if (HasMultiCurrency or HasBase2) then begin
+    TileButton(tilenr,"Valðta"); tilenr = tilenr + 1;
+  end;
+  TileButton(tilenr,"Ilgums"); tilenr = tilenr + 1;
+  TileButton(tilenr,"Nosðt."); tilenr = tilenr + 1;
+  TileButton(tilenr,"Adrese"); tilenr = tilenr + 1;  
+  tilenr = 1;
+  if (HasPositions or HasModWHM or HasLocalization("PRT")) then begin  
+    Tile(tilenr,60,false,tilenr,FrPos); tilenr = tilenr + 1;
+    v = 6;
+    if (HasPositions) then begin
+      EditField(h,v,80, "No poz´cijas",Normal,FrPos,false,UsedPosSClass);  
+  EditField(h2,v,80,"Uz poz´ciju",Normal,ToPos,false,FreePosSClass);
+    end;
+    if (HasModProd) then begin
+      EditField(h3,v,80,"Raìojumam",Normal,ProdSerNr,false,ProdSClass); v = v + vs;
+      EditField(h3,v,150,"Maräruts",Normal,Sorting,false,DelRouteSClass); v = v + vs;  
+    end;
+    if ((HasLocalization("PRT") and HasModIN and HasMultiLocations) or IsStandardProduct==false) then begin   
+      EditField(h3,v,150,"Tips",Normal,StockMovType,false,SetSClass); v = v + vs;  
+    end;
+    if (HasModWHM) then begin
+      v = 6 + vs;
+      CheckBox(h,v,0,"Manu‚la izdoäana",ManualPick);  
+  CheckBox(h,v+=16,0,"Aizsðt´t uz pac•l‚ja rindu",ToForkLiftQue);
+    end;
+  end;
+  Tile(tilenr,70,false,tilenr,Comment); tilenr = tilenr + 1;
+  v = 6;
+  if (HasObjects) then begin
+    EditField(h,v,-20,"Objekti",Normal,Objects,false,ObjSClass);
+    v = v + vs;
+  end;
+  EditField(h,v,-20,"Koment‚rs",Normal,Comment,false,0);
+  EditField(h,v+=vs,135,"Pavadz. Nr.",Normal,OfficialSerNr,false,LegalInvNrSClass);
+  EnterSkip(Math);
+  Tile(tilenr,79,true,tilenr,Math); tilenr = tilenr + 1;
+  v = 24;
+  MatrixBegin(4,v,-50,-50,-,199);  
+  Flip(0);
+  flipnr = 1;
+  if (HasJewelleryInterface) then begin
+    MatCol(1,32,"S•rijas Nr.",0,SerialNr,false,SerialNrSClass);
+    EnterSkip(Quant);
+    MatCol(1,130,"Artikuls",0,ArtCode,false,INSClass); 
+    Flip(flipnr); flipnr = flipnr + 1;
+    if (HasVarieties) then begin
+    MatCol(1,200,"Piepras´ts",0,OrdQuant,true,MATVARINSClass); 
+    end else begin
+      if (HasThrouLocation) then begin
+      MatCol(1,200,"Piepras´ts",0,OrdQuant,true,0);  
+    end;
+    end;
+    if (HasThrouLocation) then begin
+    MatCol(1,250,"Nosðt´ts",0,SentQuant,true,0); 
+    end;
+    MatCol(1,300,"SaÀemts",0,Quant,true,0); 
+    MatCol(1,350,"Apraksts",0,Spec,false,0); 
+  end else begin
+    MatCol(1,32,"Artikuls",0,ArtCode,false,INSClass);
+    Flip(flipnr);  flipnr = flipnr + 1;
+    if (HasVarieties) then begin
+  MatCol(1,86,"Piepras´ts",0,OrdQuant,true,MATVARINSClass);
+    end else begin
+      if (HasThrouLocation) then begin
+      MatCol(1,86,"Piepras´ts",0,OrdQuant,true,0);  
+    end;
+    end;
+    if (HasThrouLocation) then begin
+  MatCol(1,148,"Nosðt´ts",0,SentQuant,true,0);
+    end;
+  MatCol(1,210,"SaÀemts",0,Quant,true,0);
+  MatCol(1,272,"Nosaukums",0,Spec,false,0);
+  end;
+  MatCol(1,-260,"SaÀ. vec‚ art. cena",0,OldPrice,true,0);
+  MatCol(1,-160,"SaÀ. papildizm.",0,ExtraSCost,true,0);
+  MatCol(1,-80,"SaÀ. jaun‚ art. cena.",0,NewPrice,true,0);
+  Flip(flipnr); flipnr = flipnr + 1;
+  if (HasVarieties) then begin
+  MatCol(1,86,"Piepras´ts",0,OrdQuant,true,MATVARINSClass);
+  end else begin
+    if (HasThrouLocation) then begin
+    MatCol(1,86,"Piepras´ts",0,OrdQuant,true,0);  
+  end;
+  end;
+  if (HasThrouLocation) then begin
+  MatCol(1,148,"Nosðt´ts",0,SentQuant,true,0);
+  end;
+  MatCol(1,210,"SaÀemts",0,Quant,true,0);
+  MatCol(1,272,"Nosaukums",0,Spec,false,0);
+  MatCol(1,-260,"Nos. vec‚ art. cena",0,SentOldPrice,true,0);
+  MatCol(1,-160,"Nos. papildizm.",0,SentExtraSCost,true,0);
+  MatCol(1,-80,"Nos. jaun‚ art. cena",0,SentNewPrice,true,0);
+  Flip(flipnr); flipnr = flipnr + 1;
+  MatCol(1,86,"Nosaukums",0,Spec,false,0);
+  if (HasObjects) then begin
+  MatCol(1,-380,"Objekti",0,Objects,false,ObjSClass);
+  end;
+  if (HasSerialNumbers) then begin
+  MatCol(1,-280,"S•rijas Nr.",0,SerialNr,false,SerialNrSClass);
+  end;
+  MatCol(1,-140,"Cena",0,BasePrice,true,0);
+  MatCol(1,-40,"Koef.",0,Coefficient,false,0);
+  Flip(flipnr); flipnr = flipnr + 1;
+  MatCol(1,86,"Nosaukums",0,Spec,false,0);
+  if (HasSerialNumbers) then begin
+  MatCol(1,-280,"S•rijas Nr.",0,SerialNr,false,SerialNrSClass);
+  end;
+  MatCol(1,-180,"Platums",0,UnitXval,true,0);
+  MatCol(1,-135,"Augst.",0,UnitYval,true,0);
+  MatCol(1,-90,"Biezums",0,UnitZval,true,0);
+  MatCol(1,-45,"K‚rt´bas rinda",0,OrderRowNr,false,0);
+  if (HasPositions) then begin
+    Flip(flipnr); flipnr = flipnr + 1;
+  MatCol(1,86,"Nosaukums",0,Spec,false,0);
+  MatCol(1,-180,"No poz´cijas",0,FrPosCode,false,UsedPosSClass);
+  MatCol(1,-90,"Uz poz´ciju",0,ToPosCode,false,FreePosSClass);
+  end;
+  DeleteRowTest;
+  RowMenuBegin(""); 
+  RowMenuItem(0,"Artikula statuss",'I','I',0,"ItemStatusStockMovDsm"); 
+  if (HasQualityControl) then begin
+    RowMenuItem(0,"Kvalit‚tes kontrole",'u','u',0,"QualConFromStockMovDsm"); 
+  end;
+  EndRowMenu;
+  EndMatrix;
+  vs = 20;
+  v = 18; 
+  if (flipnr>2) then begin
+    for (f=1;f<flipnr;f=f+1) begin
+      VTab(-35,v,-16,v+vs,ToolFlip,f,chr(asc("A") + f - 1));
+      v = v + vs;
+    end;
+  end;
+  if (HasThrouLocation) then begin
+  CheckBox(20,-52,0,"Apstiprin‚ts",OrdFlag);
+  CheckBox(20,-36,0,"Nosðt´ts",SentOKFlag);
+  end;
+  CheckBox(20,-20,0,"SaÀemts",OKFlag);
+  if (HasThrouLocation) then begin
+  EditField(170,-20,62,"Nos. daudz.",Normal,TotSentQty,true,0);
+  end;
+  EditField(310,-20,62,"SaÀ. kop‚",Normal,TotQty,true,0);
+  if (HasLocalization("HRV,PRT")) then begin  
+    EditField(550,-40,150,"Tax Seal",ViewOnly,TaxAdminServSeal,false,0);
+//    SoftEditField(550,-40,150,"Tax Auth. Approval",Normal,"TaxAdminServSeal",false,0,M4Str,200);
+  end;
+  EditField(550,-20,100,"Neuzkr‚t‚s papildizm.",Normal,OtherExtraCosts,false,0);
+  if (HasMultiCurrency or HasBase2) then begin
+    Tile(tilenr,70,false,tilenr,FrRate); tilenr = tilenr + 1;
+    h1 = 110; vs = 20;
+    if (HasBase2) then begin
+      h1 = h1 + 20;
+    end;
+    EditField(h1,v=6,50,"Valðta",Normal,CurncyCode,false,CurncyCodeSClass);
+    if (HasMultiCurrency) then begin
+      if (HasBase2) then begin
+        EditField(h1,v+vs,50,"B‚zes valðta 1",Normal,BaseRate1,true,0);
+      end else begin
+        EditField(h1,v+vs,50,"B‚zes valðta",Normal,BaseRate1,true,0);
+      end;
+      if (HasBase2) then begin  
+        EditField(h1,v+(vs*2),50,"B‚zes valðta 2",Normal,BaseRate2,true,0);  
+      end;
+      EditField(h2=295,v,50,"Kurss",Normal,FrRate,true,0);  
+      if (HasBase2) then begin  
+        RateField(h3=360,v,50,":",Normal,"ToRateB1",true,h3+60,v+14,"B‚zes valðta 1",false);  
+        RateField(h3,v+=vs,50,":",Normal,"ToRateB2",true,h3+60,v+14,"B‚zes valðta 2",false);            
+      end else begin
+        RateField(h3=360,v,50,":",Normal,"ToRateB1",true,h3+60,v+14,"B‚zes valðta",false);      
+      end;
+    end else begin
+      EditField(h1,v+=vs,50,"B‚zes valðta 1",Normal,BaseRate1,true,0);
+      EditField(h1,v+=vs,50,"B‚zes valðta 2",Normal,BaseRate2,true,0);
+    end;
+  end;
+  Tile(tilenr,110,false,tilenr,PlanSendDate); tilenr = tilenr + 1;
+  vs = 20; h1 = 130; h2 = 330; h3 = 560; 
+  EditField(h,v=6,80,"Pl‚n. nos. dat.",Normal,PlanSendDate,false,PasteCurDate);
+  EnterSkip(PlanSendTime);
+  if (HasLocalization("PRT")==false or IsStandardProduct==false) then begin   
+  EditField(h2,v,40,"Pl‚n. pieg. dienas",ViewOnly,PlanDurationDays,false,0);
+  end;
+  EditField(h,v+=vs,80,"Pl‚n. nos. laiks",Normal,PlanSendTime,false,PasteCurTime);
+  EnterSkip(PlanArrDate);
+  if (HasLocalization("PRT")==false or IsStandardProduct==false) then begin   
+  EditField(h2,v,80,"Pl‚n. pieg. stundas",ViewOnly,PlanDurationTime,false,0);
+  end;
+  EditField(h3,v=6,80,"Pl‚notais pieg‚des datums",Normal,PlanArrDate,false,PasteCurDate);
+  EditField(h3,v+=vs,80,"Pl‚notais pieg‚des laiks",Normal,PlanArrTime,false,PasteCurTime);
+  if (HasLocalization("PRT")==false or IsStandardProduct==false) then begin   
+  EditField(h,vm=(v+=32),80,"Faktiskais nos. dat.",Normal,ActSendDate,false,PasteCurDate);
+  EnterSkip(ActSendTime);
+  EditField(h2,v,40,"Faktiskais d.sk.",ViewOnly,ActDurationDays,false,0);
+  EditField(h,v+=vs,80,"Faktiskais nos. laiks",Normal,ActSendTime,false,PasteCurTime);
+  EnterSkip(ActArrDate);
+  EditField(h2,v,80,"Faktiskais st.sk.",ViewOnly,ActDurationTime,false,0);
+  EditField(h3,v=vm,80,"Faktiskais pieg‚des datums",Normal,ActArrDate,false,PasteCurDate);
+  EditField(h3,v+=vs,80,"Faktiskais pieg‚des laiks",Normal,ActArrTime,false,PasteCurTime);
+  end;
+  Tile(tilenr,110,false,tilenr,FreightCode); tilenr = tilenr + 1;
+  vs = 20; h2 = 255; 
+  EditField(h=130,v=6,60,"Transporta komp.",Normal,FreightCode,false,FreightCompanySClass);
+  EditField(h2,v,-40,"Re®. Nr.",Normal,FreightCompanyRegNr,false,0);
+  EditField(h,v+=vs,-40,"Nosaukums",Normal,FreightCompany,false,0);
+  EditField(h,v+=vs,-40,"A/M inform‚cija",Normal,TruckInfo,false,0);
+  EditField(h,v+=vs,-40,"Vad´t‚js",Normal,Driver,false,0);
+  EditField(h,v+=vs,-40,"CMR",Normal,CMRText,false,0);
+  if (HasNumberSeries and HasLocalization("PRT")) then begin  
+    if (HasOfficialSerNr) then begin
+      EditField(h,v+=vs,100,"Pavadz. Nr. 2",Normal,OfficialSerNr2,false,0);  
+      EditField(h2+100,v,135,"Statuss",Normal,Status,false,SetSClass);  
+    end;    
+  end;
+  Tile(tilenr,200,false,tilenr,FrAddr0); tilenr = tilenr + 1;
+  vs = 20; h2 = 255;
+  EditField(h=130,v=6,-40,"No adreses",Normal,FrAddr0,false,0);  
+  EditField(h,v+=vs,-40,"",Normal,FrAddr1,false,0);  
+  EditField(h,v+=vs,-40,"",Normal,FrAddr2,false,0);  
+  EditField(h,v+=vs,-40,"",Normal,FrAddr3,false,0);  
+  EditField(h,v+=vs,-40,"",Normal,FrAddr4,false,0);  
+  if (HasThrouLocation) then begin
+  EditField(h,v+=vs,-40,"Caur adresi",Normal,ThrouAddr0,false,0);  
+  EditField(h,v+=vs,-40,"",Normal,ThrouAddr1,false,0);  
+  EditField(h,v+=vs,-40,"",Normal,ThrouAddr2,false,0);  
+  EditField(h,v+=vs,-40,"",Normal,ThrouAddr3,false,0);  
+  EditField(h,v+=vs,-40,"",Normal,ThrouAddr4,false,0);  
+  end;
+  EditField(h,v+=vs,-40,"Uz adresi",Normal,ToAddr0,false,0);  
+  EditField(h,v+=vs,-40,"",Normal,ToAddr1,false,0);  
+  EditField(h,v+=vs,-40,"",Normal,ToAddr2,false,0);  
+  EditField(h,v+=vs,-40,"",Normal,ToAddr3,false,0);  
+  EditField(h,v+=vs,-40,"",Normal,ToAddr4,false,0);  
+  SpecialMenu("Paäizmaksa p•c vec‚s cenas",'=',0,"StockMovFillFIFODsm");
+  SpecialMenu("Artikulu mekl•äana",'f',1,"ItemSearchDsm");
+  if (HasIntegratedNL) then begin
+  SpecialMenu("Atv•rt gr‚matojumu nosðt´ts",' ',2,"OpenTRFromStockMovSent");
+  SpecialMenu("Atv•rt gr‚matojumu saÀemts",'t',3,"OpenTRFromStockMov");
+  end;
+  if (HasLocalization("PRT")) then begin  
+    if (HasETaxDocuments) then begin
+      SpecialMenu("Sðt´t uz nodokºu iest‚d•m",'',10,"EShipPRTDsm");  
+    end;
+  end;  
+   if (HasConsStockMoveInvoices) then begin 
+     SpecialMenu("Druk‚t Noliktavas kust´bas R•úinus",'p',3,"PrintStockMovInvoices");    
+   end;   
+  EndWindow;
+end;
+
+window PurRClass:1
+  wtag("language","LAT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,v,vm,vs;
+  WindowBegin("Veidot iztrðkstoäo pre‹u p‚rskatu",PurRClass,CGRcW,RcType);
+  SetWRect(20,80,450,380);
+  v = 6; vs = 20; h = 140;
+  EditFieldTL(h,v, 150,"Artikuls",M4UStr,Normal,50,f1,false,INSClass);
+  if (HasItemGroups) then begin
+  EditFieldTL(h,v+=vs, 150,"Grupa",M4UStr,Normal,11,f3,false,ITSClass);
+  end;
+  if (HasItemClassification) then begin
+  EditFieldTL(h,v+=vs, 150,"Artikulu klasifik‚cija", M4UStr,Normal,60,f4,false,DISClass); 
+  EditFieldTL(h,v+=vs, 70,"Klasifik‚ciju tips",M4UStr,Normal,60,f5,false,CTypeSClass);
+  end;
+  if (HasMultiLocations) then begin
+  EditFieldTL(h,v+=vs, 150,"Noliktava",M4UStr,Normal,10,FirstAcc,false,LocationSClass);
+  end;
+  if (HasDepartments) then begin
+    if (StandardHansa==false) then begin
+  EditFieldTL(h,v+=vs, 150,"Departaments",M4UStr,Normal,10,LastAcc,false,DepSClass);
+    end;
+  end;
+  if (HasSalesman or HasSalesmanBonus) then begin
+  EditFieldTL(h,v+=vs ,100,"A®ents",M4UStr,Normal,10,AccStr,false,UserSClass);
+  end;
+  if (HasSalesGroup) then begin
+    EditFieldTL(h,v+=vs ,50,"A®entu grupa",M4UStr,Normal,10,Stext,false,SalesGroupSClass); 
+  end;
+  if (IsEnterprise) then begin
+  CheckBox(h,v+=30,0,"Pasðt. artikul‚ p‚rbaud´t parasto pasðt. daudz.",flags[5]);
+  CheckBox(h,v+=16,0,"Izlaist artikulus bez atlikuma",flags[3]);
+  CheckBox(h,v+=16,0,"Izlaist artikulus bez iztrðkuma",flags[4]);
+    CheckBox(h,v+=16,0,"Iekºaut tikai apstr. pasðt´jumus",flags[7]); 
+  end;
+  if (HasVarieties) then begin
+  CheckBox(h,v+=16,0,"R‚d´t vari‚cijas",flags[6]);
+  end;
+  CheckBox(h,v+=16,0,"Iekºaut materi‚lu iztrðkumu no kl. pasðt´jumiem",flags[10]);//payout-20; edz
+  CheckBox(h,v+=16,0,"R‚d´t tikai materi‚lus",flags[11]);//payout-20; edz
+  ButtonFrame(h,vm=(v+=41),123,3,"Sec´ba p•c");
+  RadioButton(h,v,0,0,"Artikula",flags[2]);
+  if (HasItemGroups) then begin
+  RadioButton(h,v+=16,1,0,"Grupas",flags[2]);
+  end;
+  RadioButton(h,v+=16,2,0,"Nosaukuma",flags[2]);
+  EndFrame;
+  EndWindow;
+end;
+
+window PlanRecordsVClass:1
+  wtag("language","LAT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,v;
+  WindowBegin("Veidot pl‚notos ierakstus",PlanRecordsVClass,CGMnt,RcType);
+  SetWRect(20,80,520,400);
+  PeriodField(h=160,v=6,"Pl‚notais periods");
+  EditFieldTL(h,v+=20,150,"Artikuli",M4UStr,Normal,41,f1,false,INSClass);
+  if (HasItemGroups) then begin
+  EditFieldTL(h,v+=20,150,"Artikulu grupas",M4UStr,Normal,5,f2,false,ITSClass);
+  end;
+  if (HasItemClassification) then begin
+  EditFieldTL(h,v+=20,150,"Klasifik‚cija",M4UStr,Normal,5,f4,false,DISClass);
+  end;
+  if (HasMultiLocations) then begin
+  EditFieldTL(h,v+=20,150,"Noliktavas",M4UStr,Normal,21,f3,false,LocationSClass);
+  EditFieldTL(h,v+=20,150,"Raìoäanas noliktavas",M4UStr,Normal,21,f6,false,LocationSClass);
+  end;
+  EditFieldTL(h,v+=20,150,"Galven‚ sast‚vdaºa",M4UStr,Normal,21,f10,false,INSClass);//payout-20; edz
+  EditFieldTL(h,v+=20,150,"Pasðt´juma datums",M4Date,Normal,0,d1,false,PasteCurDate);//payout-20; edz
+  if (IsEnterprise) then begin
+  ButtonFrame(h,v+=45,150,2,"Veidot");
+  CheckBox(h,v,0,"Raìojumus",flags[1]); 
+  CheckBox(h,v+=16,0,"Pasðt´jumus",flags[2]);
+  end;
+  CheckBox(h,v+=40,0,"Ignor•t paäreiz•j‚s noliktavas v•rt´bas",flags[3]);
+//  CheckBox(h,v+=16,0,"Include Items with no future plans",flags[4]);
+  CheckBox(h,v+=16,0,"No katra klientu pasðt´juma izveidot pasðt´jumu",flags[5]);
+  CheckBox(h,v+=16,0,"Pasðt´t visas sast‚vdaºas",flags[6]);
+  StaticText(h+18,v+=27,"Iekºaujot sast‚vdaºas, kas nepiecieäamas pirms perioda.",false);
+  EndWindow;
+end;
+
+window BarcodeDClass:1
+  wtag("language","LAT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real v;
+  WindowBegin("Sv´tru kods",BarcodeDClass,CGview,-);
+  SetWRect(64,80,509,170);
+  UseView(BarcodeVc);
+  EditField(120,v=6,-40,"Sv´tru kods",Normal,Barcode,false,0);
+  EditField(120,v+=20,-40,"Artikuls",Normal,Itemcode,false,INSClass);
+  EditField(120,v+=20,-40,"Artikuls bez var.",Normal,OrigItemcode,false,INSClass);//payout-21; edz
+  EditField(120,v+=20,-40,"Klients",Normal,CustCode,false,CUSClass);
+  EditField(120,v+=20,-40,"Koment‚rs",Normal,Comment,false,0);
+  EndWindow;
+end;
+
+window ORLClass:3
+  wtag("language","LAT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  Integer pos,rn;
+
+  WindowBegin("Klientu pasðt´jumi",ORLClass,CGmlist,-);
+  SpawnClass(ORDClass);
+  SetWRect(20,80,900,298);
+  Sizeable(-1,-1,0,0);
+  UseView(ORVc);
+  FormName(PrintORL);
+  RecordList(4,17,-21,-39);
+    RlColKey(4,4,"N_r.",SerNr,false,SerNr);
+  RlColKey(79,79,"Apst.",OKFlag,false,OKFlag);
+  pos = 111;
+  if (HasModIN) then begin
+    RlColKey(pos,pos,"Nos.",ShipMark,false,ShipFlag);  
+    pos = pos + 32;
+  end;
+  if (HasModSL) then begin
+    RlColKey(pos,pos,"R•ú.",InvMark,false,InvFlag);  
+    pos = pos + 32;
+  end;
+  RlCol(pos,pos,"Sl.",Closed,false);  
+  pos = pos + 32;
+  RlColKey(pos,pos,"Pasðt. dat.",OrdDate,false,OrdDate);  
+  pos = pos + 80;
+  //payout-21; edz:
+  RlColKey(pos,pos,"Pl‚n. nos. dat.",PY_PlanShip,false,PY_PlanShip);
+  pos = pos + 80;
+  //:edz
+  if (HasMultiLocations) then begin
+    RlCol   (pos,pos,"Noliktava",Location,false);  
+    pos = pos + 60;
+  end;
+  RlColKey(pos,pos,"Kl. pas. Nr.",CustOrdNr,false,CustOrdNr); 
+  pos = pos + 80;
+  RlColKey(pos,pos,"Klients",CustCode,false,CustCode); 
+  pos = pos + 60;
+  RlColKey(pos,pos,"Nosaukums",Addr0,false,Name); 
+  if (IsEnterprise) then begin
+    if (AcceptanceStatusColumnTest("ORVc")) then begin  //!!SAMETRANSLATION
+      CalculatedColumn(-240,-240,"Apst.","ORLClassAcceptanceStatus",false);
+    end;
+    RlColKey(-200,-200,"Klase",OrderClass,false,OrderClass);
+    RlColKey(-155,-155,"Kop‚",Sum4,true,Sum4);  
+    RlCol(-75,-75,"Apmaks‚ts",DownPaySent,true);  
+  end else begin
+    RlColKey(-55,-55,"Kop‚",Sum4,true,Sum4); 
+  end;
+  if (HasLimitedAccess) then begin
+  BrowseSubsetButton(-40,-15);
+  end;
+  SearchField("Mekl•"); 
+  if (GuiType==kGuiMetro) then begin
+    rn = 0;
+    RowMenuBegin("");  
+    if (HasModIN) then begin
+      RowMenuItem(rn,"Veidot nosðt´äanu",'L','L',4300,"SHFromORLsm"); rn = rn + 1;  
+    end;
+    RowMenuItem(rn,"Veidot r•úinu",'L','L',4300,"IVFromORLsm"); rn = rn + 1;  
+    if (HasDownpayments) then begin
+      RowMenuItem(rn,"Veidot priekäapmaksas r•úinu",'o','o',4300,"DownPayFromORLsm"); rn = rn + 1;  
+    end;
+    RowMenuItem(rn,"Pasðt´juma statuss",'r','r',4300,"ORStatusORLsm"); rn = rn + 1;  
+    if (HasModPO) then begin
+      RowMenuItem(rn,"Veidot pasðt´jumu",' ',' ',4300,"POFromORLsm"); rn = rn + 1;  
+    end;
+    if (HasModCRM) then begin
+      RowMenuItem(rn,"Veidot aktivit‚ti",'c','c',4300,"ActFromORLsm"); rn = rn + 1;
+    end;
+    if (IsEnterprise) then begin
+      RowMenuItem(rn,"R•úins jau izrakst´ts",' ',' ',4300,"ORToInvORLsm"); rn = rn + 1;  
+    end;
+    EndRowMenu;
+  end else begin
+    SpecialMenu("Pasðt´juma statuss",'r',3,"ORStatusORLsm"); 
+    if (IsEnterprise) then begin
+      SpecialMenu("R•úins jau izrakst´ts",' ',6,"ORToInvORLsm"); 
+    end;
+    SpecMenuGroup("",kSpecMenuGroupTypeExtendedPlusMenu,0); 
+  if (HasModIN) then begin
+  SpecialMenu("Nosðt´äanu",'L',0,"SHFromORLsm");
+  end;
+  SpecialMenu("R•úinu",'F',1,"IVFromORLsm");  
+    if (HasDownpayments) then begin
+  SpecialMenu("Priekäapmaksas r•úinu",'o',2,"DownPayFromORLsm");  
+  end;
+  if (HasModPO) then begin
+  SpecialMenu("Pasðt´jumu",' ',4,"POFromORLsm");  
+  end;
+  if (HasModCRM) then begin
+      SpecialMenu("Aktivit‚ti",'c',5,"ActFromORLsm");
+    end;
+  end;
+  EndWindow;
+end;
+
+window OrdItemRClass:1
+  wtag("language","LAT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,v,vm,vs;
+  WindowBegin("Veidot atskaiti Pasðt´tie artikuli",OrdItemRClass,CGRcW,RcType);
+  SetWRect(20,80,450,340);
+  v = 6; vs = 20; h = 140;
+  PeriodField(h,v,"Periods");
+  EditFieldTL(h,v+=vs, 150,"Artikuls",   M4UStr,Normal,50,f1,false,INSClass);
+  if (HasItemGroups) then begin
+  EditFieldTL(h,v+=vs, 150,"Artikulu grupa",   M4UStr,Normal,11,f3,false,ITSClass);
+  end;
+  if (HasItemClassification) then begin
+    EditFieldTL(h,v+=vs, 150,"Artikulu klasifik‚cija", M4UStr,Normal,60,f8,false,DISClass); 
+  end;
+  if (IsEnterprise) then begin
+  EditFieldTL(h,v+=vs, 150,"Pasðt. veids",   M4UStr,Normal,11,ObjStr,false,OrderClassSClass);
+  end;
+  EditFieldTL(h,v+=vs, 80,"Pl‚nots nosðt´t",M4Str,Normal,10,LastAcc,false,PasteCurDate);
+  if (IsEnterprise) then begin
+    h = 30;
+  end;
+  ButtonFrame(h,vm=(v+=41),123,2,"Cena");  
+  RadioButton(h,v,0,0,"áodienas cena",flags[7]);
+  RadioButton(h,v+=16,1,0,"Cena no pasðt´juma",flags[7]);
+  if (IsEnterprise) then begin
+  ButtonFrame(h+=150,v=vm,123,2,"Valðtas kurss");
+  RadioButton(h,v,0,0,"áodienas",flags[6]);
+  RadioButton(h,v+=16,1,0,"Pasðt´juma datuma",flags[6]);
+    h = 30;
+  end;
+  ButtonFrame(h,vm=(v+=41),123,3,"K‚rtot p•c");  
+  RadioButton(h,v,0,0,"Nr.",flags[2]);
+  if (HasItemGroups) then begin
+  RadioButton(h,v+=16,1,0,"Grupas",flags[2]);
+  end;
+  RadioButton(h,v+=16,2,0,"Apraksta",flags[2]);
+  EndFrame;
+  if (IsEnterprise) then begin
+  ButtonFrame(h+=150,v=vm,123,3,"Druk‚t");
+  RadioButton(h,v,0,0,"Artikulus",UsedOnly);
+  RadioButton(h,v+=16,1,0,"Grupu summas",UsedOnly);
+  RadioButton(h,v+=16,2,0,"Artik. pa vari‚cij‚m",UsedOnly);
+  end else begin
+    if (HasItemGroups) then begin
+      CheckBox(h,v+=24,0,"Tikai grupu summas",UsedOnly);
+    end;
+  end;
+  CheckBox(h=30,v+=32,0,"Iekºaut materi‚lu iztrðkumu no kl. pasðt´jumiem",flags[10]);//payout-20; edz
+  CheckBox(h,v+=16,0,"R‚d´t tikai materi‚lus",flags[11]);//payout-20; edz
+  EndWindow;
+end;

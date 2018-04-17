@@ -1,0 +1,45 @@
+//<halrule>server-only</halrule>
+global
+updating function LongInt ORVcRecordSave(var record ORVc ORr,record ORVc OR2r,LongInt stat,LongInt long4)
+begin
+  longint res;
+
+  res = inner.ORVcRecordSave(ORr,OR2r,stat,long4);
+
+  //payout-21; edz:
+  ORr.PY_PlanShip = StringToDate(ORr.PlanShip);
+  //:edz
+  
+  ORVcRecordSave = res; 
+  return;
+end;
+
+global
+updating function LongInt ORVcRecordUpdate(var record ORVc ORr,record ORVc OR2r,LongInt stat,LongInt long4)
+begin
+  longint res;
+
+  res = inner.ORVcRecordUpdate(ORr,OR2r,stat,long4);
+  
+  //payout-21; edz:
+  ORr.PY_PlanShip = StringToDate(ORr.PlanShip);
+  //:edz
+
+  ORVcRecordUpdate = res; 
+  return;
+end;
+
+global
+updating function LongInt ORVcRecordImport(var record ORVc ORr,record ORVc OR2r,LongInt long3,LongInt long4)
+begin
+  longint res;
+  
+  res = inner.ORVcRecordImport(ORr,OR2r,long3,long4);
+  
+  //payout-21; edz:
+  ORr.PY_PlanShip = StringToDate(ORr.PlanShip);
+  //:edz
+
+  ORVcRecordImport = res; 
+  return;
+end;

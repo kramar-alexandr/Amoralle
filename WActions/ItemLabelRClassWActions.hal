@@ -1,0 +1,57 @@
+//edz:
+external inner function Boolean TestForVARINS(Integer,string);
+
+procedure ItemLabelRClassSpecPasteNamef1(Integer wn,var string psname)
+begin
+  record RcVc RepSpec;
+  record INVc INr;
+
+  GetWindowRecord(wn,RepSpec);
+  DeselectWindow(wn,false);
+  SelectWindow(wn);
+  INr.Code = RepSpec.f1;
+  if (ReadFirstMain(INr,1,true)) then begin
+    if (nonblank(INr.VARMask)) then begin
+      psname = "VARINSClass";
+    end;
+  end;
+  WindowFieldGoto(wn,RepSpec,-1,"f1",false);
+  return;
+end;
+
+global
+function string 40 ItemLabelRClassSpecPasteName(Integer wn,string defpsname)
+begin
+  string 40 psname;
+
+  psname = defpsname;
+  switch (WindowActiveField(wn)) begin
+    case "f1": ItemLabelRClassSpecPasteNamef1(wn,psname);
+  end;
+  ItemLabelRClassSpecPasteName = psname;
+  return;
+end;
+
+global
+function Boolean VARINSClassOnOpenWindow(Integer wn)
+begin
+  Integer mwn,ar;
+  record RcVc RepSpec;
+
+  mwn = MotherWindow(wn);
+  ar = WindowActiveRow(mwn);
+  switch (GetWindowFileName(mwn)) begin
+    case "TRVc":
+//      GetWindowRecord(mwn,TRr);   
+    case "RcVc":
+      //edz:
+      if (GetWindowClass(mwn)=="ItemLabelRClass") then begin
+        GetWindowRecord(mwn,RepSpec);
+        TestForVARINS(mwn,RepSpec.f1);
+      end;
+      //:edz
+  end;
+  VARINSClassOnOpenWindow = false;
+  return;
+end;
+//:edz

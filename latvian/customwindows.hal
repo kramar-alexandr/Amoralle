@@ -1,0 +1,23 @@
+SetLangMode(LangLatvian,"LAT",0);
+
+window PY_SettingsTClass:2
+  wtag("language","LAT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,v,vs;
+  Integer tilenr;
+
+  WindowBegin("Amoralle - iestat´jumi",PY_SettingsTClass,CGSbl,-);
+  SetWRect(64,80,700,580);
+  SetBlid(PY_SettingsBlock);
+  vs = 20;
+  Tile(0,50,false,"",-);
+  TileButton(1,"Vari‚cijas");
+  //TileButton(2,"");   
+  Tile(1,110,true,"1",PY_ColVAR);
+  EditField(h=300,v=6,50,"Kr‚su vari‚cijas grupa",Normal,PY_ColVAR,false,VARGSClass);//payout-21; edz
+  EditField(h=300,v+=vs,50,"Pied‚v‚juma vari‚ciju valoda",Normal,PY_VARLang,false,LangSClass);//payout-21; edz
+  //Tile(2,90,true,"2",-);  
+  EndWindow;
+  
+  return;
+end;

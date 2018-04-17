@@ -1,0 +1,16 @@
+event startup
+begin
+
+  SetLangMode(LangLatvian,"LAT",0);
+  
+  //payout-20; edz:
+  SString(110000,"Materi‚li no klientu pasðt´jumiem");
+  SString(110001,"Nepiecieäams");
+  SString(110002,"Noliktavas atlikums");
+  SString(110003,"Pasðt´ts");
+  SString(110004,"Iztrðkums");
+  //:edz
+  SString(110005,"Original");//payout-21; edz
+
+  return;
+end;
