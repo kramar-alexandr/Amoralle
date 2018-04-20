@@ -1,0 +1,28 @@
+remote inner procedure RefillShipment(var record SHVc,record SHVc);
+
+
+global procedure UpdateAvailSHDsm()
+begin
+	integer wn,i,mtrw;
+	record SHVc SHr,oldSHVc,SH2r;
+	row SHVc SHrw,SH2rw;
+	
+	wn = curwindow;
+	if(windowstate(wn)==Rs_normal)then begin
+		getwindowrecord(wn,SHr);
+		if(SHr.OKFlag==0)then begin
+			GetPrevWindowRecord(wn,SH2r);
+			recordcopy(oldSHVc,SHr);
+			RefillShipment(SHr,SH2r);
+			mtrw = matrowcnt(SHr);
+			For(i=0;i<mtrw;i=i+1) begin
+				matrowget(SHr,i,SHrw);
+				matrowget(oldSHVc,i,SH2rw);
+				SHrw.Ship = SH2rw.Ship;
+				matrowput(SHr,i,SHrw);
+			end; 
+			PutWindowRecord(wn,SHr);
+		end;
+	end;
+return;
+end;

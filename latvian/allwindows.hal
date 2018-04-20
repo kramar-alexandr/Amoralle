@@ -836,3 +836,412 @@ begin
   CheckBox(h,v+=16,0,"R‚d´t tikai materi‚lus",flags[11]);//payout-20; edz
   EndWindow;
 end;
+
+window SHDClass:1// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 17 April 2018 16:56:44
+  wtag("language","LAT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h1,h2,h3,h4,t,v,vm,vs;
+  Integer tilenr,f,flipnr,rn;
+
+  WindowBegin("Nosðt´t‚s preces",SHDClass,CGview,-);
+  SetWRect(20,80,750,460);
+  Sizeable(-1,-1,0,0);
+  UseView(SHVc);
+  vs = 20;
+ Tile(0,74,false,"",SerNr);
+  EditField(75,vm=(v=6),95,"Nr.",Normal,SerNr,false,TSerSClass);
+  EditField(75,v+=20,95,"Klients",ViewOnly,CustCode,false,0);
+  EditField(h=255,v=vm,-40,"Nosaukums",Normal,Addr0,false,0);
+  v = v + vs;
+  if (HasOfficialSerNr and (HasLocalization("AGO")==false)) then begin
+    EditField(h,vm=v,135,"Pavadz. Nr.",Normal,OfficialSerNr,false,LegalInvNrSClass);
+  end;  
+  if (HasTREO) then begin
+  EditField(h+230,vm,95,"TREO Nr.",Normal,TREONr,false,0);
+  end;
+  CheckBox(h4=-100,v,0,"Gr‚matot",OKFlag);
+  tilenr = 1;
+  if (IsEnterprise) then begin
+    TileButton(tilenr,"Nosac´jumi"); tilenr = tilenr + 1;
+    TileButton(tilenr,"Artikuli"); tilenr = tilenr + 1;
+    TileButton(tilenr,"Pieg‚des nosac."); tilenr = tilenr + 1;
+    TileButton(tilenr,"Iepakoäana"); tilenr = tilenr + 1;
+    TileButton(tilenr,"Pieg‚des adrese"); tilenr = tilenr + 1;  
+    TileButton(tilenr,"Koment‚rs"); tilenr = tilenr + 1;  
+    if (StandardHansa==false) then begin
+    TileButton(tilenr,"Pieg‚de"); tilenr = tilenr + 1;
+    end;
+  end else begin
+    TileButton(tilenr,"Koment‚rs"); tilenr = tilenr + 1;
+    TileButton(tilenr,"Artikuli"); tilenr = tilenr + 1;
+    TileButton(tilenr,"Adreses"); tilenr = tilenr + 1;
+    if (HasLocalization("PRT")) then begin  
+      if (HasModIN and HasModSL) then begin 
+        TileButton(tilenr,"Iepakojums"); tilenr = tilenr + 1;     
+      end;
+      TileButton(tilenr,"Pieg‚de"); tilenr = tilenr + 1;  
+    end;
+  end;
+  tilenr = 1;
+  Tile(tilenr,70,false,tilenr,ShipDate); tilenr = tilenr + 1;
+  vs = 20; h1 = 110; h2 = 290; h3 = 530; h4 = -100;
+  EditField(h1,vm=(v=6),82,"Datums",Normal,ShipDate,false,PasteCurDate);
+  if (HasMultiLocations) then begin
+    v = v + vs;
+    EditField(h1,v,82,"Noliktava",Normal,Location,false,LocationSClass);
+  end;
+  if (HasRoute) then begin
+    v = v + vs;
+    EditField(h1,v,82,"Maräruts",Normal,Sorting,false,DelRouteSClass);
+  end;
+  if (IsEnterprise) then begin
+    v = v + vs;
+    SoftEditField(h1,v,82,"Sv´trkods",Normal,"scanbarcode",false,0,M4Str,60); 
+  end;
+  if (HasObjects) then begin
+  EditField(h2,v=vm,135,"Objekti",Normal,Objects,false,ObjSClass);
+  end;
+  if (HasBranch) then begin
+    v = v + vs;
+    EditField(h2,v,135,"Fili‚le",ViewOnly,BranchID,false,0);
+  end;
+  if (HasMultiLocations or HasModTS) then begin
+    v = v + vs;
+  end;
+  if (HasModTS) then begin
+    EditField(h2,v,135,"Projekts",ViewOnly,PRCode,false,0);
+  end;
+  if (HasObjects) then begin
+    EditField(h3,v=vm,80,"Pasðt. Nr.",ViewOnly,OrderNr,false,0);  
+  end else begin
+    if (IsEnterprise==false) then begin
+      if (HasModTS) then begin
+        EditField(h3,v=vm,135,"Pasðt. Nr.",ViewOnly,OrderNr,false,0);
+      end else begin
+        EditField(h2,v=vm,135,"Pasðt. Nr.",ViewOnly,OrderNr,false,0);  
+      end;
+    end;
+  end;
+  if (IsEnterprise) then begin
+  EditField(h3,v+=vs,80,"Pasðt´juma veids",Normal,SHClass,false,OrderClassSClass);
+  CheckBox(h4,v=6,0,"Tel. ziÀojums",Check1);
+  end;
+  
+  HalPushButton(h3,v+2*vs,h3+120,v+3*vs,"UpdateAvailSHDsm","Atjaunot atlikumus");// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 18 April 2018 10:03:54
+  
+  if (IsEnterprise==false) then begin
+    if (HasMultiLocations) then begin
+      EditField(h1,v+=2*vs,-40,"Koment‚rs",Normal,Comment,false,0);  
+    end else begin
+      EditField(h1,v+=vs,-40,"Koment‚rs",Normal,Comment,false,0);  
+    end;
+    if (HasLanguages) then begin 
+      EditField(h1,v+=vs,82,"Valoda",Normal,LangCode,false,LangSClass); 
+    end;      
+  end;
+  Tile(tilenr,190,true,tilenr,Math); tilenr = tilenr + 1;
+  v = 20;
+  MatrixBegin(4,v,-50,-35,-,200);
+  MatTypedRow(stp);
+  Flip(0);
+  MatCol(1,32,"Artikuls",0,ArtCode,false,ForSaleINSClass);
+//  MatCol(1,94,"Veids",0,VARList,false,VARSClass);
+//  MatCol(1,144,"Nosaukums",0,Spec,false,0);
+  MatCol(1,94,"Nosaukums",0,Spec,false,0);
+  MatCol(t=kInvoiceRowTypeStructuredItemComponent,32,"Artikuls",0,ArtCode,false,ForSaleINSClass);
+//  MatCol(t,94,"Var",0,VARList,false,VARSClass);
+//  MatCol(t,144,"Description",0,Spec,false,0);
+  MatCol(t,94,"Apraksts",0,Spec,false,0);
+  MatText(t=kInvoiceRowTypeHidden,32,"Print•jot, ä´ rinda un visas rindas zem t‚s bðs pasl•ptas",false);
+  t = kInvoiceRowTypePerceptionTax;    
+  flipnr = 1;
+  Flip(flipnr); flipnr = flipnr + 1;
+  if (HasCustItem) then begin
+    MatCol(1,-230,"Kl.artik.Nr.",0,CustArtCode,false,CUINSClass);
+  end;
+  MatCol(1,-150,"Pasðt´ts",0,Ordered,true,0);
+  MatCol(1,-98,"Pieej.",0,InStock,true,0);
+  MatCol(1,-50,"Nosðt.",0,Ship,true,0);
+  if (HasCustItem) then begin
+    MatCol(t=kInvoiceRowTypeStructuredItemComponent,-230,"Klienta artik. Nr.",0,CustArtCode,false,CUINSClass);
+    MatCol(t,-150,"Pasðt´ts",0,Ordered,true,0); 
+  end else begin
+    MatCol(t=kInvoiceRowTypeStructuredItemComponent,-147,"Pasðt´ts",0,Ordered,true,0); 
+  end;
+  MatCol(t,-98,"Pieej.",0,InStock,true,0);
+  MatCol(t,-50,"Nosðt.",0,Ship,true,0);
+  Flip(flipnr); flipnr = flipnr + 1;
+  if (IsEnterprise==false) then begin
+    if (HasSerialNumbers) then begin
+      MatCol(1,-350,"S•rijas Nr.",0,SerialNr,false,SerialNrSClass);
+    end;
+    if (HasObjects) then begin
+      MatCol(1,-250,"Objects",0,Objects,false,ObjSClass);
+    end;
+    MatCol(1,-98,"FIFO",0,FIFORowVal,false,0);
+    if (HasLocalization("RUS")) then begin  
+      Flip(flipnr); flipnr = flipnr + 1;
+      MatCol(1,-230,"Unit",0,UnitCode,false,UnitSClass);   //!!SAMETRANSLATION
+      MatCol(1,-180,"Unit Name",0,UnitComment,false,0);   //!!SAMETRANSLATION
+    end;
+  end else begin
+  MatCol(1,-350,"S•rijas Nr.",0,SerialNr,false,SerialNrSClass);
+  MatCol(1,-250,"Der´gs l´dz",0,BestBefore,false,0);
+  MatCol(1,-150,"Noliktava",0,Location,false,LocationSClass);
+    if (HasPositions) then begin
+  MatCol(1,-50,"Poz´cija",0,PosCode,false,UsedPosSClass);
+    end;
+  MatCol(t=kInvoiceRowTypeStructuredItemComponent,-350,"S•r. Nr.",0,SerialNr,false,SerialNrSClass);
+  MatCol(t,-250,"Der´gs l´dz",0,BestBefore,false,0);
+  MatCol(t,-150,"Noliktava",0,Location,false,LocationSClass);
+    if (HasPositions) then begin
+  MatCol(t,-50,"Poz´cija",0,PosCode,false,UsedPosSClass);
+    end;
+    Flip(flipnr); flipnr = flipnr + 1;
+    if (HasBuyBack) then begin
+  MatCol(1,-400,"Atpirkä. cena",0,BBCostPrice,false,0);
+    end;
+  MatCol(1,-320,"Rindas FIFO",0,FIFORowVal,false,0);
+    if (StandardHansa==false) then begin
+  MatCol(1,-220,"Vid. sv. b‚zes 2",0,WAB2,false,0);
+    end;
+  MatCol(1,-120,"Cena",0,BasePrice,false,0);
+  MatCol(1,-40,"Koef.",0,Coefficient,false,0);
+    if (HasBuyBack) then begin
+  MatCol(t=kInvoiceRowTypeStructuredItemComponent,-400,"Atpirkä. cena",0,BBCostPrice,false,0);
+  MatCol(t,-320,"Rindas FIFO",0,FIFORowVal,false,0);
+    if (StandardHansa==false) then begin
+  MatCol(t,-220,"Vid. sv. B‚zes 2",0,WAB2,false,0);
+    end;
+  MatCol(t,-120,"Cena",0,BasePrice,false,0);
+  MatCol(t,-40,"Koef.",0,Coefficient,false,0);
+    end;
+    Flip(flipnr); flipnr = flipnr + 1;
+  MatCol(1,-400,"Specifik‚cija",0,Recepy,false,0);
+  MatCol(1,-320,"Vieta",0,Source,false,SourceSClass);
+  MatCol(1,-240,"Izrakst. r•ú.",0,Invd,false,0);
+    if (StandardHansa==false) then begin
+  MatCol(1,-160,"Izkrauä. dat.",0,DespatchRowDate,false,PasteCurDate);
+  MatCol(1,-80,"Izkrauä. laiks",0,DespatchRowTime,false,PasteCurTime);
+    end;
+  MatCol(t=kInvoiceRowTypeStructuredItemComponent,-400,"Specifik‚cija",0,Recepy,false,0);
+  MatCol(t,-300,"Vieta",0,Source,false,SourceSClass);
+  MatCol(t,-240,"Izr. r•úins",0,Invd,false,0);
+    if (StandardHansa==false) then begin
+  MatCol(t,-160,"Izkr. datums",0,DespatchRowDate,false,PasteCurDate);
+  MatCol(t,-80,"Izkr. laiks",0,DespatchRowTime,false,PasteCurTime);
+    end;
+    Flip(flipnr); flipnr = flipnr + 1;
+  MatCol(1,-400,"Realiz. konts",0,SalesAcc,false,AccSClass);
+  MatCol(1,-330,"Izmaksu konts",0,CostAcc,false,AccSClass);
+  MatCol(1,-250,"Objekti",0,Objects,false,ObjSClass);
+  MatCol(1,-135,"Plat.",0,UnitXval,true,0);
+  MatCol(1,-90,"Augst.",0,UnitYval,true,0);
+  MatCol(1,-45,"Biez.",0,UnitZval,true,0);
+  MatCol(t=kInvoiceRowTypeStructuredItemComponent,-400,"Realiz. konts",0,SalesAcc,false,AccSClass);
+  MatCol(t,-330,"Izmaksu konts",0,CostAcc,false,AccSClass);
+  MatCol(t,-250,"Objekti",0,Objects,false,ObjSClass);
+  MatCol(t,-135,"Plat.",0,UnitXval,true,0);
+  MatCol(t,-90,"Augst.",0,UnitYval,true,0);
+  MatCol(t,-45,"Biez.",0,UnitZval,true,0);
+    if (StandardHansa==false) then begin
+    Flip(flipnr); flipnr = flipnr + 1;
+  MatCol(1,-300,"Iepakojumi",0,RowPackages,false,0);
+  MatCol(1,-220,"Iep. tips",0,PackageType,false,PackTypeSClass);
+  MatCol(1,-170,"Iep. nosaukums",0,PackageDesc,false,0);
+  MatCol(1,-70,"Akc´ze",0,ExciseNr,false,0);
+  MatCol(t=kInvoiceRowTypeStructuredItemComponent,-300,"Iepakojumi",0,RowPackages,false,0);
+  MatCol(t,-220,"Iep. tips",0,PackageType,false,PackTypeSClass);
+  MatCol(t,-170,"Iep. nosaukums",0,PackageDesc,false,0);
+  MatCol(t,-70,"Akc´ze",0,ExciseNr,false,0);
+    end;
+  end;
+  InsertRowTest;
+  DeleteRowTest;
+  RowMenuBegin(""); 
+  RowMenuItem(0,"Artikula statuss",'I','I',0,"ItemStatusSHDsm"); 
+  if (IsEnterprise) then begin
+    if (StandardHansa==false) then begin
+      RowMenuItem(0,"Sadal´t‚jrinda",' ',' ',0,"SplitRowSHDsm");
+    end;
+  end;
+  EndRowMenu;
+  EndMatrix;
+  vs = 22;
+//  v = 21;
+  v = v + 1;
+  if (flipnr>2) then begin
+    for (f=1;f<flipnr;f=f+1) begin
+      VTab(-35,v,-16,v+vs,ToolFlip,f,chr(asc("A") + f - 1)); //!!SAMETRANSLATION
+      v = v + vs;
+    end;
+  end;
+
+//  CheckBox(20,-20,0,"OK",OKFlag);
+  if (HasLocalization("PRT")) then begin  
+    EditField(120,-20,150,"Tax Seal",ViewOnly,TaxAdminServSeal,false,0); //!!SAMETRANSLATION
+//    SoftEditField(120,-20,150,"Tax Auth. Approval",Normal,"TaxAdminServSeal",false,0,M4Str,200);
+  end;
+  EditField(-131,-20,80,"Kop•jais daudz.",ViewOnly,TotQty,true,0);
+  if (IsEnterprise) then begin
+    Tile(tilenr,90,false,tilenr,ShipMode); tilenr = tilenr + 1;
+  vs = 20;
+  EditField(h1,v=vm,82,"Nosðt. veids",Normal,ShipMode,false,DMSClass);
+  EditField(h1,v+=vs,80,"Nodokºu summa",ViewOnly,TAX1Sum,true,0);
+    if (StandardHansa==false) then begin
+  EditField(h1,v+=vs,80,"Deklar•t‚ v•rt´ba",Normal,DeclaredVal,true,0);
+  EditField(h1,v+=vs,-20,"E-sðt´juma statuss",ViewOnly,EShipStatus,false,0);
+      if (HasLocalization("BRA,BOL,PRT")) then begin  
+        EditField(h1,v+=vs,80,"Tax Seal",ViewOnly,TaxAdminServSeal,false,0); //!!SAMETRANSLATION
+      end;
+    end;
+  EditField(h2,v=vm,80,"Kop•jais daudz.",ViewOnly,TotQty,true,0);
+  EditField(h2,v+=vs,80,"Kop•jais svars",Normal,TotWeight,true,0);
+  EditField(h2,v+=vs,80,"Kop•jais tilpums",Normal,TotVolume,true,0);
+  CheckBox(473,v=vm,0,"Izmantot r•úina adresi",Check2);
+    if (StandardHansa==false) then begin
+  CheckBox(473,v+=16,0,"Elektroniskais sðt´jums izveidots",EShipmentCreated);
+  CheckBox(473,v+=16,0,"Elektroniskais sðt´jums saÀemts",EShipCollected);
+    end;
+    Tile(tilenr,110,false,tilenr,Packages); tilenr = tilenr + 1;
+    h2 = 310;
+  EditField(h1,v=6,82,"Transporta Nr.",Normal,TransportNumber,false,0);
+  EditField(h1,v+=vs,82,"Iepakojumi",Normal,Packages,true,0);
+    if (HasLanguages) then begin 
+  EditField(h1,v+=vs,82,"Valoda",Normal,LangCode,false,LangSClass);
+    end;  
+  EditField(h1,v+=vs,82,"Valðta",Normal,CurncyCode,false,CurncyCodeSClass);
+    if (StandardHansa==false) then begin
+  EditField(h1,v+=vs,-20,"Transporta nor‚des",Normal,TransportDirect,false,0);
+      EditField(h1,v+=vs,80,"Pl‚n. nosðt. dat.",Normal,PlanSendDate,false,PasteCurDate);  
+      EditField(h1,v+=vs,80,"Pl‚n. nosðt. laiks",Normal,PlanSendTime,false,PasteCurTime);  
+    end;
+
+  EditField(h2,v=6,135,"No pils•tas",Normal,FromCity,false,0);
+  EditField(h2,v+=vs,135,"Uz pils•tu",Normal,ToCity,false,0);
+  EditField(h2,v+=vs,135,"No doka",Normal,FromDock,false,0);
+  EditField(h2,v+=vs,135,"Uz doku",Normal,ToDock,false,0);
+    if (StandardHansa==false) then begin
+      EditField(h2,v+=2*vs,80,"Pl‚n. pieg. dat.",Normal,PlanArrDate,false,PasteCurDate);  
+      EditField(h2,v+=vs,80,"Pl‚n. pieg. laiks",Normal,PlanArrTime,false,PasteCurTime);  
+    end;
+  end;
+  Tile(tilenr,150,false,tilenr,Addr1); tilenr = tilenr + 1;
+  vs = 20;
+  if (IsEnterprise) then begin
+    if (StandardHansa==false) then begin
+  EditField(h1,v=6,80,"Adreses kods",Normal,DelAddrCode,false,DelAddr3SClass);
+  EditField(h1,v+=vs,-20,"Pieg‚de",Normal,Addr1,false,0);
+    end else begin
+      EditField(h1,v=6,-20,"Pieg‚de",Normal,Addr1,false,0);  
+    end;
+  EditField(h1,v+=vs,-20,"Adrese",Normal,Addr2,false,0);
+  end else begin
+    EditField(h1,v=6,-20,"Adrese",Normal,Addr1,false,0);
+    EditField(h1,v+=vs,-20,"",Normal,Addr2,false,0);
+  end;
+  EditField(h1,v+=vs,-20,"",Normal,Addr3,false,0);
+  EditField(h1,v+=vs,-20,"",Normal,DelAddr3,false,0);
+  EditField(h1,v+=vs,-20,"",Normal,DelAddr4,false,0);
+  if (HasCountryPerCustomer) then begin
+  EditField(h1,v+=vs,80,"Valsts",Normal,DelCountry,false,CountrySClass);
+    if (HasLocalization("BRA")) then begin   
+      EditField(h2-109,v,232,"",ViewOnly,DelCountryName,false,0);  
+    end;    
+  end;
+  if (IsEnterprise) then begin
+  EditField(h3,v,-20,"Re®ions",Normal,Region,false,RegionSClass); 
+    Tile(tilenr,30,false,tilenr,Comment); tilenr = tilenr + 1;
+    EditField(h1+10,v=6,-20,"Koment‚rs",Normal,Comment,false,0);
+    EditField(h1+10,v+=20,-20,"Realiz. l´guma tips",Normal,ORCOType,false,0);  
+    if (HasNumberSeries and HasLocalization("PRT")) then begin  
+      if (HasOfficialSerNr) then begin
+        EditField(h1+10,v+=vs,100,"Pavadz. Nr. 2",Normal,OfficialSerNr2,false,0);  
+        EditField(h2,v,135,"Statuss",Normal,Status,false,SetSClass);  
+      end;    
+    end;
+  end else begin
+    if (HasLocalization("RUS")) then begin  
+      EditField(h1,v+=vs,80,"Kop•jais svars",Normal,TotWeight,true,0);  
+    end;
+  end;
+  if (IsStandardProduct and HasLocalization("PRT,LTU") and HasModIN and HasModSL) then begin 
+    Tile(tilenr,110,false,tilenr,PlanSendDate); tilenr = tilenr + 1;
+    h2 = 310;
+    EditField(h1,v=6,80,"Pl‚n. nosðt. dat.",Normal,PlanSendDate,false,PasteCurDate);  
+    EditField(h1,v+=vs,80,"Pl‚n. nosðt. laiks",Normal,PlanSendTime,false,PasteCurTime);  
+    if (HasLocalization("PRT")) then begin
+    EditField(h2,v=6,80,"Pl‚n. pieg. dat.",Normal,PlanArrDate,false,PasteCurDate);  
+    EditField(h2,v+=vs,80,"Pl‚n. pieg. laiks",Normal,PlanArrTime,false,PasteCurTime);        
+  end;
+  end;
+  if (IsEnterprise or HasLocalization("PRT,LTU")) and (StandardHansa==false) then begin
+    Tile(tilenr,130,false,tilenr,FreightCode); tilenr = tilenr + 1;
+    if (IsEnterprise) then begin
+      HalPushButton(473,2,600,22,"UpdateSHPackages","Defin•t pakas");
+    end;
+    EditField(h1,v=6,80,"Transporta komp.",Normal,FreightCode,false,FreightCompanySClass);  
+    EditField(h1,v+=vs,-20,"Nosaukums",Normal,FreightCompany,false,0);  
+    EditField(h1,v+=vs,-20,"Re®. Nr.",Normal,FreightCompanyRegNr,false,0);  
+    EditField(h1,v+=vs,-20,"A/M inform‚cija",Normal,TruckInfo,false,0);  
+    if (IsEnterprise or HasLocalization("PRT")) then begin
+    EditField(h1,v+=vs,-20,"Vad´t‚js",Normal,Driver,false,0);  
+    EditField(h1,v+=vs,-20,"CMR",Normal,CMRText,false,0); // International transporting number   //!!SAMETRANSLATION
+    end;
+  end;
+  if (GuiType==kGuiMetro) then begin // Temporarily disabled on Windows 8
+    SpecialMenu("Artikula statuss",'I',2,"ItemStatusSHDsm");  
+    if (HasIntegratedNL) then begin
+      SpecialMenu("Atv•rt gr‚matojumu",'t',3,"OpenTRFromSH");  
+    end;
+    SpecialMenu("Druk‚t pieg‚des uzl´mes",'l',0,"PrintSHLabSHDsm");  
+    if (HasReturnedGoods and HasModIN) then begin
+      SpecialMenu("Veidot atgriezto preci",'B',5,"RetFromSHSpec");  
+    end;
+  end else begin
+  SpecialMenu("Druk‚t kravas uzl´mes",'l',0,"PrintSHLabSHDsm");
+  if (IsEnterprise) then begin
+  SpecialMenu("R•úin‚t svaru",'w',1,"SHCalcWeightDsm");
+  end;
+  if (HasIntegratedNL) then begin
+  SpecialMenu("Atv•rt gr‚matojumu",'t',3,"OpenTRFromSH");
+  end;
+  if (HasLocalization("SWE")) then begin  
+  SpecialMenu("ASG eksports",' ',4,"ASGEnSHDsm"); /* Specific for Sweden */
+  end;
+  if (HasLocalization("NOR")) then begin  
+  SpecialMenu("Winedi eksports",' ',4,"WinEDIEnSHDsm"); /* Specific for Norway */
+  end;
+  if (HasLocalization("PRT")) then begin  
+    if (HasETaxDocuments) then begin
+    SpecialMenu("Sðt´t uz nodokºu iest‚d•m",'',10,"EShipPRTDsm");  //tax authorities server is down   //!!SAMETRANSLATION
+    end;
+  end;
+  if (IsEnterprise) then begin
+  SpecialMenu("Aizpild´t artikulu s•rijas Nr.",' ',6,"INBatchSHSpec");
+  end;
+  if (HasModWHM) then begin
+  SpecialMenu("Apstiprin‚t noliktavas kust´bas",' ',8,"OKStockMovSHrDsm");
+  SpecialMenu("Druk‚t noliktavas pre‹u sarakstu",' ',9,"PickingListDsm");
+  end;
+//  SpecialMenu("Calculate Manually",' ',10,"CalcSHMan"); /* Specific for one customer in Portugal, you may comment it out */
+  if (IsEnterprise) then begin
+    if (StandardHansa==false) then begin
+  SpecialMenu("Re®istr•t elektronisko sðt´jumu",' ',9,"EShipRegisterDsm");
+    end;
+    if (GuiType==kGuiiPhone) then begin
+      SpecialMenu("Paraksts",' ',10,"SignSHDsm");  
+    end;
+  end;
+  SpecialMenu("Atjaunot atlikumus",' ',9,"UpdateAvailSHDsm");// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 17 April 2018 14:32:25
+ 
+  SpecMenuGroup("",kSpecMenuGroupTypeExtendedPlusMenu,0); 
+  if (HasModSL) then begin
+    SpecialMenu("R•úinu",'F',1,"IVFromSHDsm"); 
+  end;
+  if (IsEnterprise or HasReturnedGoods) then begin
+    SpecialMenu("Atgriezto preci",'B',2,"RetFromSHDsm"); 
+  end;
+  end;
+  EndWindow;
+end;

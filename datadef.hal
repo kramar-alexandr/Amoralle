@@ -10,6 +10,7 @@ SourceFile("halcust/latvian",3);
 SourceFile("halcust/english",3);
 SourceFile("halcust/Tools",3);
 SourceFile("halcust/RActions",3);
+SourceFile("halcust/Swedbank",3);
 
 begin
 
@@ -45,7 +46,40 @@ begin
   RecordField(PY_ColVAR,M4Code,5,VARGVc);//payout-21; edz
   RecordField(PY_VARLang,M4Code,5,0);//payout-21; edz
   EndBlock;
-
+	
+	RecordBegin(SwedbankImportVc,-,"");// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 17 April 2018 17:17:53
+		RecordField(NtryRef,M4Code,50,0);
+		RecordField(OwnID,M4Code,50,0);
+		RecordField(BankID,M4Code,50,0);
+		RecordField(BookgDt,M4Date,0,0);
+		RecordField(CdtDbtInd,M4Code,10,0);
+		RecordField(AmtCcy,M45Val,0,0);
+		RecordField(RvslInd,M4Int,0,0);
+		RecordField(CurncyCode,M4Code,20,0);
+		RecordField(IBAN,M4Code,50,0);
+		RecordField(Ustrd,M4Str,250,0);
+		RecordField(IPNr,M4Long,0,0);
+		RecordField(RecName,M4Str,255,0);
+		
+		MainKeyBegin(NtryRef,0);
+  	KeySegment(NtryRef);
+  	KeySegment(BankID);
+  	KeySegment(OwnID);
+  	
+  	KeyBegin(BookgDt);
+  	KeySegment(BookgDt);
+  	KeySegment(NtryRef);
+  	KeySegment(BankID);
+  	KeySegment(OwnID);
+  	
+  	KeyBegin(CdtDbtInd);
+  	KeySegment(CdtDbtInd);
+  	KeySegment(NtryRef);
+  	KeySegment(BankID);
+  	KeySegment(OwnID);
+  	
+	EndRecord;
+	
 //==========CUSTOM END==========
 
   return;

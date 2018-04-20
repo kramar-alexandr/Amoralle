@@ -21,3 +21,53 @@ begin
   
   return;
 end;
+
+window SwedBankImportSTIClass:1// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 17 April 2018 18:01:52
+  wtag("language","ENG"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real f,h,v,vm,vs;
+  
+
+  WindowBegin("SwedBank import Statement ",SwedBankImportSTIClass,CGIcW,RcType); 
+  SetWRect(20,80,480,450);
+  vs = 20;
+
+  EndWindow;
+  return;
+end;
+
+
+window SwedbankImportLClass:1// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 18 April 2018 10:00:30
+  wtag("language","ENG"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Swedbank Imports",SwedbankImportLClass,CGmlist,-);
+  SetWRect(20,80,1200,355);
+  Sizeable(-1,-1,0,0);
+  SpawnClass(SwedbankImportDClass);
+  UseView(SwedbankImportVc);
+  RecordList(4,17,-21,-39);
+  RlColKey(4,1,"NtryRef",NtryRef,false,NtryRef);
+  RlCol(140,140,"BankID",BankID,false);
+  RlCol(210,210,"OwnID",OwnID,false);
+  RlColKey(280,280,"Date",BookgDt,false,BookgDt);
+  RlCol(350,350,"IBAN",IBAN,false);
+  RlCol(460,460,"Name",RecName,false);
+  RlCol(660,660,"Cmt",Ustrd,false);
+  RlColKey(-180,-180,"D/C",CdtDbtInd,false,CdtDbtInd);
+  RlCol(-130,-130,"AmtCcy",AmtCcy,false);
+  RlCol(-60,-60,"Curncy",CurncyCode,true);
+  SearchField("Search");
+  EndWindow;
+end;
+
+window SwedbankImportDClass:1// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 18 April 2018 10:00:30
+  wtag("language","ENG"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  WindowBegin("Swedbank Imports",SwedbankImportDClass,CGview,-);
+  SetWRect(20,80,700,355);
+  Sizeable(-1,-1,0,0);
+  UseView(SwedbankImportVc);
+  
+  SearchField("Search");
+  EndWindow;
+end;
