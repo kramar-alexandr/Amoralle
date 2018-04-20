@@ -22,6 +22,7 @@ begin
   return;
 end;
 
+
 window SwedBankImportSTIClass:1// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 17 April 2018 18:01:52
   wtag("language","LAT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
@@ -57,9 +58,9 @@ begin
   RlCol(460,460,"Name",RecName,false);
   RlCol(660,660,"Cmt",Ustrd,false);
   RlColKey(-180,-180,"D/C",CdtDbtInd,false,CdtDbtInd);
-  RlCol(-130,-130,"AmtCcy",AmtCcy,false);
+  RlCol(-130,-130,"Ammount",AmtCcy,false);
   RlCol(-60,-60,"Curncy",CurncyCode,true);
-  SpecialMenu("‘DellAll",'r',0,"DelAllDsm");
+  //SpecialMenu("DellAll",'r',0,"DelAllDsm");
   SearchField("Search");
   EndWindow;
 end;
@@ -67,10 +68,24 @@ end;
 window SwedbankImportDClass:1// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 18 April 2018 10:00:30
   wtag("language","LAT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
+	real f,h,v,vm,vs;
+	
   WindowBegin("Swedbank Imports",SwedbankImportDClass,CGview,-);
-  SetWRect(20,80,700,355);
+  SetWRect(20,80,250,250);
   Sizeable(-1,-1,0,0);
   UseView(SwedbankImportVc);
+  
+  vs = 20;
+  EditField(h=100,v=30,150,"NtryRef",ViewOnly,NtryRef,false,0);
+  EditField(h=100,v+=vs,150,"BankID",ViewOnly,BankID,false,0);
+  EditField(h=100,v+=vs,150,"OwnID",ViewOnly,OwnID,false,0);
+  EditField(h=100,v+=vs,150,"Date",ViewOnly,BookgDt,false,0);
+  EditField(h=100,v+=vs,150,"IBAN",ViewOnly,IBAN,false,0);
+  EditField(h=100,v+=vs,-20,"Name",ViewOnly,RecName,false,0);
+  EditField(h=100,v+=vs,-20,"Comment",ViewOnly,Ustrd,false,0);
+  EditField(h=100,v+=vs,150,"D/C",ViewOnly,CdtDbtInd,false,0);
+  EditField(h=100,v+=vs,150,"Ammount",ViewOnly,AmtCcy,false,0);
+  EditField(h=100,v+=vs,150,"Curncy",ViewOnly,CurncyCode,false,0); 
   
   SearchField("Search");
   EndWindow;

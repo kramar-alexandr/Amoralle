@@ -26,11 +26,15 @@ window SwedBankImportSTIClass:1// Edit ************************** BPI Ukraine - 
   wtag("language","ENG"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real f,h,v,vm,vs;
-  
 
   WindowBegin("SwedBank import Statement ",SwedBankImportSTIClass,CGIcW,RcType); 
-  SetWRect(20,80,480,450);
+  SetWRect(20,80,480,200);
+  h = 70;
+  v = 40;
   vs = 20;
+  StaticText(h,v+=vs,"Import: SwedBank Bank To Customer Statement",false);
+  StaticText(h,v+=vs,"File format: XML",false);
+  StaticText(h,v+=vs,"Based on: Bank To Customer Statement V02 camt.053.001.02",false);
 
   EndWindow;
   return;
@@ -63,10 +67,24 @@ end;
 window SwedbankImportDClass:1// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 18 April 2018 10:00:30
   wtag("language","ENG"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
+  real f,h,v,vm,vs;
+	
   WindowBegin("Swedbank Imports",SwedbankImportDClass,CGview,-);
-  SetWRect(20,80,700,355);
+  SetWRect(20,80,250,250);
   Sizeable(-1,-1,0,0);
   UseView(SwedbankImportVc);
+  
+  vs = 20;
+  EditField(h=100,v=30,150,"NtryRef",ViewOnly,NtryRef,false,0);
+  EditField(h=100,v+=vs,150,"BankID",ViewOnly,BankID,false,0);
+  EditField(h=100,v+=vs,150,"OwnID",ViewOnly,OwnID,false,0);
+  EditField(h=100,v+=vs,150,"Date",ViewOnly,BookgDt,false,0);
+  EditField(h=100,v+=vs,150,"IBAN",ViewOnly,IBAN,false,0);
+  EditField(h=100,v+=vs,-20,"Name",ViewOnly,RecName,false,0);
+  EditField(h=100,v+=vs,-20,"Comment",ViewOnly,Ustrd,false,0);
+  EditField(h=100,v+=vs,150,"D/C",ViewOnly,CdtDbtInd,false,0);
+  EditField(h=100,v+=vs,150,"Ammount",ViewOnly,AmtCcy,false,0);
+  EditField(h=100,v+=vs,150,"Curncy",ViewOnly,CurncyCode,false,0); 
   
   SearchField("Search");
   EndWindow;
