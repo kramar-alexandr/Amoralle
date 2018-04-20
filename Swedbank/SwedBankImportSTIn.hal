@@ -86,8 +86,8 @@ begin
 				
 	
 			end else begin
-				logtext(0,"Error in import bank statement for file: " & GetImportFileName);
-				logtext(0,"In key: " & "Document/BkToCstmrStmt/Stmt/Ntry[" & i & "]/NtryRef");
+				
+				
 			end;
 	  	
 	end; 
@@ -221,7 +221,6 @@ begin
 					ExtractObj(instr,pos,ostr);
 				end;
 				
-				logtext(0,cucode);
 				if(remsum>0)then begin
 					if(cufnd)then begin
 						clearrow(IPr,IPrw,1);
