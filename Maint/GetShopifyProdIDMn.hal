@@ -1,0 +1,444 @@
+external inner function Boolean PasteCustInOrder(var record ORVc,string,string,var string,var string);
+//external procedure DOLMakeWebRequest(string , string , area , var area );
+external inner function string 50 TimeToString(time,string,boolean);
+external inner procedure ExtractObj(string,var Integer,var string);
+external inner function Boolean ORVc_PasteArtCode(var record ORVc,Integer,var string,var string,Boolean);
+external inner procedure ExtractObj(string,var Integer,var string);
+
+global procedure DOLMakeWebRequest(string method,string apipath,var area areq,var area areply)
+begin
+  record DOLShopifyBlock DOLShopifyBl;
+	area request;
+	
+	blockload(DOLShopifyBl);
+		
+	addtexttoarea(method & " " & apipath & " HTTP/1.1" & chr(13) & chr(10),request);
+ 	addtexttoarea("host: " & DOLShopifyBl.ShopifyURL & chr(13) & chr(10),request);
+	addtexttoarea("Authorization: Basic " & Base64Encode(DOLShopifyBl.APIUser & ":" & DOLShopifyBl.APIPass) & chr(13) & chr(10),request);
+	addtexttoarea(chr(13) & chr(10),request);
+	
+	insertareabeforearea(request,areq);
+	
+	//SendWebRequest(DOLShopifyBl.ShopifyURL,DOLShopifyBl.ShopifyPort,-1,false,method,apipath,"application/json","",false,areq,areply,10);
+	
+	
+	
+	SendRawWebRequest(DOLShopifyBl.ShopifyURL,DOLShopifyBl.ShopifyPort,true,method,apipath,"application/json","",false,areq,areply,10);
+	if(DOLShopifyBl.SaveReqResp>0)then begin
+		if (!DirExists("ShopifyRQS")) then begin
+			CreateFolder("ShopifyRQS");
+		end;
+		WriteAreaToFile(areq,"ShopifyRQS/ShopifyRequest_" & DateToString(currentdate,"YYYY-MM-DD") & TimeToString(currenttime,"HHMMSS",false) & ".txt",0);
+		WriteAreaToFile(areply,"ShopifyRQS/ShopifyReply_" & DateToString(currentdate,"YYYY-MM-DD") & TimeToString(currenttime,"HHMMSS",false) & ".txt",0);
+	end;
+	//SendAsyncRawWebRequest(DOLShopifyBl.ShopifyURL,DOLShopifyBl.ShopifyPort,true,method,apipath,"application/json","",request,"DOLMakeWebRequestReply",20);
+
+return;
+end;
+
+global procedure DOLUpdShopifyStock(string items)
+begin
+	record DOLShopifyBlock DOLShopifyBl;
+	area request,a_reply;
+	record ItemStatusVc ISr;
+	record INVc INr;
+	string 50 curcm,rqs;
+	record LocationVc Locr;
+	vector boolean locfl;
+	boolean TrHs,inTrHs;
+	val qty;
+	integer pos;
+	array string 200 invar;
+	array val invarqty;
+	integer arcnt,i;
+	record ShopifyProductsVc SPr;
+	
+	blockload(DOLShopifyBl);
+	
+	curcm = currentcompany & ";";
+	rqs = right(items,len(items)-len(curcm));
+	
+	if(nonblank(items))then begin
+		if(nonblank(DOLShopifyBl.ShpifyLocId))then begin
+			while(loopmain(Locr,1,true))begin
+				if(setinset(DOLShopifyBl.StockClass,Locr.Classification))then begin
+					locfl[Locr.Code] = true;
+				end;
+			end;
+			
+			if(nonblank(rqs))then begin
+				if(rqs=="*")then begin
+					INr.Code = "";	
+				end else begin
+					pos = 0;
+					ExtractObj(rqs,pos,INr.Code);
+				end;
+				while(loopmain(INr,1,true))begin
+					resetloop(ISr);
+					ISr.Code = INr.Code;
+					TrHs = true;
+					qty = blankval;
+					while(loopmain(ISr,1,TrHs))begin
+						if(ISr.Location!=";;;")then begin
+							if(ISr.Code!=INr.Code)then begin TrHs = false; end;
+							
+							
+							if(TrHs)then begin
+								if(locfl[ISr.Location])then begin
+									if(nonblank(ISr.Variety))then begin
+										invar[arcnt] = ISr.Code & "." & ISr.Variety;
+									end else begin
+										invar[arcnt] = ISr.Code;
+									end;
+									invarqty[arcnt] = ISr.Instock;
+									arcnt = arcnt + 1;
+								end;
+							end;
+						end;
+					end;
+					
+					if(arcnt>0)then begin
+						setareazerosize(request);
+						addtexttoarea("{",request);
+						For(i=0;i<arcnt;i=i+1) begin
+	  					if(nonblank(invar[i]))then begin
+	  						SPr.SKU = invar[i];
+	  						if(readfirstkey("SKU",SPr,1,true))then begin
+	  							addtexttoarea("\"location_id\":" & DOLShopifyBl.ShpifyLocId & ",",request);
+	  							addtexttoarea("\"inventory_item_id\":" & SPr.Vinvent_id & ",",request);
+	  							addtexttoarea("\"available\":" & invarqty[arcnt],request);
+	  						end;
+	  					end;
+						end; 
+						addtexttoarea("}",request);
+						DOLMakeWebRequest("POST","/admin/inventory_levels/set.json",request,a_reply);
+					end;
+				end;
+			end;
+		
+		end;
+	end;
+
+return;
+end;
+
+procedure PreparePostArea(var area atarget) //Cut HTTP Header From raw reply
+begin
+	longint i,lenth;
+	string 10 ch,unix,win,mac;
+	area temparea;
+	
+	unix = chr(10) & chr(10);
+	win = chr(13) & chr(10) & chr(13) & chr(10);
+	mac = chr(13) & chr(13);
+	
+	lenth = GetAreaLength(atarget);
+	For(i=0;i<lenth;i=i+1) begin
+	  ch = GetStringfromarea(atarget,i,2);
+	  if(ch==unix or ch==mac)then begin
+	  	getareafromarea(atarget,i+2,lenth-i-2,temparea);
+	  	i = lenth;
+	  end else begin
+			ch = GetStringfromarea(atarget,i,4);
+			if(ch==win)then begin
+				getareafromarea(atarget,i+4,lenth-i-4,temparea);
+				i = lenth;
+			end;
+	  end;
+	end; 
+	
+	setareazerosize(atarget);
+	getareafromarea(temparea,0,getarealength(temparea),atarget);
+	WriteAreaToFile(atarget,"ShopifyNrm.txt",0);
+	
+return;
+end;
+
+global
+updating procedure DOLGetShopifyLocationsIDMn(record RcVc RepSpec)
+begin
+  record DOLShopifyBlock DOLShopifyBl;
+  json jdata;
+  boolean breakf;
+  integer i,loopc,pg;
+  string 255 data,since_id,pub_stat;
+  val price;
+  area a_req,a_reply;
+  integer pos;
+  record ShopifyLocVc SHLocr;
+
+  BlockLoad(DOLShopifyBl);
+
+
+	if (nonblank(DOLShopifyBl.APIUser) and nonblank(DOLShopifyBl.APIPass)) then begin
+		DOLMakeWebRequest("GET","/admin/locations.json",a_req,a_reply);
+		PreparePostArea(a_reply);
+		jdata = ParseJSONArea(a_reply);
+		
+		i = 0;
+		while (JSONNodeExists(jdata,"locations/[" & i & "]/id")) begin
+			if (JSONNodeExists(jdata,"locations/[" & i & "]/id")) then begin
+				data = JSONGet(jdata,"locations/[" & i & "]/id");
+				SHLocr.Id = data;
+				if(readfirstmain(SHLocr,1,true))then begin
+					SHLocr.Name = JSONGet(jdata,"locations/[" & i & "]/name");
+					SHLocr.address1 = JSONGet(jdata,"locations/[" & i & "]/address1");
+					SHLocr.address2 = JSONGet(jdata,"locations/[" & i & "]/address2");
+					SHLocr.city = JSONGet(jdata,"locations/[" & i & "]/city");
+					recordstore(SHLocr,true);
+				end else begin
+					recordnew(SHLocr);
+					SHLocr.Id = JSONGet(jdata,"locations/[" & i & "]/id");
+					SHLocr.Name = JSONGet(jdata,"locations/[" & i & "]/name");
+					SHLocr.address1 = JSONGet(jdata,"locations/[" & i & "]/address1");
+					SHLocr.address2 = JSONGet(jdata,"locations/[" & i & "]/address2");
+					SHLocr.city = JSONGet(jdata,"locations/[" & i & "]/city");
+					recordstore(SHLocr,true);
+				end;
+				
+			end;
+			i = i + 1;
+		end;
+
+	end else begin
+		MessageBox(0,"ERROR: API Access data must be provided. Check the Shopify settings.");
+	end;
+
+
+return;
+end;
+
+
+global
+updating procedure DOLGetShopifyProdIDMn(record RcVc RepSpec)
+begin
+  record INVc INr,IN2r;
+  record DOLShopifyBlock DOLShopifyBl;
+  json jdata;
+  boolean breakf;
+  integer i,loopc,pg,j;
+  string 255 data,since_id,pub_stat;
+  val price;
+  area a_req,a_reply;
+  integer pos;
+	record ShopifyProductsVc SPr;
+	
+  BlockLoad(DOLShopifyBl);
+
+  pub_stat = "published";
+  if (RepSpec.flags[0] == 1) then begin
+    pub_stat = "any";
+  end;
+	SPr.Id = "";
+		
+  if (RepSpec.ArtMode == 0 or RepSpec.ArtMode == 2) then begin // EVS: DOL-167 artmode == 2
+    if (nonblank(DOLShopifyBl.APIUser) and nonblank(DOLShopifyBl.APIPass)) then begin
+      
+      pg = 1;
+      DOLMakeWebRequest("GET","/admin/products.json?fields=title,id,variants&limit=250&page=" & pg,a_req,a_reply);
+     	PreparePostArea(a_reply);
+      WriteAreaToFile(a_reply,"Shopify.txt",0);
+			
+      jdata = ParseJSONArea(a_reply);
+			
+      while (GetAreaLength(a_reply) > 0 and JSONNodeExists(jdata,"products/[0]/id") and loopc < 100) begin // 25000 items max; to avoid infinite loop
+				logtext(0,"Begin to parse " & JSONNodeExists(jdata,"products/[" & i & "]/id"));
+        i = 0;
+        while (JSONNodeExists(jdata,"products/[" & i & "]/id")) begin
+          if (JSONNodeExists(jdata,"products/[" & i & "]/variants/[0]/sku")) then begin
+            data = JSONGet(jdata,"products/[" & i & "]/variants/[0]/sku");
+            pos = 0;
+            ExtractObj(data,pos,data);
+            since_id = JSONGet(jdata,"products/[" & i & "]/id");
+            /*INr.Code = data;
+            if (ReadFirstMain(INr,1,true)) then begin
+              if (RepSpec.ArtMode == 0) then begin
+                data = JSONGet(jdata,"products/[" & i & "]/id");
+                if (INr.ShopifyID != data and nonblank(data)) then begin
+                  RecordCopy(IN2r,INr);
+                  INr.ShopifyID = data;
+                  logtext(0,"IN Update " & INr.Code);
+                  RecordUpdate(IN2r,INr,false);
+                end;
+              end;
+              if (RepSpec.ArtMode == 2) then begin
+                data = JSONGet(jdata,"products/[" & i & "]/variants/[0]/price");
+                price = StringToVal(data,M4Val);
+                if (INr.ShopifyPrice != price and nonblank(data)) then begin
+                  RecordCopy(IN2r,INr);
+                  INr.ShopifyPrice = price;
+                  logtext(0,"IN Update " & INr.Code);
+                  RecordUpdate(IN2r,INr,false);
+                end;
+              end;
+            end;*/
+          
+						j=0;
+						while (JSONNodeExists(jdata,"products/[" & i & "]/variants/[" & j & "]/id")) begin
+							recordnew(SPr);
+							SPr.Id = JSONGet(jdata,"products/[" & i & "]/id");
+							SPr.VariantId = JSONGet(jdata,"products/[" & i & "]/variants/[" & j & "]/id");
+							SPr.Vproduct_id = JSONGet(jdata,"products/[" & i & "]/variants/[" & j & "]/product_id");
+							SPr.Vinvent_id = JSONGet(jdata,"products/[" & i & "]/variants/[" & j & "]/inventory_item_id");
+							SPr.Name = JSONGet(jdata,"products/[" & i & "]/title");
+							SPr.VarName = JSONGet(jdata,"products/[" & i & "]/variants/[" & j & "]/option1");
+							SPr.SKU = JSONGet(jdata,"products/[" & i & "]/variants/[" & j & "]/sku");
+							if(nonblank(SPr.Id))then begin
+								recordstore(SPr,true);
+							end;
+							j = j + 1;
+						end;
+          end;
+          logtext(0,"i = " & i & " pg = " & pg);
+          i = i + 1;
+        end;
+
+        SetAreaZeroSize(a_reply);
+
+        pg = pg + 1;
+        setareazerosize(a_reply);
+        setareazerosize(a_req);
+        DOLMakeWebRequest("GET","/admin/products.json?fields=title,id,variants&limit=250&page=" & pg,a_req,a_reply);
+				PreparePostArea(a_reply);
+        jdata = ParseJSONArea(a_reply);
+        logtext(0,pg & " AreaSize " & getarealength(a_reply));
+				logtext(0,pg & " AreaSizeNDExs " & JSONNodeExists(jdata,"products/[0]/id"));
+        loopc = loopc + 1;
+      end;
+
+    end else begin
+      MessageBox(0,"ERROR: API Access data must be provided. Check the Shopify settings.");
+    end;
+  end;
+  if (RepSpec.ArtMode == 1) then begin
+    while (LoopMain(INr,1,true)) begin
+      RecordCopy(IN2r,INr);
+      INr.ShopifyID = "";
+      RecordUpdate(IN2r,INr,false);
+    end;
+  end;
+
+return;
+end;
+
+
+global
+updating procedure DOLGetShopifyOrdersMn(record RcVc RepSpec)
+begin
+  record INVc INr,IN2r;
+  record DOLShopifyBlock DOLShopifyBl;
+  json jdata;
+  boolean breakf;
+  integer i,loopc,pg,linit,k;
+  string 255 data,since_id,pub_stat;
+  val price;
+  area a_req,a_reply;
+  record ORVc ORr;
+	row ORVc ORrw;
+	date crat,bdat;
+	string 50 created_at;
+	record CUVc CUr;
+	string 255 warning,errstr,itemid,varid,sku;
+	
+  BlockLoad(DOLShopifyBl);
+    
+  if (nonblank(DOLShopifyBl.APIUser) and nonblank(DOLShopifyBl.APIPass)) then begin
+  	DOLMakeWebRequest("GET","/admin/orders.json?fields=name,email,created_at,line_items,customer&status=any&created_at_min=" & DateToString(addday(currentdate,-7),"YYYY-MM-DD") & "T00:00:00-00:00",a_req,a_reply);
+		PreparePostArea(a_reply);
+		
+		//addfiletoarea("Shopify.txt",a_reply,0);
+		
+		if(GetAreaLength(a_reply) > 0)then begin
+			jdata = ParseJSONArea(a_reply);
+
+			i = 0;
+			while (JSONNodeExists(jdata,"orders/[" & i & "]/name")) begin
+				
+					data = JSONGet(jdata,"orders/[" & i & "]/name");
+					
+					if(nonblank(data))then begin
+						ORr.CustOrdNr = data;
+						if(readfirstkey("CustOrdNr",ORr,1,true)==false)then begin
+							recordnew(ORr);
+							crat = bdat;//blanked crat
+							created_at = JSONGet(jdata,"orders/[" & i & "]/created_at");
+							crat.year = stringtoint(left(created_at,4));
+							crat.month = stringtoint(mid(created_at,5,2));
+							crat.day = stringtoint(mid(created_at,8,2));
+							ORr.OrdDate = crat;
+							ORr.CustOrdNr = data;
+							ORr.OrderClass = DOLShopifyBl.DefWebOrdClass;
+							ORr.Location = DOLShopifyBl.DefWebLocation;
+							ORr.CustCode = DOLShopifyBl.DefWebUserCode;
+							
+							CUr.eMail = JSONGet(jdata,"orders/[" & i & "]/customer/email");
+							if(readfirstkey("eMail",CUr,1,true))then begin
+								ORr.CustCode = CUr.Code;
+							end else begin
+								CUr.Name = JSONGet(jdata,"orders/[" & i & "]/customer/first_name") & " " & JSONGet(jdata,"orders/[" & i & "]/customer/last_name");;
+								if(readfirstkey("Name",CUr,1,true))then begin
+									ORr.CustCode = CUr.Code;
+								end;
+							end;
+							PasteCustInOrder(ORr,ORr.CustCode,"",warning,errstr);
+							ORr.Addr0 = JSONGet(jdata,"orders/[" & i & "]/customer/first_name") & " " & JSONGet(jdata,"orders/[" & i & "]/customer/last_name");
+							
+							
+							linit = 0;
+							k = 0;
+							while (JSONNodeExists(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/id")) begin
+								Clearrow(ORr,ORrw,1);
+								itemid = JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/id");
+								varid = JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/variant_id");
+								sku = JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/sku");
+								logtext(0,sku);
+								ORrw.ArtCode = sku;
+								matrowput(ORr,k,ORrw);
+								ORVc_PasteArtCode(ORr,k,warning,warning,false)
+								matrowget(ORr,k,ORrw);
+								ORrw.Spec = JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/title");
+								ORrw.Price = evaltoval(JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/price"));
+								ORrw.Quant = evaltoval(JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/quantity"));
+								if(nonblank(ORrw.Spec))then begin
+									matrowput(ORr,k,ORrw);
+								end;
+								k = k + 1;
+								linit = linit + 1;
+							end;
+							
+							
+							ORr.SerNr = NextSerNr("ORVc",ORr.OrdDate,-1,false,"");   
+							recordstore(ORr,true);
+						end;
+					end;
+					
+				i = i + 1;
+			end;
+		end;
+		
+		WriteAreaToFile(a_reply,"Shopify.json",0);
+  
+  end;
+  
+  return;
+end;
+
+
+global updating procedure PeriodicWebTasks()
+begin
+	record RcVc RepSpec;
+	time t;
+	
+	t = currenttime;
+	if(right(t.minute,1)=="0" or right(t.minute,1)=="5")then begin
+		DOLGetShopifyOrdersMn(RepSpec);
+	end;
+	if(t.hour==23 and t.minute==0)then begin
+		DOLGetShopifyLocationsIDMn(RepSpec);
+	end;
+	if(t.minute==0)then begin
+		DOLGetShopifyProdIDMn(RepSpec);
+	end;
+	
+return;
+end;

@@ -80,6 +80,73 @@ begin
   	
 	EndRecord;
 	
+	BlockBegin(DOLShopifyBlock,-,"");// Edit ************************** BPI Ukraine - KramarAlexandr - Monday, 23 April 2018 15:39:19
+  RecordField(APIUser,M4Str,255,0);
+  RecordField(APIPass,M4Str,255,0);
+  RecordField(UpdItems,M4Int,0,0);
+  RecordField(UpdStock,M4Int,0,0);
+  RecordField(UpdStockInertval,M4Int,0,0);
+  RecordField(ShopifyURL,M4Str,255,0);
+  RecordField(ShopifyPort,M4Int,0,0);
+  RecordField(StockClass,M4Code,20,0);
+  RecordField(SaveReqResp,M4Int,0,0);
+  RecordField(InchVARGCode,M4Code,10,0);
+  RecordField(UpdStockAlways,M4Int,0,0);
+  RecordField(UpdPriceAlways,M4Int,0,0); // EVS: DOL-167
+  RecordField(DefWebUserCode,M4Code,60,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 3 May 2018 14:17:51
+  RecordField(DefWebLocation,M4Code,60,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 3 May 2018 14:17:51
+  RecordField(DefWebOrdClass,M4Code,60,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 3 May 2018 14:17:51
+  RecordField(ShpifyLocId,M4Code,60,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 3 May 2018 14:17:51
+
+  EndBlock;
+  
+  RecordAddBegin(INVc,"dol_invc");
+  RecordField(CreateDate,M4Date,0,0); //EBS
+  RecordField(InitPrice,M4Val,0,0); //EBS
+  RecordField(InitDisc,M4Val,0,0); //EBS
+  RecordField(DoNotUpdName,M4Int,0,0); //EBS
+  RecordField(ShopifyID,M4Str,60,0); // EVS: DOL-166
+  RecordField(ShopifyPrice,M4Val,0,0); // EVS: DOL-167
+  
+  KeyBegin(ShopifyID);
+  keysegment(ShopifyID);
+  keysegment(Code);
+  EndRecordAdd;
+	
+	
+	RecordBegin(ShopifyLocVc,-,"");
+		RecordField(Id,M4Code,50,0);
+		RecordField(Name,M4Str,200,0);
+		RecordField(address1,M4Str,200,0);
+		RecordField(address2,M4Str,200,0);
+		RecordField(city,M4Str,200,0);
+		MainKeyBegin(Id,0);
+  	KeySegment(Id);  	
+	EndRecord;
+	
+	RecordBegin(ShopifyProductsVc,-,"");
+		RecordField(Id,M4Code,50,0);
+		RecordField(VariantId,M4Code,50,0);
+		RecordField(Vproduct_id,M4Code,50,0);
+		RecordField(Vinvent_id,M4Code,50,0);
+		RecordField(Name,M4Str,200,0);
+		RecordField(VarName,M4Str,200,0);
+		RecordField(SKU,M4Str,200,0);
+		RecordField(HansaArtCode,M4Str,200,0);
+		RecordField(HansaVarCodes,M4Str,200,0);
+		MainKeyBegin(Id,0);
+  	KeySegment(Id);  
+  	KeySegment(VariantId); 
+  	KeyBegin(HansaArtCode);
+  	KeySegment(HansaArtCode);
+  	KeySegment(Id);
+  	KeySegment(VariantId);
+  	KeyBegin(SKU);
+  	KeySegment(SKU);
+  	KeySegment(Id);
+  	KeySegment(VariantId);
+	EndRecord;
+	
 //==========CUSTOM END==========
 
   return;

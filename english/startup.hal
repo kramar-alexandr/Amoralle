@@ -6,5 +6,7 @@ begin
   Setting("Amoralle - Settings",PY_SettingsTClass,modSY);//payout-21; edz
   Import("SwedBank import Statement",SwedBankImportSTIClass,SwedBankImportSTIn,modSL);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 17 April 2018 17:19:21
 	Setting("SwedBank import Statement",SwedbankImportLClass,modSL);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 18 April 2018 10:49:31
+ 	Setting("Amoralle - Shopify",DOLShopifyTClass,modSY); // Edit ************************** BPI Ukraine - KramarAlexandr - Monday, 23 April 2018 15:40:18
+
   return;
 end;
