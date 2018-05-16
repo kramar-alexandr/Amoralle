@@ -1653,9 +1653,10 @@ begin
   if (HasJewelleryInterface) and (UserCanReport("INInfoRn","",true)) then begin 
     SpecialMenu("Artikula statuss pa alternat´vajiem kodiem",'S',5,"ItemStatusAltINDsm");
   end;
+  SpecialMenu("Update Shopify Stock",' ',2,"DOLUpdItemStockDsm");// Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 11 May 2018 15:14:26
+
   SpecMenuGroup("",kSpecMenuGroupTypeExtendedPlusMenu,0); 
   SpecialMenu("Pasðt´juma artikulu",' ',1,"PIFromINDsm");
   SpecialMenu("Specifik‚ciju",' ',2,"RecFromINDsm");
-  SpecialMenu("Update Shopify Stock",' ',2,"DOLUpdItemStockDsm");// Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 11 May 2018 15:14:26
   EndWindow;
 end;

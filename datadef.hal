@@ -97,7 +97,9 @@ begin
   RecordField(DefWebLocation,M4Code,60,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 3 May 2018 14:17:51
   RecordField(DefWebOrdClass,M4Code,60,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 3 May 2018 14:17:51
   RecordField(ShpifyLocId,M4Code,60,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 3 May 2018 14:17:51
-
+	RecordField(GetOrdFrq,M4Long,0,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 16 May 2018 14:49:54
+	RecordField(LastTickOR,M4Long,0,0);
+	RecordField(LastTickIN,M4Long,0,0);
   EndBlock;
   
   RecordAddBegin(INVc,"dol_invc");

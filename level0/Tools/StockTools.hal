@@ -202,7 +202,7 @@ LUpdateInstock:;
   end;
   
   if (location == ";;;" and DOLShopifyBl.UpdStockAlways == 1 and filename != "StockMovVc" and !ImportingTextBackup and !IsMaintenance) then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 11 May 2018 15:06:29
-    DOLUpdShopifyStock(CurrentCompany & ";" & INr.Code);
+    DOLUpdShopifyStock(CurrentCompany & ";" & ac);
   end;
   
   RETURN;

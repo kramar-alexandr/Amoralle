@@ -4,26 +4,29 @@ external inner function string 50 TimeToString(time,string,boolean);
 external inner procedure ExtractObj(string,var Integer,var string);
 external inner function Boolean ORVc_PasteArtCode(var record ORVc,Integer,var string,var string,Boolean);
 external inner procedure ExtractObj(string,var Integer,var string);
+external inner procedure ORVc_PasteQuant(var record ORVc,Integer,Boolean,var Boolean);
+external inner procedure ORVc_PastePrice(var record ORVc,Integer,var Boolean);
+external inner procedure ORVc_PasteSum(var record ORVc,Integer,var Boolean);
+external inner procedure ORDchsum(var record ORVc,Integer);
+external inner procedure ORSumup(var record ORVc);
 
 global procedure DOLMakeWebRequest(string method,string apipath,var area areq,var area areply)
 begin
   record DOLShopifyBlock DOLShopifyBl;
 	area request;
 	
-	blockload(DOLShopifyBl);
-		
+	blockload(DOLShopifyBl);	
+	
+	//DOLShopifyBl.ShopifyURL = "z8farsqgafir.runscope.net";
+	
 	addtexttoarea(method & " " & apipath & " HTTP/1.1" & chr(13) & chr(10),request);
  	addtexttoarea("host: " & DOLShopifyBl.ShopifyURL & chr(13) & chr(10),request);
 	addtexttoarea("Authorization: Basic " & Base64Encode(DOLShopifyBl.APIUser & ":" & DOLShopifyBl.APIPass) & chr(13) & chr(10),request);
 	addtexttoarea(chr(13) & chr(10),request);
 	
 	insertareabeforearea(request,areq);
-	
-	//SendWebRequest(DOLShopifyBl.ShopifyURL,DOLShopifyBl.ShopifyPort,-1,false,method,apipath,"application/json","",false,areq,areply,10);
-	
-	
-	
-	SendRawWebRequest(DOLShopifyBl.ShopifyURL,DOLShopifyBl.ShopifyPort,true,method,apipath,"application/json","",false,areq,areply,10);
+		
+	SendRawWebRequest(DOLShopifyBl.ShopifyURL,DOLShopifyBl.ShopifyPort,true,method,apipath,"application/json","",false,areq,areply,20);
 	if(DOLShopifyBl.SaveReqResp>0)then begin
 		if (!DirExists("ShopifyRQS")) then begin
 			CreateFolder("ShopifyRQS");
@@ -31,30 +34,75 @@ begin
 		WriteAreaToFile(areq,"ShopifyRQS/ShopifyRequest_" & DateToString(currentdate,"YYYY-MM-DD") & TimeToString(currenttime,"HHMMSS",false) & ".txt",0);
 		WriteAreaToFile(areply,"ShopifyRQS/ShopifyReply_" & DateToString(currentdate,"YYYY-MM-DD") & TimeToString(currenttime,"HHMMSS",false) & ".txt",0);
 	end;
-	//SendAsyncRawWebRequest(DOLShopifyBl.ShopifyURL,DOLShopifyBl.ShopifyPort,true,method,apipath,"application/json","",request,"DOLMakeWebRequestReply",20);
 
+return;
+end;
+
+global procedure DOLMakeWebRequestAsync(string method,string apipath,var area areq)
+begin
+  record DOLShopifyBlock DOLShopifyBl;
+	area request,areply;
+	
+	blockload(DOLShopifyBl);
+		
+	
+	//DOLShopifyBl.ShopifyURL = "z8farsqgafir.runscope.net";
+	
+ 	addtexttoarea("Host: " & DOLShopifyBl.ShopifyURL & chr(13) & chr(10),request);
+	addtexttoarea("Authorization: Basic " & Base64Encode(DOLShopifyBl.APIUser & ":" & DOLShopifyBl.APIPass) & chr(13) & chr(10),request);
+	
+	addtexttoarea(chr(13) & chr(10),request);
+	
+	insertareabeforearea(request,areq);
+	
+	SendAsyncRawWebRequest(DOLShopifyBl.ShopifyURL,DOLShopifyBl.ShopifyPort,true,method,apipath,"application/json","",areq,"DOLMakeWebRequestReply",20);
+	if(DOLShopifyBl.SaveReqResp>0)then begin
+		if (!DirExists("ShopifyRQS")) then begin
+			CreateFolder("ShopifyRQS");
+		end;
+		WriteAreaToFile(areq,"ShopifyRQS/ShopifyRequest_" & DateToString(currentdate,"YYYY-MM-DD") & TimeToString(currenttime,"HHMMSS",false) & ".txt",0);
+	end;
+
+return;
+end;
+
+global updating procedure DOLMakeWebRequestReply(Area a_reply,Area a_replyheader,boolean timeout)
+begin
+	record DOLShopifyBlock DOLShopifyBl;
+	
+	blockload(DOLShopifyBl);
+	if (!DirExists("ShopifyRQS")) then begin
+		CreateFolder("ShopifyRQS");
+	end;
+	if(DOLShopifyBl.SaveReqResp>0)then begin
+		if (!DirExists("ShopifyRQS")) then begin
+			CreateFolder("ShopifyRQS");
+		end;
+		WriteAreaToFile(a_reply,"ShopifyRQS/ShopifyReply_" & DateToString(currentdate,"YYYY-MM-DD") & TimeToString(currenttime,"HHMMSS",false) & ".txt",0);
+	end;	
 return;
 end;
 
 global procedure DOLUpdShopifyStock(string items)
 begin
 	record DOLShopifyBlock DOLShopifyBl;
-	area request,a_reply;
+	area request,a_reply,atmp;
 	record ItemStatusVc ISr;
 	record INVc INr;
-	string 50 curcm,rqs;
+	string 50 curcm,rqs,lastsk,varstr,itcod;
 	record LocationVc Locr;
-	vector boolean locfl;
-	boolean TrHs,inTrHs;
+	vector boolean locfl,invarb;
+	vector val invarqty;
+	boolean TrHs,inTrHs,testf;
 	val qty;
 	integer pos;
 	array string 200 invar;
-	array val invarqty;
-	integer arcnt,i;
+	integer arcnt,i,sqty;
 	record ShopifyProductsVc SPr;
+	longint cntesend;
 	
 	blockload(DOLShopifyBl);
-	
+		
 	curcm = currentcompany & ";";
 	rqs = right(items,len(items)-len(curcm));
 	
@@ -71,51 +119,70 @@ begin
 					INr.Code = "";	
 				end else begin
 					pos = 0;
-					ExtractObj(rqs,pos,INr.Code);
+					ExtractObj(rqs,pos,itcod);
+					INr.Code = itcod;
+					varstr = right(rqs,len(rqs) - len(itcod));
+					if(varstr==itcod)then begin
+						varstr = "";
+					end;
 				end;
-				while(loopmain(INr,1,true))begin
+				inTrHs = true;
+
+				while(loopmain(INr,1,inTrHs))begin
+					arcnt = 0;
+					if(rqs!="*")then begin
+						if(INr.Code!=itcod)then begin
+							inTrHs = false;
+						end;
+					end;
 					resetloop(ISr);
 					ISr.Code = INr.Code;
-					TrHs = true;
+					TrHs = inTrHs;
 					qty = blankval;
-					while(loopmain(ISr,1,TrHs))begin
-						if(ISr.Location!=";;;")then begin
-							if(ISr.Code!=INr.Code)then begin TrHs = false; end;
+					if(inTrHs)then begin
+						while(loopmain(ISr,1,TrHs))begin
+							testf = true;
+							if(ISr.Code!=INr.Code)then begin TrHs = false; testf = false; end;
+							if(nonblank(varstr) and varstr!=ISr.Variety)then begin testf = false; end;
 							
-							
-							if(TrHs)then begin
-								if(locfl[ISr.Location])then begin
-									if(nonblank(ISr.Variety))then begin
-										invar[arcnt] = ISr.Code & "." & ISr.Variety;
-									end else begin
-										invar[arcnt] = ISr.Code;
+							if(testf)then begin
+								if(ISr.Location!=";;;")then begin							
+									if(TrHs)then begin
+										
+										if(locfl[ISr.Location])then begin
+											if(invarb[ISr.Code & ISr.Variety])then begin
+												invarqty[ISr.Code & ISr.Variety] = invarqty[ISr.Code & ISr.Variety] + ISr.Instock;
+											end else begin
+												invar[arcnt] = ISr.Code & ISr.Variety;
+												invarb[invar[arcnt]] = true;
+												invarqty[invar[arcnt]] = ISr.Instock;
+												arcnt = arcnt + 1;
+											end;
+										end;
 									end;
-									invarqty[arcnt] = ISr.Instock;
-									arcnt = arcnt + 1;
+								end;
+							end;
+						end;
+						if(arcnt>0)then begin						
+							For(i=0;i<arcnt;i=i+1) begin
+								
+								if(nonblank(invar[i]))then begin
+									SPr.SKU = invar[i];
+									setareazerosize(request);
+									if(readfirstkey("SKU",SPr,1,true))then begin
+										cntesend = cntesend + 1;
+										sqty = invarqty[invar[i]];
+										addtexttoarea("{\"location_id\":" & DOLShopifyBl.ShpifyLocId & "," & chr(13) & chr(10),request);
+										addtexttoarea("\"inventory_item_id\":" & SPr.Vinvent_id & "," & chr(13) & chr(10),request);
+										addtexttoarea("\"available\":" & sqty & "}" & chr(13) & chr(10),request);
+										DOLMakeWebRequestAsync("POST","/admin/inventory_levels/set.json",request);
+									end;
 								end;
 							end;
 						end;
 					end;
-					
-					if(arcnt>0)then begin
-						setareazerosize(request);
-						addtexttoarea("{",request);
-						For(i=0;i<arcnt;i=i+1) begin
-	  					if(nonblank(invar[i]))then begin
-	  						SPr.SKU = invar[i];
-	  						if(readfirstkey("SKU",SPr,1,true))then begin
-	  							addtexttoarea("\"location_id\":" & DOLShopifyBl.ShpifyLocId & ",",request);
-	  							addtexttoarea("\"inventory_item_id\":" & SPr.Vinvent_id & ",",request);
-	  							addtexttoarea("\"available\":" & invarqty[arcnt],request);
-	  						end;
-	  					end;
-						end; 
-						addtexttoarea("}",request);
-						DOLMakeWebRequest("POST","/admin/inventory_levels/set.json",request,a_reply);
-					end;
-				end;
+				end;			
 			end;
-		
 		end;
 	end;
 
@@ -339,6 +406,7 @@ begin
 	string 50 created_at;
 	record CUVc CUr;
 	string 255 warning,errstr,itemid,varid,sku;
+	boolean chsum;
 	
   BlockLoad(DOLShopifyBl);
     
@@ -399,9 +467,13 @@ begin
 								ORrw.Spec = JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/title");
 								ORrw.Price = evaltoval(JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/price"));
 								ORrw.Quant = evaltoval(JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/quantity"));
+								ORrw.Sum = ORrw.Price * ORrw.Quant;
 								if(nonblank(ORrw.Spec))then begin
 									matrowput(ORr,k,ORrw);
 								end;
+								ORVc_PasteQuant(ORr,k,true,chsum);
+								ORDchsum(ORr,k);
+								ORSumup(ORr);
 								k = k + 1;
 								linit = linit + 1;
 							end;
@@ -428,16 +500,32 @@ global updating procedure PeriodicWebTasks()
 begin
 	record RcVc RepSpec;
 	time t;
+	record DOLShopifyBlock DOLShopifyBl;
+	longint ordiff,indiff;
+	
+	BlockLoad(DOLShopifyBl);
+	
+	ordiff = GetCurTick - DOLShopifyBl.LastTickOR;
+	indiff = GetCurTick - DOLShopifyBl.LastTickIN;
 	
 	t = currenttime;
-	if(right(t.minute,1)=="0" or right(t.minute,1)=="5")then begin
+	if(ordiff<0 or (ordiff/1000)>DOLShopifyBl.GetOrdFrq*60)then begin
+		DOLShopifyBl.LastTickOR = GetCurTick;
+		blockstore(DOLShopifyBl);
 		DOLGetShopifyOrdersMn(RepSpec);
 	end;
+	if(indiff<0 or (indiff/1000)>DOLShopifyBl.UpdStockInertval*60)then begin
+		DOLShopifyBl.LastTickIN = GetCurTick;
+		blockstore(DOLShopifyBl);
+		DOLGetShopifyOrdersMn(RepSpec);
+	end;
+
+
 	if(t.hour==23 and t.minute==0)then begin
 		DOLGetShopifyLocationsIDMn(RepSpec);
 	end;
 	if(t.minute==0)then begin
-		DOLGetShopifyProdIDMn(RepSpec);
+		DOLUpdShopifyStock(currentcompany & ";*");
 	end;
 	
 return;
