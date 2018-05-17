@@ -115,13 +115,12 @@ begin
   Tile(2,120,true,"",UpdStockInertval);
   //CheckBox(h,v=20,0,"Update Items (!for testing only!) (restart required)",UpdItems);
   ButtonFrame(h,v+=30,270,5,"");
-  CheckBox(h,v+=1,0,"Update Stock Levels (restart required)",UpdStock);
+  CheckBox(h,v+=1,0,"Update Stock Levels",UpdStock);
   EditField(h+100,v+=vs,60,"Every",Normal,UpdStockInertval,false,0);
   StaticText(h+155,v+10,"minutes",false);
   EditField(h+100,v+=vs,60,"Location class",Normal,StockClass,false,LocClSClass);
   //EditField(h+100,v+=vs,60,"Inch variety group",Normal,InchVARGCode,false,VARGSClass);
-  ButtonFrame(h,v+=50,270,2,"Effective immediately");
-  CheckBox(h,v+=1,0,"Update Stock Levels when Stock level Changes",UpdStockAlways);
+  CheckBox(h,v+=vs,0,"Update Stock Levels when Stock level Changes",UpdStockAlways);
   //CheckBox(h,v+=20,0,"Update Price When Item is Updated",UpdPriceAlways); // EVS: DOL-167
   EndFrame;
   Tile(3,120,true,"",SaveReqResp);
@@ -146,7 +145,7 @@ begin
 
   WindowBegin("Dolita - Load Shopify Product IDs",DOLGetShopifyProdIDVClass,CGMnt,RcType);
   SetWRect(20,80,350,240);
-  ButtonFrame(h=80,v=20,200,3,"Action");
+  /*ButtonFrame(h=80,v=20,200,3,"Action");
   RadioButton(h,v,0,0,"Download Shopify IDs",ArtMode);
   RadioButton(h,v+=16,2,0,"Download Shopify Prices",ArtMode); // EVS: DOL-167
   RadioButton(h,v+=16,1,0,"Clear All Shopify IDs",ArtMode);
@@ -156,7 +155,7 @@ begin
   RadioButton(h,v,0,0,"Published only",flags[0]);
   RadioButton(h,v+=16,1,0,"All",flags[0]);
   EndFrame;
-  // :EVS
+  // :EVS*/
   EndWindow;
 
   return;
@@ -170,7 +169,7 @@ begin
 
   WindowBegin("Dolita - Load Shopify Product IDs",DOLGetShopifyOrdersVClass,CGMnt,RcType);
   SetWRect(20,80,350,240);
-  
+  PeriodField(h=160,v=6,"Planned Period");
   EndWindow;
 
   return;

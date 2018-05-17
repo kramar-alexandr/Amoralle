@@ -17,8 +17,6 @@ begin
 	
 	blockload(DOLShopifyBl);	
 	
-	//DOLShopifyBl.ShopifyURL = "z8farsqgafir.runscope.net";
-	
 	addtexttoarea(method & " " & apipath & " HTTP/1.1" & chr(13) & chr(10),request);
  	addtexttoarea("host: " & DOLShopifyBl.ShopifyURL & chr(13) & chr(10),request);
 	addtexttoarea("Authorization: Basic " & Base64Encode(DOLShopifyBl.APIUser & ":" & DOLShopifyBl.APIPass) & chr(13) & chr(10),request);
@@ -27,10 +25,12 @@ begin
 	insertareabeforearea(request,areq);
 		
 	SendRawWebRequest(DOLShopifyBl.ShopifyURL,DOLShopifyBl.ShopifyPort,true,method,apipath,"application/json","",false,areq,areply,20);
+	logtext(0,"************************DOLShopifyBl.SaveReqResp" & DOLShopifyBl.SaveReqResp);
 	if(DOLShopifyBl.SaveReqResp>0)then begin
 		if (!DirExists("ShopifyRQS")) then begin
 			CreateFolder("ShopifyRQS");
 		end;
+		logtext(0,"Write***");
 		WriteAreaToFile(areq,"ShopifyRQS/ShopifyRequest_" & DateToString(currentdate,"YYYY-MM-DD") & TimeToString(currenttime,"HHMMSS",false) & ".txt",0);
 		WriteAreaToFile(areply,"ShopifyRQS/ShopifyReply_" & DateToString(currentdate,"YYYY-MM-DD") & TimeToString(currenttime,"HHMMSS",false) & ".txt",0);
 	end;
@@ -102,11 +102,13 @@ begin
 	longint cntesend;
 	
 	blockload(DOLShopifyBl);
-		
+	
+	logtext(0,"DOLUpdShopifyStock");
+	
 	curcm = currentcompany & ";";
 	rqs = right(items,len(items)-len(curcm));
 	
-	if(nonblank(items))then begin
+	if(nonblank(items) and DOLShopifyBl.UpdStock==1)then begin
 		if(nonblank(DOLShopifyBl.ShpifyLocId))then begin
 			while(loopmain(Locr,1,true))begin
 				if(setinset(DOLShopifyBl.StockClass,Locr.Classification))then begin
@@ -409,9 +411,11 @@ begin
 	boolean chsum;
 	
   BlockLoad(DOLShopifyBl);
-    
+  
+  
+  
   if (nonblank(DOLShopifyBl.APIUser) and nonblank(DOLShopifyBl.APIPass)) then begin
-  	DOLMakeWebRequest("GET","/admin/orders.json?fields=name,email,created_at,line_items,customer&status=any&created_at_min=" & DateToString(addday(currentdate,-7),"YYYY-MM-DD") & "T00:00:00-00:00",a_req,a_reply);
+  	DOLMakeWebRequest("GET","/admin/orders.json?fields=name,email,created_at,line_items,customer&status=any&created_at_min=" & DateToString(RepSpec.sStartDate,"YYYY-MM-DD") & "T00:00:00-00:00" & "&created_at_max=" & DateToString(addday(RepSpec.sEndDate,1),"YYYY-MM-DD") & "T00:00:00-00:00",a_req,a_reply);
 		PreparePostArea(a_reply);
 		
 		//addfiletoarea("Shopify.txt",a_reply,0);
@@ -505,28 +509,36 @@ begin
 	
 	BlockLoad(DOLShopifyBl);
 	
+	logtext(0,"PeriodicWebTasks");
+	
 	ordiff = GetCurTick - DOLShopifyBl.LastTickOR;
 	indiff = GetCurTick - DOLShopifyBl.LastTickIN;
-	
+	logtext(0,"***************PeriodicWebTasks GetCurTick " & GetCurTick);
 	t = currenttime;
-	if(ordiff<0 or (ordiff/1000)>DOLShopifyBl.GetOrdFrq*60)then begin
-		DOLShopifyBl.LastTickOR = GetCurTick;
-		blockstore(DOLShopifyBl);
-		DOLGetShopifyOrdersMn(RepSpec);
+	if(DOLShopifyBl.GetOrdFrq>0)then begin
+		if(ordiff<0 or (ordiff/1000)>DOLShopifyBl.GetOrdFrq*60)then begin
+			DOLShopifyBl.LastTickOR = GetCurTick;
+			blockstore(DOLShopifyBl);
+			RepSpec.sStartDate = addday(currentdate,-7);
+			RepSpec.sEndDate = addday(currentdate,-7);
+			DOLGetShopifyOrdersMn(RepSpec);
+			Logtext(0,"***************Periodic task DOLGetShopifyOrdersMn");
+		end;
 	end;
-	if(indiff<0 or (indiff/1000)>DOLShopifyBl.UpdStockInertval*60)then begin
-		DOLShopifyBl.LastTickIN = GetCurTick;
-		blockstore(DOLShopifyBl);
-		DOLGetShopifyOrdersMn(RepSpec);
+	if(DOLShopifyBl.UpdStockInertval>0)then begin
+		if(indiff<0 or (indiff/1000)>DOLShopifyBl.UpdStockInertval*60)then begin
+			DOLShopifyBl.LastTickIN = GetCurTick;
+			blockstore(DOLShopifyBl);
+			//DOLUpdShopifyStock(currentcompany & ";*");
+			Logtext(0,"***************Periodic task DOLUpdShopifyStock");
+		end;
 	end;
 
 
 	if(t.hour==23 and t.minute==0)then begin
 		DOLGetShopifyLocationsIDMn(RepSpec);
 	end;
-	if(t.minute==0)then begin
-		DOLUpdShopifyStock(currentcompany & ";*");
-	end;
+
 	
 return;
 end;

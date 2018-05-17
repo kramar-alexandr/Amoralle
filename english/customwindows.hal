@@ -114,8 +114,8 @@ begin
   //CheckBox(h,v=20,0,"Update Items (!for testing only!) (restart required)",UpdItems);
   ButtonFrame(h,v+=30,270,5,"");
   CheckBox(h,v+=1,0,"Update Stock Levels (restart required)",UpdStock);
-  //EditField(h+100,v+=vs,60,"Every",Normal,UpdStockInertval,false,0);
-  //StaticText(h+155,v+10,"minutes",false);
+  EditField(h+100,v+=vs,60,"Every",Normal,UpdStockInertval,false,0);
+  StaticText(h+155,v+10,"minutes",false);
   EditField(h+100,v+=vs,60,"Location class",Normal,StockClass,false,LocClSClass);
   //EditField(h+100,v+=vs,60,"Inch variety group",Normal,InchVARGCode,false,VARGSClass);
   ButtonFrame(h,v+=50,270,2,"Effective immediately");
@@ -128,10 +128,11 @@ begin
   EditField(h,v += vs,80,"Def. Location",Normal,DefWebLocation,false,LocationSClass);
   EditField(h,v += vs,80,"Def. Order Class",Normal,DefWebOrdClass,false,OrderClassSClass);
   EditField(h,v += vs,80,"Shopify Location Id",Normal,ShpifyLocId,false,ShopifyLocSClass);
+  EditField(h,v += vs,80,"Get Orders every minutes",Normal,GetOrdFrq,false,0);
   Tile(4,120,true,"",SaveReqResp);
   StaticText(h,v=20,"NOTE: Do not change anything unless insctructed",false);
   CheckBox(h,v+=20,0,"Save request and response data",SaveReqResp);
   SpecialMenu("Send Stock Levels Once",' ',0,"DOLShopifySendStockSm");
-	EndWindow;
+  EndWindow;
 
 end;

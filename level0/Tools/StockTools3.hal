@@ -379,8 +379,8 @@ begin
   longint tick;// Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 11 May 2018 15:09:46
   string 20 ac;// Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 11 May 2018 15:09:46
   record DOLShopifyBlock DOLShopifyBl;// Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 11 May 2018 15:09:29
-
-    
+	  
+  blockload(DOLShopifyBl);// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 17 May 2018 10:38:58
   BlockLoad(MainStockRec);
   if (SMp.Reserved!=0) then begin
     reservedf = true;
@@ -497,13 +497,12 @@ begin
       end;
       // Edit Start ---------------------------------------------- Edit Start
 	//Friday, 11 May 2018 15:10:08
-	
       if (DOLShopifyBl.UpdStockAlways == 1 and !IsMaintenance and !ImportingTextBackup) then begin
         if (ReadFirstItem(StockMovrw.ArtCode,INr,false,false)) then begin
           tick = GetCurTick;
           ac = StockMovrw.ArtCode;
           logtext(0,"INFO: Stock Update schedule timed task DOLUpdShopifyStock for item " & ac & " @ " & CurrentDate & " " & AddSeconds(CurrentTime,5) & " from " & "StockMovVc" & ":" & SMp.SerNr);
-          NewTimedTask("Quick DOLUpdShopifyStock " & ac & " " & tick,"Quick DOLUpdShopifyStock " & ac & " " & tick,"DOLUpdShopifyStock",CurrentCompany & ";" & INr.Code,CurrentDate,AddSeconds(CurrentTime,5),"","");
+          NewTimedTask("Quick DOLUpdShopifyStock " & ac & " " & tick,"Quick DOLUpdShopifyStock " & ac & " " & tick,"DOLUpdShopifyStock",CurrentCompany & ";" & StockMovrw.ArtCode,CurrentDate,AddSeconds(CurrentTime,5),"","");
         end;
       end;
       
