@@ -98,17 +98,17 @@ begin
   RecordField(DefWebOrdClass,M4Code,60,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 3 May 2018 14:17:51
   RecordField(ShpifyLocId,M4Code,60,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 3 May 2018 14:17:51
 	RecordField(GetOrdFrq,M4Long,0,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 16 May 2018 14:49:54
-	RecordField(LastTickOR,M4Long,0,0);
-	RecordField(LastTickIN,M4Long,0,0);
+	RecordField(LastTickOR,M4Long,0,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 18 May 2018 09:26:33
+	RecordField(LastTickIN,M4Long,0,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 18 May 2018 09:26:33
   EndBlock;
   
-  RecordAddBegin(INVc,"dol_invc");
+  RecordAddBegin(INVc,"dol_invc");// Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 18 May 2018 09:26:58
   RecordField(CreateDate,M4Date,0,0); //EBS
   RecordField(InitPrice,M4Val,0,0); //EBS
   RecordField(InitDisc,M4Val,0,0); //EBS
   RecordField(DoNotUpdName,M4Int,0,0); //EBS
-  RecordField(ShopifyID,M4Str,60,0); // EVS: DOL-166
-  RecordField(ShopifyPrice,M4Val,0,0); // EVS: DOL-167
+  RecordField(ShopifyID,M4Str,60,0); // Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 18 May 2018 09:26:27
+  RecordField(ShopifyPrice,M4Val,0,0); // Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 18 May 2018 09:26:28
   EndRecordAdd;
 	
 	

@@ -92,7 +92,7 @@ begin
 end;
 
 
-window DOLShopifyTClass:1
+window DOLShopifyTClass:1// Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 18 May 2018 09:26:00
   wtag("language","LAT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,v,vm,vs;
