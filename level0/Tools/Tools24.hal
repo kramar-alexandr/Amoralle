@@ -471,7 +471,7 @@ begin
 end;
 
 global
-procedure CreateEANBarCode(var record INVc INr,string variety,var record BarcodeVc Barcoder)
+procedure CreateEANBarCode(var record INVc INr,string variety,var record BarcodeVc Barcoder,var string lastnextnr)
 begin
   record INVc tempINr;
   record ItemSettingBlock ISr;
@@ -479,15 +479,17 @@ begin
   string 100 temp;
   string 100 barcode;
   string 100 oldbarcode;
+  record BarcodeVc oldBarcoder;
 
   BlockLoad(ISr);
-  barcode = ISr.YourBarCodeDef;
+  /*barcode = ISr.YourBarCodeDef;
   M4PadString(barcode,ISr.BarCodeLength,"9",false,temp);
   tempINr.BarCode = temp;
   if (ReadLastKey("BarCode",tempINr,1,false)) then begin
     oldbarcode = Right(tempINr.BarCode,len(tempINr.BarCode)-len(ISr.YourBarCodeDef));
     oldbarcode = Left(oldbarcode,len(oldbarcode)-1);
   end;
+  logtext(0,"oldbarcode1 " & oldbarcode);
   //payout-21; edz:
   Barcoder.BarCodeSerialNo = "999999999999999";
   if (ReadLastKey("BarCodeSerialNo",Barcoder,1,false)) then begin
@@ -495,6 +497,10 @@ begin
       oldbarcode = Barcoder.BarCodeSerialNo;
     end;
   end;
+  logtext(0,"oldbarcode2 " & oldbarcode);
+  M4PadString(oldbarcode,ISr.BarCodeLength - len(ISr.YourBarCodeDef),"0",true,temp);
+  oldbarcode = temp;
+  logtext(0,"oldbarcode3 " & temp);
   //Barcoder.BarCodeSerialNo = temp;
   //if (ReadLastKey("BarCodeSerialNo",Barcoder,1,false)) then begin
   //  if (oldbarcode<Barcoder.BarCodeSerialNo) then begin
@@ -517,7 +523,45 @@ begin
       nextnr = ISr.BarCodeStartFrom;
     end;
   end;
+  logtext(0,"barcode " & barcode & nextnr);*/
+  
+  nextnr = ISr.BarCodeStartFrom;
+lGotoRhere:;
+  
+  
+  
+  barcode = ISr.YourBarCodeDef & nextnr;
+  M4PadString(ISr.YourBarCodeDef,ISr.BarCodeLength,"9",false,temp);
+	oldBarcoder.Barcode = temp;
+  if(readlastmain(oldBarcoder,1,false))then begin
+  	if(left(oldBarcoder.Barcode,len(ISr.BarCodeStartFrom))==ISr.BarCodeStartFrom)then begin
+  		if(len(oldBarcoder.Barcode)==13)then begin
+  			nextnr = Right(oldBarcoder.Barcode,len(oldBarcoder.Barcode)-len(ISr.YourBarCodeDef));
+				nextnr = Left(nextnr,len(nextnr)-1);
+  			barcode = ISr.YourBarCodeDef & nextnr;
+  		end;
+  	end;
+  end;
+  if(nonblank(lastnextnr))then begin
+  	if(nextnr<lastnextnr)then begin
+  		nextnr = lastnextnr;
+  	end;
+  end;
+  barcode = ISr.YourBarCodeDef & nextnr;
+  CalculateBarCodeCheckSum(barcode);
+  oldBarcoder.Barcode = barcode;
+  if(readfirstmain(oldBarcoder,1,true))then begin
+  	NextM4Number(nextnr,nextnr);
+  	goto lGotoRhere;
+  end;
+  tempINr.BarCode = barcode;
+  if (ReadLastKey("BarCode",tempINr,1,true)) then begin
+  	NextM4Number(nextnr,nextnr);
+  	goto lGotoRhere;
+  end;
+  
   RecordNew(Barcoder);
+  lastnextnr = nextnr;
   Barcoder.Itemcode = INr.Code & variety;
   Barcoder.OrigItemcode = INr.Code;//payout-21; edz
   Barcoder.BarCodeSerialNo = nextnr;
@@ -531,6 +575,48 @@ end;
 
 global//// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 28 05 2018 15:39:42
 updating procedure DoCreateEANBarCode(string itemcode,Boolean addtoitem)
+begin
+  record INVc INr;
+  record INVc oldINr;
+  record BarcodeVc Barcoder;
+  Boolean testf;
+  string 255 variety;
+  string 100 lastnextnr;
+
+  testf = false;
+  if (addtoitem) then begin
+    if (ReadFirstItem(itemcode,INr,true,true)) then begin
+      if (blank(INr.BarCode)) then begin
+        testf = true;
+      end;
+    end;
+  end else begin
+    Barcoder.Itemcode = itemcode;
+    if (ReadFirstKey("Itemcode",Barcoder,1,true)==false) then begin
+      if (ReadFirstItem(itemcode,INr,true,true)) then begin
+        testf = true;
+      end;
+    end;
+  end;
+  if (testf) then begin
+    RecordCopy(oldINr,INr);
+    variety = Right(itemcode,len(itemcode)-len(INr.Code));
+    CreateEANBarCode(INr,variety,Barcoder,lastnextnr);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 29 May 2018 11:51:55
+    if (addtoitem) then begin
+      if (RecordUpdate(oldINr,INr,false)==0) then begin
+      end;
+    end else begin
+      if (RecordStore(Barcoder,false)==false) then begin
+      end else begin
+      	logtext(0,"GeneratedBarCode " & itemcode & " " & Barcoder.Barcode);
+      end;
+    end;
+  end;
+  return;
+end;
+
+global//// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 28 05 2018 15:39:42
+updating procedure DoCreateEANBarCodeMy(string itemcode,Boolean addtoitem,var string lastnextnr)
 begin
   record INVc INr;
   record INVc oldINr;
@@ -556,13 +642,14 @@ begin
   if (testf) then begin
     RecordCopy(oldINr,INr);
     variety = Right(itemcode,len(itemcode)-len(INr.Code));
-    CreateEANBarCode(INr,variety,Barcoder);
-    logtext(0,"DoCreateEANBarCode " & Barcoder.Barcode);
+    CreateEANBarCode(INr,variety,Barcoder,lastnextnr);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 29 May 2018 11:51:55
     if (addtoitem) then begin
       if (RecordUpdate(oldINr,INr,false)==0) then begin
       end;
     end else begin
       if (RecordStore(Barcoder,false)==false) then begin
+      end else begin
+      	logtext(0,"GeneratedBarCode " & itemcode & " " & Barcoder.Barcode);
       end;
     end;
   end;
