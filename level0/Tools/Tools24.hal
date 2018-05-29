@@ -529,6 +529,7 @@ begin
   return;
 end;
 
+global//// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 28 05 2018 15:39:42
 updating procedure DoCreateEANBarCode(string itemcode,Boolean addtoitem)
 begin
   record INVc INr;
@@ -556,6 +557,7 @@ begin
     RecordCopy(oldINr,INr);
     variety = Right(itemcode,len(itemcode)-len(INr.Code));
     CreateEANBarCode(INr,variety,Barcoder);
+    logtext(0,"DoCreateEANBarCode " & Barcoder.Barcode);
     if (addtoitem) then begin
       if (RecordUpdate(oldINr,INr,false)==0) then begin
       end;

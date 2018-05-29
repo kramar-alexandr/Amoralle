@@ -1,3 +1,8 @@
+external inner updating procedure DoCreateEANBarCode(string,Boolean);
+external inner function Boolean FindItemVAR2(string,var string,var string,var string);
+external inner procedure ExtractObj(string,var Integer,var string);
+
+
 //<halrule>server-only</halrule>
 //payout-21; auth: edz
 event startup
@@ -42,4 +47,116 @@ begin
   end;
   
   return;
+end;
+
+Global Updating Procedure CreateItemsBarcode_BPI(record RcVc RepSpec)
+begin
+	record INVc INr;
+	boolean TrHs;
+	string 255 varsitemcode,itemsize,mask,subsets,location,tstr,ostr;
+	array string 255 sub;
+	integer i,sbcnt,j,k,pos,f1cnt,f2cnt,f3cnt;
+	string 1 c;
+	array string 200 f1array,f2array,f3array;
+
+	INr.Code = "";
+	if(nonblank(RepSpec.f1))then begin
+		INr.Code = RepSpec.f1;
+	end;
+	TrHs = true;
+	while(loopmain(INr,1,TrHs))begin
+		if(nonblank(RepSpec.f1) and RepSpec.f1!=INr.Code)then begin TrHs = false; end;
+		
+		if(TrHs)then begin
+			itemsize = "";
+			mask = "";
+			subsets = "";
+			f3cnt = 0;
+			f2cnt = 0;
+			f1cnt = 0;
+			if(FindItemVAR2(INr.Code,itemsize,mask,subsets))then begin
+				tstr = "";
+				for(i=0;i<len(subsets);i=i+1)begin
+					c = mid(subsets,i,1);
+					if(c==";")then begin
+						sub[sbcnt] = tstr;
+						pos = 0;
+						f1cnt = 0;
+						ExtractObj(tstr,pos,ostr);
+						while(nonblank(ostr))begin
+							if(nonblank(ostr))then begin
+								f1array[f1cnt] = ostr;
+								f1cnt = f1cnt + 1;
+							end;
+							ExtractObj(tstr,pos,ostr);
+						end;
+						if(f2cnt>0)then begin
+							f3cnt = 0;
+							for(j=0;j<f2cnt;j=j+1)begin
+								for(k=0;k<f1cnt;k=k+1)begin
+									f3array[f3cnt] = f2array[j] & "." & f1array[k];
+									f3cnt = f3cnt + 1;
+								end;
+							end;
+							f2cnt = 0;
+							for(j=0;j<f3cnt;j=j+1)begin
+								f2array[j] = f3array[j];
+								f2cnt = f2cnt + 1;
+							end;
+						end else begin
+							for(j=0;j<f1cnt;j=j+1)begin
+								f2array[j] = f1array[j];
+								f2cnt = f2cnt + 1;
+							end;
+						end;
+						sbcnt = sbcnt + 1;
+						tstr = "";
+					end else begin
+						tstr = tstr & c;
+					end;
+				end;
+				sub[sbcnt] = tstr;
+				pos = 0;
+				f1cnt = 0;
+				ExtractObj(tstr,pos,ostr);
+				while(nonblank(ostr))begin
+					if(nonblank(ostr))then begin
+						f1array[f1cnt] = ostr;
+						f1cnt = f1cnt + 1;
+					end;
+					ExtractObj(tstr,pos,ostr);
+				end;
+				if(f2cnt>0)then begin
+					f3cnt = 0;
+					for(j=0;j<f2cnt;j=j+1)begin
+						for(k=0;k<f1cnt;k=k+1)begin
+							f3array[f3cnt] = f2array[j] & "." & f1array[k];
+							f3cnt = f3cnt + 1;
+						end;
+					end;
+					f2cnt = 0;
+					for(j=0;j<f3cnt;j=j+1)begin
+						f2array[j] = f3array[j];
+						f2cnt = f2cnt + 1;
+					end;
+				end else begin
+					for(j=0;j<f1cnt;j=j+1)begin
+						f2array[j] = f1array[j];
+					end;
+				end;
+				sbcnt = sbcnt + 1;
+				tstr = "";
+				
+				for(i=0;i<f3cnt;i=i+1)begin
+					if(nonblank(f3array[i]))then begin
+						logtext(0,"Auto Create Barcode " & INr.Code & "." & f3array[i]);
+						DoCreateEANBarCode(INr.Code & "." & f3array[i],false);
+					end;
+				end;
+				
+			end;
+		end;
+	end;
+
+return;
 end;

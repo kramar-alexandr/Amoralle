@@ -241,3 +241,16 @@ begin
   SearchField("Search");
   EndWindow;
 end;
+
+window CreateItemsBarcode_BPIVClass:1// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 28 05 2018 16:38:29
+  wtag("language","ENG"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real v,vs,h,vm;
+
+  WindowBegin("Generate Barcodes for all items",CreateItemsBarcode_BPIVClass,CGMnt,RcType);
+  SetWRect(20,80,350,240);
+  	EditField(h=100,v=30,150,"Code",Normal,f1,false,INSClass);
+  EndWindow;
+
+  return;
+end;

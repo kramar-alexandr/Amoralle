@@ -1664,7 +1664,6 @@ begin
   wclass = GetWindowClass(wn);
   actfield = WindowActiveField(wn);
   FingVarMatrxEntryQuantitys(wn,wclass,actfield,itemcode,avariety,varsq);
-    
   if ((blank(itemcode)) or 
       (wclass=="VARMaskTClass") or 
       (wclass=="AvailVarsRClass")) then begin goto LPrepareAndOpenMatVARWind; end;//list of all windows where paste variety should not work, C - code!
