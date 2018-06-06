@@ -1243,3 +1243,90 @@ begin
   end;
   EndWindow;
 end;
+
+window CCatDClass:2
+  wtag("language","ENG"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h2,v,vs;
+  WindowBegin("Customer Category",CCatDClass,CGview,-);
+  SetWRect(64,80,600,330);
+  UseView(CCatVc);
+  v = 6; vs = 20; h = 100;
+  if (IsEnterprise) then begin
+    Tile(0,90,false,"",Code);
+    EditField(h,v, 70,"Code",Normal,Code,false,0);
+    EditField(h,v+=vs,-40,"Description",Normal,Comment,false,0);
+    if (StandardHansa==false) then begin
+      EditField(h,v+=vs,-40,"Class. Types",Normal,ClassType,false,CTypeSClass);
+    end;
+    TileButton(1,"Pricing");
+    TileButton(2,"Accounts");
+    if (StandardHansa==false) then begin
+      TileButton(3,"Web");
+    end;
+    if (HasCharts) then begin
+      TileButton(4,"BI");
+    end;
+    Tile(1,110,false,"1",PLCode);
+    v = 6; h = 200;
+    EditField(h,v,70,"Price List",Normal,PLCode,false,PLDefSClass);
+    if (HasAdvancedPricing) then begin
+      EditField(h,v+=vs,70,"Discount Matrix",Normal,RebCode,false,RebSClass);
+    end;
+    EditField(h,v+=vs,55,"Down Payment Percentage",Normal,DownPayPerc,false,0);
+    if (HasItemClassification) then begin
+      EditField(h,v+=vs,55,"Main Item Classification",Normal,MainDispGroup,false,DISClass);
+    end;
+    if (StandardHansa==false) then begin
+      EditField(h,v+=vs,55,"Web Order Class",Normal,WebOrderClass,false,OrderClassSClass);
+    end;
+    EditField(h,v+=vs ,150,"Objects",Normal,BPIObjects,false,ObjSClass);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 6 June 2018 11:46:29
+
+//##  EditField(h,v+=vs ,70, "Commission Matrix",Normal,ComCode,false,ComSClass);
+    Tile(2,130,false,"2",ARAcc);
+    v = 6; h = 200;
+    EditField(h,v ,55,"Debtors Account",Normal,ARAcc,false,AccSClass);
+    EditField(h,v+=vs,55,"Bad Debtors Account",Normal,BadARAcc,false,AccSClass);
+    EditField(h,v+=vs,55,"Debtors On Account A/C",Normal,OnAccAcc,false,AccSClass);
+    EditField(h,v+=vs,55,"Creditors Account",Normal,AccAP,false,AccSClass);
+    EditField(h,v+=vs,55,"Creditors On Account A/C",Normal,OnAccAccAP,false,AccSClass);
+    
+    if (StandardHansa==false) then begin
+      Tile(3,50,false,"3",WebDisplays);
+      v = 6;
+      EditField(h,v,55,"Display on the Web",Normal,WebDisplays,false,WebDisplaySClass);
+      EditField(h,v+=vs,55,"Web Tag/Object Type",Normal,WebOTCode,false,OTSClass);
+    end;
+    if (HasCharts) then begin
+      Tile(4,400,false,"4",-);
+      ChartArea(10,6,-10,390,"$CCATDCLass_BIChart");
+    end;
+  end else begin
+    SetWRect(64,80,509,200);
+    UseView(CCatVc);
+    v = 10; vs = 20; h = 130; h2 = 320;
+    EditField(h,v, 70,"Code",Normal,Code,false,0);
+    EditField(h,v+=vs ,-40,"Description",Normal,Comment,false,0);
+    if (HasContactClassification) then begin
+      EditField(h,v+=vs ,-40,"Class. Types",Normal,ClassType,false,CTypeSClass);
+    end;
+    if (HasPriceLists) then begin
+      EditField(h,v+=vs ,70, "Price List",Normal,PLCode,false,PLDefSClass);
+    end;
+    if (HasModNL) then begin
+      EditField(h,v+=vs ,70,"Debtors A/C",Normal,ARAcc,false,AccSClass);
+      if (HasRussianPrepayment or HasPrepayments) then begin
+        if (HasModSL) then begin
+          EditField(h,v+=vs,70,"Debtors On Acc. A/C",Normal,OnAccAcc,false,AccSClass);
+        end;
+        if (HasModPL) then begin
+          EditField(h,v+=vs,70,"Creditors On Acc. A/C",Normal,OnAccAccAP,false,AccSClass);
+        end;
+      end;
+    end;
+    if (HasAdvancedPricing) then begin
+      EditField(h,v+=vs ,70, "Discount Matrix",Normal,RebCode,false,RebSClass);
+    end;
+  end;
+  EndWindow;
+end;

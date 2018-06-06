@@ -2137,3 +2137,90 @@ begin
   end;
   EndWindow;
 end;
+
+window CCatDClass:2
+  wtag("language","LAT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,h2,v,vs;
+  WindowBegin("Klientu kategorija",CCatDClass,CGview,-);
+  SetWRect(64,80,600,330);
+  UseView(CCatVc);
+  v = 6; vs = 20; h = 100;
+  if (IsEnterprise) then begin
+  Tile(0,90,false,"",Code);
+  EditField(h,v, 70,"Kods",Normal,Code,false,0);
+  EditField(h,v+=vs,-40,"Nosaukums",Normal,Comment,false,0);
+    if (StandardHansa==false) then begin
+  EditField(h,v+=vs,-40,"Klasif.tipi",Normal,ClassType,false,CTypeSClass);
+    end;
+  TileButton(1,"Cenu veidoäana");
+  TileButton(2,"Konti");
+    if (StandardHansa==false) then begin
+  TileButton(3,"Web"); 
+    end;
+    if (HasCharts) then begin
+      TileButton(4,"BI");   
+    end;
+  Tile(1,110,false,"1",PLCode);  
+  v = 6; h = 200;
+  EditField(h,v ,70, "Cenu lapa",Normal,PLCode,false,PLDefSClass);
+  if (HasAdvancedPricing) then begin
+  EditField(h,v+=vs ,70, "Atlaiìu matrica",Normal,RebCode,false,RebSClass);
+  end;
+  EditField(h,v+=vs ,55, "Priekäapm. procenti",Normal,DownPayPerc,false,0);
+  if (HasItemClassification) then begin
+  EditField(h,v+=vs ,55, "Galveno artikulu klasifik‚cija",Normal,MainDispGroup,false,DISClass);
+  end;
+    if (StandardHansa==false) then begin
+  EditField(h,v+=vs ,55, "Interneta pasðt´jumu veids",Normal,WebOrderClass,false,OrderClassSClass);
+    end;
+  EditField(h,v+=vs ,150, "Objekti",Normal,BPIObjects,false,ObjSClass);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 6 June 2018 11:46:29
+
+//##  EditField(h,v+=vs ,70, "Commission Matrix",Normal,ComCode,false,ComSClass);
+  Tile(2,130,false,"2",ARAcc);  
+  v = 6; h = 200;
+  EditField(h,v ,55, "Debitoru konts",Normal,ARAcc,false,AccSClass);
+  EditField(h,v+=vs ,55, "áaub´go debitoru konts",Normal,BadARAcc,false,AccSClass);
+  EditField(h,v+=vs ,55, "Deb. priekäapm. konts",Normal,OnAccAcc,false,AccSClass);
+  EditField(h,v+=vs ,55, "Kred. konts",Normal,AccAP,false,AccSClass);
+  EditField(h,v+=vs ,55, "Kred. priekäapm. konts",Normal,OnAccAccAP,false,AccSClass);
+  EditField(h,v+=vs ,55, "áaub´gie debitori",Normal,RetainAcc,false,AccSClass);
+    if (StandardHansa==false) then begin
+  Tile(3,50,false,"3",WebDisplays);
+  v = 6;
+  EditField(h,v,55,"Att•lojums t´mekl´",Normal,WebDisplays,false,WebDisplaySClass);
+      EditField(h,v+=vs,55,"T´mekºa objekta tips",Normal,WebOTCode,false,OTSClass); 
+    end;
+    if (HasCharts) then begin
+      Tile(4,400,false,"4",-);  
+      ChartArea(10,6,-10,390,"$CCATDCLass_BIChart");  
+    end;
+  end else begin
+  SetWRect(64,80,509,200);
+  UseView(CCatVc);
+    v = 10; vs = 20; h = 130; h2 = 320;
+  EditField(h,v, 70,"Kods",Normal,Code,false,0);
+  EditField(h,v+=vs ,-40,"Nosaukums",Normal,Comment,false,0);
+    if (HasContactClassification) then begin
+  EditField(h,v+=vs ,-40,"Klasif. tipi",Normal,ClassType,false,CTypeSClass);
+    end;
+    if (HasPriceLists) then begin
+  EditField(h,v+=vs ,70, "Cenu lapa",Normal,PLCode,false,PLDefSClass);
+end;
+  if (HasModNL) then begin
+  EditField(h,v+=vs ,70,"Debitoru konts",Normal,ARAcc,false,AccSClass);
+      if (HasRussianPrepayment or HasPrepayments) then begin
+        if (HasModSL) then begin
+          EditField(h,v+=vs,70,"Priekäapmaksa",Normal,OnAccAcc,false,AccSClass); 
+        end;
+        if (HasModPL) then begin
+          EditField(h,v+=vs,70,"Kred. priekä. konts",Normal,OnAccAccAP,false,AccSClass); 
+        end;
+      end;
+end;
+  if (HasAdvancedPricing) then begin
+  EditField(h,v+=vs ,70, "Atlaiìu matrica",Normal,RebCode,false,RebSClass);
+    end;
+  end;
+  EndWindow;
+end;
