@@ -511,7 +511,10 @@ begin
   rwcnt = MatRowCnt(Recp);
   for (i=0;i<rwcnt;i=i+1) begin
     MatRowGet(Recp,i,Recrw);
-    if (INp.Code==Recrw.Item) then begin
+    /*if (INp.Code==Recrw.Item) then begin
+      outsum = outsum + Recrw.OutQty;
+    end;*/
+    if (rec==Recrw.Item) then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Monday, 11 June 2018 10:44:22
       outsum = outsum + Recrw.OutQty;
     end;
   end;
@@ -824,7 +827,7 @@ begin
     thedatp = deficdatp;
   end;
   curstp = -curstp;
-  if (PY_FindPlannedQty(INp,Recr,curstp,v_spec[INp.Code])) then begin
+  if (PY_FindPlannedQty(INp,Recr,curstp,v_spec[INp.Code & IHr.Variety])) then begin
     testf = true;
     if (nonblank(RepSpec.f10)) then begin
       rwcnt = MatRowCnt(Recr);
