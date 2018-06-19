@@ -45,7 +45,7 @@ window SwedbankImportLClass:1// Edit ************************** BPI Ukraine - Kr
   wtag("language","LAT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   WindowBegin("Swedbank Imports",SwedbankImportLClass,CGmlist,-);
-  SetWRect(20,80,1200,355);
+  SetWRect(20,80,1300,355);
   Sizeable(-1,-1,0,0);
   SpawnClass(SwedbankImportDClass);
   UseView(SwedbankImportVc);
@@ -57,6 +57,8 @@ begin
   RlCol(350,350,"IBAN",IBAN,false);
   RlCol(460,460,"Name",RecName,false);
   RlCol(660,660,"Cmt",Ustrd,false);
+  RlCol(-340,-340,"PayType",PayType,false);
+  RlCol(-280,-280,"OrgId",OrgId,false);
   RlColKey(-180,-180,"D/C",CdtDbtInd,false,CdtDbtInd);
   RlCol(-130,-130,"Ammount",AmtCcy,false);
   RlCol(-60,-60,"Curncy",CurncyCode,true);
@@ -305,4 +307,23 @@ begin
   EndWindow;
 
   return;
+end;
+
+
+window BankImportSetTClass:1// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 13 June 2018 10:15:55
+  wtag("language","LAT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,v,vm,vs;
+  v = 6; vs = 20; h = 90;
+
+  WindowBegin("Amoralle - Banking Statement Import settings",BankImportSetTClass,CGSbl,-);
+  SetWRect(20,80,400,480);
+  SetBlid(BankImportSetBlock);
+  Sizeable(-1,-1,0,0);
+  	h = 50;
+  	CheckBox(h,v+=20,0,"Import payments",ImpPaym);
+  	CheckBox(h,v+=20,0,"Import payment orders",ImpPaymOrd);
+  	CheckBox(h,v+=20,0,"Import charges",ImpCharges);
+  EndWindow;
+
 end;

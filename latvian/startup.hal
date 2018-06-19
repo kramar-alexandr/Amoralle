@@ -4,11 +4,17 @@ begin
   SetLangMode(LangLatvian,"LAT",0);
   
   Setting("Amoralle - Iestat´jumi",PY_SettingsTClass,modSY);//payout-21; edz
-  Import("SwedBank import Statement",SwedBankImportSTIClass,SwedBankImportSTIn,modSL);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 17 April 2018 17:19:21
-	Setting("SwedBank import Statement",SwedbankImportLClass,modSL);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 18 April 2018 10:49:31
+  Import("Amoralle - SwedBank import Statement",SwedBankImportSTIClass,SwedBankImportSTIn,modSL);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 17 April 2018 17:19:21
+  Import("Amoralle - SwedBank import Statement",SwedBankImportSTIClass,SwedBankImportSTIn,modPL);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 17 April 2018 17:19:21
+	Setting("Amoralle - SwedBank import Statement",SwedbankImportLClass,modSL);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 18 April 2018 10:49:31
+	Setting("Amoralle - SwedBank import Statement",SwedbankImportLClass,modPL);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 18 April 2018 10:49:31
+
 	Setting("Amoralle - Shopify",DOLShopifyTClass,modSY); // Edit ************************** BPI Ukraine - KramarAlexandr - Monday, 23 April 2018 15:40:18
 	Setting("Amoralle - Shopify Locations",ShopifyLocLClass,modSY); // Edit ************************** BPI Ukraine - KramarAlexandr - Monday, 23 April 2018 15:40:18
 	Setting("Amoralle - Shopify Products",ShopifyProductsLClass,modSY);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 8 May 2018 14:34:22
+	Setting("Amoralle - Banking Statement Import settings",BankImportSetTClass,modSY);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 13 June 2018 10:16:15
+	Setting("Amoralle - Banking Statement Import settings",BankImportSetTClass,modSL);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 13 June 2018 10:16:15
+	Setting("Amoralle - Banking Statement Import settings",BankImportSetTClass,modPL);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 13 June 2018 10:16:15
 
 	Maintenance("Amoralle - Load Shopify Product IDs",DOLGetShopifyProdIDVClass,DOLGetShopifyProdIDMn,modSY); // Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 3 May 2018 09:47:48
 	Maintenance("Amoralle - Load Shopify Orders",DOLGetShopifyOrdersVClass,DOLGetShopifyOrdersMn,modSY); // Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 3 May 2018 09:47:48

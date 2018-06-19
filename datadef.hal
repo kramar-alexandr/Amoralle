@@ -60,6 +60,11 @@ begin
 		RecordField(Ustrd,M4Str,250,0);
 		RecordField(IPNr,M4Long,0,0);
 		RecordField(RecName,M4Str,255,0);
+		RecordField(OPNr,M4Long,0,0);
+		RecordField(OrgId,M4Code,50,0);
+		RecordField(PrvtId,M4Code,50,0);
+		RecordField(PayType,M4Str,50,0);
+
 		
 		MainKeyBegin(NtryRef,0);
   	KeySegment(NtryRef);
@@ -150,6 +155,12 @@ begin
 	RecordAddBegin(CCatVc,"BPICCatVc2");
   	RecordField(BPIObjects,M4UStr,100,ObjVc);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 6 June 2018 11:42:34
   EndRecordAdd;
+  
+  BlockBegin(BankImportSetBlock,-,"");// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 13 June 2018 10:12:18
+		RecordField(ImpPaym,M4Int,0,0);
+		RecordField(ImpPaymOrd,M4Int,0,0);
+		RecordField(ImpCharges,M4Int,0,0);
+	EndBlock;
 	
   return;
 end;
