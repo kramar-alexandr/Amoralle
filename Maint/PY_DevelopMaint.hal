@@ -78,7 +78,7 @@ begin
 				tstr = "";
 				for(i=0;i<len(subsets);i=i+1)begin
 					c = mid(subsets,i,1);
-					if(c==";")then begin
+					if(c==";" or i==len(subsets))then begin
 						sub[sbcnt] = tstr;
 						pos = 0;
 						f1cnt = 0;
@@ -141,7 +141,8 @@ begin
 					end;
 				end else begin
 					for(j=0;j<f1cnt;j=j+1)begin
-						f2array[j] = f1array[j];
+						f3array[j] = f1array[j];
+						f3cnt = f3cnt + 1;
 					end;
 				end;
 				sbcnt = sbcnt + 1;
