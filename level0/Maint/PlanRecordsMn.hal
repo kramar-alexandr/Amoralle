@@ -869,6 +869,270 @@ end;
 //:edz
 
 global
+updating function Boolean BPI_CreatePlannedRecords(record RcVc RepSpec,record INVc INp,string location,Integer ignorestock,string fritem,LongInt fror,LongInt toor,Boolean debugf,string artwvariety)
+begin
+  Boolean res;
+  record RecVc Recr;
+  record ItemHistVc IHr;
+  Boolean foundf,testf,addminlevelf;
+  val stock,ord,purch,t;
+  val curst;
+  Date lasttd;
+  Date thedat;
+  Date deficdat;
+  string 20 firstitem;
+  Integer cnt;
+  Date blankd;
+  Date newstartdat,tempdat;
+  Boolean forcecreatef,dontcreatef,ihloopf;
+  LongInt OrderNr;
+  val origcurst;
+  vector boolean vcrord;
+  //payout-20; edz:
+  vector string 255 v_spec;
+  vector boolean v_itemf;
+  record ItemStatusVc ISr;// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 26 June 2018 16:51:34
+  //:edz
+
+  UserTrace(INp.Code,M4Str);
+  
+	if (RepSpec.flags[4]!=0) then begin thedat = CurrentDate; end;
+	lasttd = RepSpec.sStartDate;
+	newstartdat = RepSpec.sStartDate;
+	addminlevelf = true;
+LBEGINCreatePlannedRecords:;
+	cnt = cnt + 1;
+//  if (cnt>100) then begin goto LCreatePlannedRecords; end;
+	stock = 0;
+	ord = 0;
+	purch = 0;
+	if (ignorestock==0) then begin
+		//Find2StockValue(INp.Code,location,stock,lasttd);
+		Find2StockValue(artwvariety,location,stock,lasttd);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 26 June 2018 17:26:41
+		if (nonblank(RepSpec.f6)) then begin
+			//Find2StockValue(INp.Code,RepSpec.f6,t,lasttd);
+			Find2StockValue(artwvariety,RepSpec.f6,t,lasttd);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 26 June 2018 17:26:50
+			stock = stock + t;
+		end;
+	end;
+	
+	curst = stock - INp.MinLevel;
+		
+	curst = Round(curst,SetRoundModeD(3)); //ProdOrderVc Qty is M4UVal, max 3 decimal places
+	if (curst==0 or (stock<INp.MinLevel and cnt>1)) then begin
+		lasttd = thedat;
+		deficdat = blankd;
+	end;
+
+	OrderNr = -1;
+	forcecreatef = false;
+	dontcreatef = false;
+	IHr.ArtCode = INp.Code;
+	IHr.TransDate = lasttd;
+	IHr.FileName = "Fut";
+	foundf = true;
+	ResetLoop(IHr);
+	while (LoopKey("FutArtFile",IHr,3,foundf)) begin
+		if (IHr.ArtCode!=INp.Code) then begin foundf = false; end;
+		if (IHr.TransDate>RepSpec.sEndDate) then begin foundf = false; end;
+		testf = true;
+		if (foundf==false) then begin testf = false; end;
+		if (IHr.Invalid!=0) then begin testf = false; end;
+		if (testf) then begin
+			if ((IHr.FileName!="Fut2ProdOrderInVc") and 
+					(IHr.FileName!="Fut2ProdOrderOutVc") and 
+					(IHr.FileName!="Fut2ProdInVc") and 
+					(IHr.FileName!="Fut2ProdOutVc") and 
+					(IHr.FileName!="Fut1POVc") and 
+					(IHr.FileName!="Fut3ORVc")) then begin testf = false; end;
+//      if (IHr.FIFO!=0) then begin testf = false; end;
+			if (nonblank(location)) then begin
+				if (location!=IHr.Location) then begin testf = false; end;
+			end;
+		end;
+		if((IHr.ArtCode & IHr.Variety)!=artwvariety)then begin testf = false; end;// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 26 June 2018 17:25:11
+		if (IHr.Invalid!=0) then begin testf = false; end;
+		if (testf) then begin
+			//payout-20; edz:
+			if (IHr.FileName=="Fut3ORVc") then begin
+				PY_GetRecipe(IHr,v_itemf,v_spec);
+			end;
+			//:edz
+			ihloopf = true;
+			thedat = IHr.TransDate;
+			if (blankdate(lasttd)) then begin lasttd = thedat; end;
+			if (curst==0) then begin
+				lasttd = thedat;
+				deficdat = blankd;
+			end;
+
+			if (forcecreatef or nonblankdate(deficdat)) then begin
+				if (forcecreatef or lasttd<=thedat) then begin
+					if (curst<0 and dontcreatef==false) then begin
+
+						//payout-20; edz:
+						if (IHr.FileName=="Fut3ORVc") then begin
+							if (!PY_CreateRecords(v_spec,IHr,RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,OrderNr)) then begin
+								goto LCreatePlannedRecords;
+							end;
+						end else begin
+						//:edz
+							if (CreateRecords(RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,OrderNr)==false) then begin
+								goto LCreatePlannedRecords;
+							end;
+						end;
+						//goto LBEGINCreatePlannedRecords;// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 26 June 2018 18:31:35
+					end;
+				end;
+			end;
+			dontcreatef = false;
+			switch (IHr.FileName) begin
+				case "Fut2ProdOrderInVc": RecalcFutProdOrd(IHr,curst,thedat,false);
+				case "Fut2ProdOrderOutVc": RecalcFutProdOrd(IHr,curst,thedat,true);
+				case "Fut2ProdInVc": RecalcFutProd(IHr,curst,thedat,false);
+				case "Fut2ProdOutVc": RecalcFutProd(IHr,curst,thedat,true);
+				case "Fut1POVc": RecalcFutPO(IHr,curst,INp.Code);
+				case "Fut3ORVc": RecalcFutOrd(IHr,curst,artwvariety);
+			end;
+
+// This routine doesn't care about "normal" transactions such as Deliveries, Goods Receipts, Stock Movements etc. 
+// The idea is that this should be run for Future Orders...
+			if (lasttd==thedat) then begin
+				if (curst<0) then begin
+					deficdat = thedat;
+				end;
+			end;
+			if (fror<0 and lasttd<=thedat) then begin// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 26 June 2018 17:48:11
+				if (curst<0) then begin
+					//payout-20; edz:
+					if (IHr.FileName=="Fut3ORVc") then begin
+						if (!PY_CreateRecords(v_spec,IHr,RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,OrderNr)) then begin
+							goto LCreatePlannedRecords;
+						end;
+					end else begin
+					//:edz
+						if (CreateRecords(RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,-1)==false) then begin
+							goto LCreatePlannedRecords;
+						end;
+					end;
+					//goto LBEGINCreatePlannedRecords;// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 26 June 2018 18:31:51
+				end;
+			end;
+			if (fror<0 and RepSpec.flags[5]!=0) then begin
+				if (curst<0) then begin
+					if (debugf) then begin
+						ExportString("E INp = " & INp.Code);
+						NewLine;
+						ExportString("E curst = " & curst);
+						NewLine;
+						ExportString("E lasttd = " & lasttd);
+						NewLine;
+						ExportString("E thedat = " & thedat);
+						NewLine;
+					end;
+					//payout-20; edz:
+					if (IHr.FileName=="Fut3ORVc") then begin
+						if (!PY_CreateRecords(v_spec,IHr,RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,OrderNr)) then begin
+							goto LCreatePlannedRecords;
+						end;
+					end else begin
+					//:edz
+						if (CreateRecords(RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,-1)==false) then begin
+							goto LCreatePlannedRecords;
+						end;
+					end;
+					//goto LBEGINCreatePlannedRecords;// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 26 June 2018 18:31:55
+				end;
+			end;
+			if (IHr.FileName=="Fut3ORVc") then begin
+				if (fror>-1) then begin
+					if (IHr.TransNr>=fror) then begin forcecreatef = true; OrderNr = IHr.TransNr; end else begin dontcreatef = true; end;
+				end;
+				if (toor>-1) then begin
+					if (IHr.TransNr>toor) then begin forcecreatef = false; dontcreatef = true; OrderNr = -1; end;
+				end;
+				if (forcecreatef) then begin
+					if (vcrord[OrderNr]==true) then begin
+						forcecreatef = false;
+						dontcreatef = true;
+					end else begin
+						vcrord[OrderNr] = true;
+					end;
+				end;
+				if (forcecreatef) then begin
+					deficdat = thedat;
+					origcurst = curst;
+					origcurst = Round(origcurst,SetRoundModeD(3));
+					curst = Round(IHr.Qty,SetRoundModeD(3));
+				end;
+			end;
+		end;
+	end;
+	if (forcecreatef or (fror<0 and nonblankdate(thedat) and curst<0)) then begin
+		if (forcecreatef) then begin
+			if (origcurst>curst) then begin
+				curst = origcurst;
+			end;
+		end;
+		if (debugf) then begin
+			ExportString("F INp = " & INp.Code);
+			NewLine;
+			ExportString("F curst = " & curst);
+			NewLine;
+			ExportString("F lasttd = " & lasttd);
+			NewLine;
+			ExportString("F thedat = " & thedat);
+			NewLine;
+		end;
+		//payout-20; edz:
+		if (v_itemf[INp.Code]) then begin
+			if (!PY_CreateRecords(v_spec,IHr,RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,OrderNr)) then begin
+				goto LCreatePlannedRecords;
+			end;
+		end else begin
+		//:edz
+			if (CreateRecords(RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,OrderNr)==false) then begin
+				goto LCreatePlannedRecords;
+			end;
+		end;
+
+		if (ihloopf==false) then begin
+			goto LCreatePlannedRecords;
+		end;
+		cnt = cnt + 1; 
+//    goto LBEGINCreatePlannedRecords;
+	end;
+LCreatePlannedRecords:;
+	res = false;
+	if (cnt>1) then begin // At least something has been ordered 
+		if (fror<0) then begin //when running per order, skip this.
+			res = true;
+	// This code is VERY odd....I don't belive it should be here... All productions and it's components are created already in this maintenance
+	// I don't understand why making this would do any good... Anyway, I won't remove it but I think the person who wrote it doesn't understand this maintenance
+			if (nonblank(v_spec[INp.Code])) then begin//payout-20; edz
+				Recr.Code = v_spec[INp.Code];//payout-20; edz
+				if (ReadFirstMain(Recr,1,true)) then begin
+					tempdat = RepSpec.sStartDate;
+					RepSpec.sStartDate = newstartdat;
+					if (debugf) then begin
+						ExportString("G Recr.Code = " & Recr.Code);
+						NewLine;
+						ExportString("G INp.Code = " & INp.Code);
+						NewLine;
+					end;
+					OrderComponents(RepSpec,Recr,INp.Code,location,firstitem,ignorestock,debugf);
+					RepSpec.sStartDate = tempdat;
+				end;
+			end;
+		end;
+	end;
+	
+  BPI_CreatePlannedRecords = res;
+  return;
+end;
+
+
+global
 updating function Boolean CreatePlannedRecords(record RcVc RepSpec,record INVc INp,string location,Integer ignorestock,string fritem,LongInt fror,LongInt toor,Boolean debugf)
 begin
   Boolean res;
@@ -891,291 +1155,55 @@ begin
   //payout-20; edz:
   vector string 255 v_spec;
   vector boolean v_itemf;
+  record ItemStatusVc ISr;// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 26 June 2018 16:51:34
+  boolean TrHs;
+  array string 100 artwvariety;
+  vector boolean artwvarietyfnd;
+  integer acnt,i;
   //:edz
 
   UserTrace(INp.Code,M4Str);
-  if (RepSpec.flags[4]!=0) then begin thedat = CurrentDate; end;
-  lasttd = RepSpec.sStartDate;
-  newstartdat = RepSpec.sStartDate;
-  addminlevelf = true;
-LBEGINCreatePlannedRecords:;
-  cnt = cnt + 1;
-//  if (cnt>100) then begin goto LCreatePlannedRecords; end;
-  stock = 0;
-  ord = 0;
-  purch = 0;
-  if (ignorestock==0) then begin
-    Find2StockValue(INp.Code,location,stock,lasttd);
-    if (nonblank(RepSpec.f6)) then begin
-      Find2StockValue(INp.Code,RepSpec.f6,t,lasttd);
-      stock = stock + t;
-    end;
-  end;
-  curst = stock - INp.MinLevel;
-  curst = Round(curst,SetRoundModeD(3)); //ProdOrderVc Qty is M4UVal, max 3 decimal places
-  if (curst==0 or (stock<INp.MinLevel and cnt>1)) then begin
-    lasttd = thedat;
-    deficdat = blankd;
-  end;
-  if (debugf) then begin
-    ExportString("P INp.Code = " & INp.Code);
-    NewLine;
-    ExportString("P location = " & location);
-    NewLine;
-    ExportString("P instock = " & curst);
-    NewLine;
-  end;  
-  OrderNr = -1;
-  forcecreatef = false;
-  dontcreatef = false;
+    
   IHr.ArtCode = INp.Code;
-  IHr.TransDate = lasttd;
+  IHr.TransDate = RepSpec.sStartDate;
   IHr.FileName = "Fut";
   foundf = true;
-  ResetLoop(IHr);
+  IHr.ArtCode = INp.Code;
   while (LoopKey("FutArtFile",IHr,3,foundf)) begin
     if (IHr.ArtCode!=INp.Code) then begin foundf = false; end;
     if (IHr.TransDate>RepSpec.sEndDate) then begin foundf = false; end;
+
     testf = true;
     if (foundf==false) then begin testf = false; end;
-    if (IHr.Invalid!=0) then begin testf = false; end;
     if (testf) then begin
       if ((IHr.FileName!="Fut2ProdOrderInVc") and 
           (IHr.FileName!="Fut2ProdOrderOutVc") and 
           (IHr.FileName!="Fut2ProdInVc") and 
           (IHr.FileName!="Fut2ProdOutVc") and 
           (IHr.FileName!="Fut1POVc") and 
-          (IHr.FileName!="Fut3ORVc")) then begin testf = false; end;
-//      if (IHr.FIFO!=0) then begin testf = false; end;
-      if (nonblank(location)) then begin
-        if (location!=IHr.Location) then begin testf = false; end;
+          (IHr.FileName!="Fut3ORVc")) then begin testf = false; 
       end;
     end;
-    if (IHr.Invalid!=0) then begin testf = false; end;
-    if (testf) then begin
-      //payout-20; edz:
-      if (IHr.FileName=="Fut3ORVc") then begin
-        PY_GetRecipe(IHr,v_itemf,v_spec);
-      end;
-      //:edz
-      ihloopf = true;
-      thedat = IHr.TransDate;
-      if (blankdate(lasttd)) then begin lasttd = thedat; end;
-      if (curst==0) then begin
-        lasttd = thedat;
-        deficdat = blankd;
-      end;
-      if (debugf) then begin
-        ExportString("A forcecreatef = " & forcecreatef);
-        NewLine;
-        ExportString("A dontcreatef = " & dontcreatef);
-        NewLine;
-        ExportString("A curst = " & curst);
-        NewLine;
-        ExportString("A deficdat = " & deficdat);
-        NewLine;
-        ExportString("A lasttd = " & lasttd);
-        NewLine;
-        ExportString("A thedat = " & thedat);
-        NewLine;
-      end;
-      if (forcecreatef or nonblankdate(deficdat)) then begin
-        if (forcecreatef or lasttd<=thedat) then begin
-          if (curst<0 and dontcreatef==false) then begin
-            if (debugf) then begin
-              ExportString("C INp = " & INp.Code);
-              NewLine;
-              ExportString("C curst = " & curst);
-              NewLine;
-              ExportString("C lasttd = " & lasttd);
-              NewLine;
-              ExportString("C thedat = " & thedat);
-              NewLine;
-            end;
-            //payout-20; edz:
-            if (IHr.FileName=="Fut3ORVc") then begin
-              if (!PY_CreateRecords(v_spec,IHr,RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,OrderNr)) then begin
-                goto LCreatePlannedRecords;
-              end;
-            end else begin
-            //:edz
-              if (CreateRecords(RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,OrderNr)==false) then begin
-                goto LCreatePlannedRecords;
-              end;
-            end;
-            goto LBEGINCreatePlannedRecords;
-          end;
-        end;
-      end;
-      dontcreatef = false;
-      switch (IHr.FileName) begin
-        case "Fut2ProdOrderInVc": RecalcFutProdOrd(IHr,curst,thedat,false);
-        case "Fut2ProdOrderOutVc": RecalcFutProdOrd(IHr,curst,thedat,true);
-        case "Fut2ProdInVc": RecalcFutProd(IHr,curst,thedat,false);
-        case "Fut2ProdOutVc": RecalcFutProd(IHr,curst,thedat,true);
-        case "Fut1POVc": RecalcFutPO(IHr,curst,INp.Code);
-        case "Fut3ORVc": RecalcFutOrd(IHr,curst,INp.Code);
-      end;
-      if (debugf) then begin
-        ExportString("Q INp = " & INp.Code);
-        NewLine;
-        ExportString("Q IHr.SerNr = " & IHr.SerNr);
-        NewLine;
-        ExportString("Q IHr.FileName = " & IHr.FileName);
-        NewLine;
-        ExportString("Q IHr.TransNr = " & IHr.TransNr);
-        NewLine;
-        ExportString("Q curst = " & curst);
-        NewLine;
-        ExportString("Q lasttd = " & lasttd);
-        NewLine;
-        ExportString("Q thedat = " & thedat);
-        NewLine;
-      end;
-// This routine doesn't care about "normal" transactions such as Deliveries, Goods Receipts, Stock Movements etc. 
-// The idea is that this should be run for Future Orders...
-      if (lasttd==thedat) then begin
-        if (curst<0) then begin
-          deficdat = thedat;
-        end;
-      end;
-      if (fror<0 and lasttd<thedat) then begin
-        if (curst<0) then begin
-          if (debugf) then begin
-            ExportString("D INp = " & INp.Code);
-            NewLine;
-            ExportString("D curst = " & curst);
-            NewLine;
-            ExportString("D lasttd = " & lasttd);
-            NewLine;
-            ExportString("D thedat = " & thedat);
-            NewLine;
-          end;
-          //payout-20; edz:
-          if (IHr.FileName=="Fut3ORVc") then begin
-            if (!PY_CreateRecords(v_spec,IHr,RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,OrderNr)) then begin
-              goto LCreatePlannedRecords;
-            end;
-          end else begin
-          //:edz
-            if (CreateRecords(RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,-1)==false) then begin
-              goto LCreatePlannedRecords;
-            end;
-          end;
-          goto LBEGINCreatePlannedRecords;
-        end;
-      end;
-      if (fror<0 and RepSpec.flags[5]!=0) then begin
-        if (curst<0) then begin
-          if (debugf) then begin
-            ExportString("E INp = " & INp.Code);
-            NewLine;
-            ExportString("E curst = " & curst);
-            NewLine;
-            ExportString("E lasttd = " & lasttd);
-            NewLine;
-            ExportString("E thedat = " & thedat);
-            NewLine;
-          end;
-          //payout-20; edz:
-          if (IHr.FileName=="Fut3ORVc") then begin
-            if (!PY_CreateRecords(v_spec,IHr,RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,OrderNr)) then begin
-              goto LCreatePlannedRecords;
-            end;
-          end else begin
-          //:edz
-            if (CreateRecords(RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,-1)==false) then begin
-              goto LCreatePlannedRecords;
-            end;
-          end;
-          goto LBEGINCreatePlannedRecords;
-        end;
-      end;
-      if (IHr.FileName=="Fut3ORVc") then begin
-        if (fror>-1) then begin
-          if (IHr.TransNr>=fror) then begin forcecreatef = true; OrderNr = IHr.TransNr; end else begin dontcreatef = true; end;
-        end;
-        if (toor>-1) then begin
-          if (IHr.TransNr>toor) then begin forcecreatef = false; dontcreatef = true; OrderNr = -1; end;
-        end;
-        if (forcecreatef) then begin
-          if (vcrord[OrderNr]==true) then begin
-            forcecreatef = false;
-            dontcreatef = true;
-          end else begin
-            vcrord[OrderNr] = true;
-          end;
-        end;
-        if (forcecreatef) then begin
-          deficdat = thedat;
-          origcurst = curst;
-          origcurst = Round(origcurst,SetRoundModeD(3));
-          curst = Round(IHr.Qty,SetRoundModeD(3));
-        end;
-      end;
+    
+    if(testf)then begin
+    	if(artwvarietyfnd[IHr.ArtCode & IHr.Variety]==false)then begin
+    		artwvariety[acnt] = IHr.ArtCode & IHr.Variety;
+    		artwvarietyfnd[IHr.ArtCode & IHr.Variety] = true;
+    		acnt = acnt + 1;
+    	end;
     end;
   end;
-  if (forcecreatef or (fror<0 and nonblankdate(thedat) and curst<0)) then begin
-    if (forcecreatef) then begin
-      if (origcurst>curst) then begin
-        curst = origcurst;
-      end;
-    end;
-    if (debugf) then begin
-      ExportString("F INp = " & INp.Code);
-      NewLine;
-      ExportString("F curst = " & curst);
-      NewLine;
-      ExportString("F lasttd = " & lasttd);
-      NewLine;
-      ExportString("F thedat = " & thedat);
-      NewLine;
-    end;
-    //payout-20; edz:
-    if (v_itemf[INp.Code]) then begin
-      if (!PY_CreateRecords(v_spec,IHr,RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,OrderNr)) then begin
-        goto LCreatePlannedRecords;
-      end;
-    end else begin
-    //:edz
-      if (CreateRecords(RepSpec,INp,curst,firstitem,location,thedat,deficdat,lasttd,newstartdat,addminlevelf,debugf,OrderNr)==false) then begin
-        goto LCreatePlannedRecords;
-      end;
-    end;
-
-    if (ihloopf==false) then begin
-      goto LCreatePlannedRecords;
-    end;
-    cnt = cnt + 1; 
-//    goto LBEGINCreatePlannedRecords;
+  
+  resetloop(IHr);
+  
+  For(i=0;i<acnt;i=i+1) begin	
+	  res = BPI_CreatePlannedRecords(RepSpec,INp,location,ignorestock,fritem,fror,toor,debugf,artwvariety[i]);
   end;
-LCreatePlannedRecords:;
-  res = false;
-  if (cnt>1) then begin // At least something has been ordered 
-    if (fror<0) then begin //when running per order, skip this.
-      res = true;
-  // This code is VERY odd....I don't belive it should be here... All productions and it's components are created already in this maintenance
-  // I don't understand why making this would do any good... Anyway, I won't remove it but I think the person who wrote it doesn't understand this maintenance
-      if (nonblank(v_spec[INp.Code])) then begin//payout-20; edz
-        Recr.Code = v_spec[INp.Code];//payout-20; edz
-        if (ReadFirstMain(Recr,1,true)) then begin
-          tempdat = RepSpec.sStartDate;
-          RepSpec.sStartDate = newstartdat;
-          if (debugf) then begin
-            ExportString("G Recr.Code = " & Recr.Code);
-            NewLine;
-            ExportString("G INp.Code = " & INp.Code);
-            NewLine;
-          end;
-          OrderComponents(RepSpec,Recr,INp.Code,location,firstitem,ignorestock,debugf);
-          RepSpec.sStartDate = tempdat;
-        end;
-      end;
-    end;
-  end;
-  CreatePlannedRecords = res;
+	
+  CreatePlannedRecords = false;// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 26 June 2018 17:45:39
   return;
 end;
+
 
 global
 updating procedure PlanRecordsMn(record RcVc RepSpec)
@@ -1209,13 +1237,13 @@ LBEGIN:;
     if (foundf==false) then begin testf = false; end;
     if (testf) then begin
       if (INr.ItemType!=1) then begin testf = false; end;
-      if (nonblank(INr.Recepy)) then begin
+      /*if (nonblank(INr.Recepy)) then begin
        //Commented out. Doesn´t create PO if this test is run
        // Delete routine at the end fixes this problem
        //  if (RepSpec.flags[1]==0) then begin testf = false; end;
       end else begin
         if (RepSpec.flags[2]==0) then begin testf = false; end;
-      end;
+      end;*/
       if (nonblank(RepSpec.f2)) then begin
         if (RepSpec.f2!=INr.Group) then begin
           testf = false;
