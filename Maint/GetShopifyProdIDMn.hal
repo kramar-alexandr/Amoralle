@@ -520,7 +520,7 @@ begin
 			DOLShopifyBl.LastTickOR = GetCurTick;
 			blockstore(DOLShopifyBl);
 			RepSpec.sStartDate = addday(currentdate,-7);
-			RepSpec.sEndDate = addday(currentdate,-7);
+			RepSpec.sEndDate = currentdate;
 			DOLGetShopifyOrdersMn(RepSpec);
 			Logtext(0,"***************Periodic task DOLGetShopifyOrdersMn");
 		end;
