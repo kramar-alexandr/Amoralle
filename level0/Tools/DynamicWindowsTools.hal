@@ -1187,6 +1187,7 @@ global
 function Integer VarietyMatMax(Integer ypos)
 begin
   Integer res;
+  
   res = ypos;
   if (GuiType==kGuiWindowsDesktop or GuiType==kGuiCocoa) then begin
     if (ypos>12) then begin
@@ -1311,8 +1312,6 @@ begin
   BlockLoad(CYb);
   compname = CYb.CompName;
 
-LogText(0,"ReadPOSButtons");
-
   GetPOSPage(windowclass,pbcode,page,POSBr);
 
 //,var record POSButtonsVc POSBr,
@@ -1325,6 +1324,8 @@ global
 function Boolean ReadNPTSWindowData(string windowclass,string pbcode,longint page,string lm,string dc,Date td,Time tt,var Boolean sof,var string bc1,var string bc2,var string compname,var record POSButtonsVc POSBr)
 begin
   ReadPOSButtons(windowclass,pbcode,page,bc1,bc2,compname,POSBr);
+  if (blank(POSBr.POSButtonGroupCode)) then begin POSBr.POSButtonGroupCode = pbcode; end;
+  if (POSBr.Page<0) then begin POSBr.Page = page; end;
   sof = IsSessionOpen(lm,dc,td,tt);
   return;
 end;
@@ -1383,6 +1384,44 @@ LCntPOSCurrencies:;
   return;
 end;
 
+procedure ShiftPaymentModes(var Array string alabel,var Array string acrncy,var Array Integer apaymenttype,var Array string apaymentmode,var Integer acnt,Integer pos)
+begin
+  Integer i;
+
+  for (i=pos;i<acnt;i=i+1) begin
+    acrncy[i] = acrncy[i+1];
+    apaymenttype[i] = apaymenttype[i+1];
+    apaymentmode[i] = apaymentmode[i+1];
+    alabel[i] = alabel[i+1];
+  end;
+  acnt = acnt - 1;
+
+  return;
+end;
+
+procedure CheckRvrsVATAndAllowCCOnly(var Array string alabel,var Array string acrncy,var Array Integer apaymenttype,var Array string apaymentmode,var Integer acnt)
+begin
+  Integer i,wn,mwn;
+  record IVCashVc IVCashr;
+
+  wn = CurWindow;
+  if (wn>0) then begin
+    mwn = MotherWindow(wn);
+    if (GetWindowFileName(mwn)=="IVCashVc") then begin
+      GetWindowRecord(mwn,IVCashr);
+      if (IVCashr.RvrsVAT>0) then begin
+        for (i=acnt-1;i>=0;i=i-1) begin
+          if (apaymenttype[i]!=kInvoiceRowTypeCreditCardPayment) then begin
+            ShiftPaymentModes(alabel,acrncy,apaymenttype,apaymentmode,acnt,i);
+          end;
+        end;
+      end;
+    end;
+  end;
+
+  return;
+end;
+
 global
 procedure CntNPTSPaymentCurrencies(var Array string alabel,var Array string acrncy,var Array Integer apaymenttype,var Array string apaymentmode,var Integer acnt)
 begin
@@ -1390,6 +1429,9 @@ begin
 
   BlockLoad(LMb);
   CntNPTSPaymentCurrenciesRemote(LMb.LocalMachineCode,alabel,acrncy,apaymenttype,apaymentmode,acnt);
+  if (HasLocalization("LVA")) then begin
+    CheckRvrsVATAndAllowCCOnly(alabel,acrncy,apaymenttype,apaymentmode,acnt);
+  end;
   return;
 end;
 
@@ -1417,7 +1459,7 @@ begin
   val q;
   
   if (IsStandardProduct) then begin
-    if (HasLocalization("FIN,NOR,SWE")==false) then begin
+    if (HasLocalization("FIN,LVA,NOR,SWE")==false) then begin
       goto LRemainingEinvoicesQuantity; 
     end;
     if (HasEInvoicing==false) then begin

@@ -840,7 +840,7 @@ window SHDClass:1
   wtag("language","ENG"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
 begin
   real h,h1,h2,h3,h4,t,v,vm,vs;
-  Integer tilenr,f,flipnr,rn;
+  Integer tilenr,f,flipnr,rn,pos;
 
   WindowBegin("Delivery",SHDClass,CGview,-);
   SetWRect(20,80,750,460);
@@ -867,9 +867,7 @@ begin
     TileButton(tilenr,"Packaging"); tilenr = tilenr + 1;
     TileButton(tilenr,"Del. Address"); tilenr = tilenr + 1;
     TileButton(tilenr,"Comment"); tilenr = tilenr + 1;
-    if (StandardHansa==false) then begin
-      TileButton(tilenr,"Freight"); tilenr = tilenr + 1;
-    end;    
+    TileButton(tilenr,"Freight"); tilenr = tilenr + 1;
   end else begin
     TileButton(tilenr,"Comment"); tilenr = tilenr + 1;
     TileButton(tilenr,"Items"); tilenr = tilenr + 1;
@@ -878,6 +876,8 @@ begin
       if (HasModIN and HasModSL) then begin 
         TileButton(tilenr,"Packaging"); tilenr = tilenr + 1;   
       end;
+    end;
+    if (HasLocalization("LTU,PRT") or BuildProductCode=="PAYYAPERP") then begin
       TileButton(tilenr,"Freight"); tilenr = tilenr + 1;
     end;
   end;
@@ -970,13 +970,15 @@ begin
   MatCol(t,-50,"Del. Qty",0,Ship,true,0);
   Flip(flipnr); flipnr = flipnr + 1;
   if (IsEnterprise==false) then begin
+    pos = -350;
     if (HasSerialNumbers) then begin
-      MatCol(1,-350,"Serial No.",0,SerialNr,false,SerialNrSClass);
+      MatCol(1,pos,"Serial No.",0,SerialNr,false,SerialNrSClass); pos = pos + 100;
+      MatCol(1,pos,"Best Before",0,BestBefore,false,0); pos = pos + 80;
     end;
     if (HasObjects) then begin
-      MatCol(1,-250,"Tags/Objects",0,Objects,false,ObjSClass);
+      MatCol(1,pos,"Tags/Objects",0,Objects,false,ObjSClass); pos = pos + 100;
     end;
-    MatCol(1,-98,"#Stock# Value",0,FIFORowVal,false,0);
+    MatCol(1,pos,"#Stock# Value",0,FIFORowVal,false,0);
     if (HasLocalization("RUS")) then begin
       Flip(flipnr); flipnr = flipnr + 1;
       MatCol(1,-230,"Unit",0,UnitCode,false,UnitSClass);
@@ -1173,12 +1175,18 @@ begin
       EditField(h2,v+=vs,80,"Plan. Arrival Time",Normal,PlanArrTime,false,PasteCurTime);      
     end;
   end;
-  if (IsEnterprise or HasLocalization("PRT,LTU")) and (StandardHansa==false) then begin
-    Tile(tilenr,130,false,tilenr,FreightCode); tilenr = tilenr + 1;
+  
+  if (IsEnterprise or HasLocalization("LTU,PRT") or BuildProductCode=="PAYYAPERP") then begin
+    if (IsStandardProduct==false or HasLocalization("PRT,LTU")==false or HasModIN==false or HasModSL==false) then begin
+      Tile(tilenr,130,false,tilenr,FreightCode); tilenr = tilenr + 1;
+      v = 6;
+    end else begin
+      v = v + vs;
+    end;
     if (IsEnterprise) then begin
       HalPushButton(473,2,600,22,"UpdateSHPackages","Define Packages");
     end;
-    EditField(h1,v=6,80,"Freight Company",Normal,FreightCode,false,FreightCompanySClass);
+    EditField(h1,v,80,"Freight Company",Normal,FreightCode,false,FreightCompanySClass);
     EditField(h1,v+=vs,-20,"Name",Normal,FreightCompany,false,0);
     EditField(h1,v+=vs,-20,"#Reg. No.#",Normal,FreightCompanyRegNr,false,0);
     EditField(h1,v+=vs,-20,"Truck Information",Normal,TruckInfo,false,0);

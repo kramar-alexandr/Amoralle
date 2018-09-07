@@ -162,5 +162,15 @@ begin
 		RecordField(ImpCharges,M4Int,0,0);
 	EndBlock;
 	
+	BlockBegin(ShopifyNewCustBlock,-,"");// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 13 June 2018 10:12:18
+		RecordField(CustCatDOM,M4Code,20,0);
+		RecordField(CustCatEU,M4Code,20,0);
+		RecordField(CustCatEXP,M4Code,20,0);
+		RecordField(Classification,M4UStr,200,0);
+		RecordField(VATNr,M4UStr,50,0);
+		RecordField(RegNr1,M4UStr,50,0);
+		RecordField(PayDeal,M4Code,50,0);
+	EndBlock;
+	
   return;
 end;

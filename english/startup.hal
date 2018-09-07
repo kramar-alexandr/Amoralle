@@ -15,6 +15,12 @@ begin
 	Setting("Amoralle - Banking Statement Import settings",BankImportSetTClass,modSY);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 13 June 2018 10:16:15
 	Setting("Amoralle - Banking Statement Import settings",BankImportSetTClass,modSL);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 13 June 2018 10:16:15
 	Setting("Amoralle - Banking Statement Import settings",BankImportSetTClass,modPL);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 13 June 2018 10:16:15
+	Setting("Amoralle - Shopify: New customer creation",ShopifyNewCustTClass,modSY);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 13 June 2018 10:16:15
+
+	Maintenance("Amoralle - Load Shopify Product IDs",DOLGetShopifyProdIDVClass,DOLGetShopifyProdIDMn,modSY); // Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 3 May 2018 09:47:48
+	Maintenance("Amoralle - Load Shopify Orders",DOLGetShopifyOrdersVClass,DOLGetShopifyOrdersMn,modSY); // Edit ************************** BPI Ukraine - KramarAlexandr - Thursday, 3 May 2018 09:47:48
+	Maintenance("Amoralle - Load Shopify Locations",DOLGetShopifyLocationsVClass,DOLGetShopifyLocationsIDMn,modSY); // Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 8 May 2018 13:52:55
+
 	
 	Maintenance("Amoralle - Generate Barcodes for items",CreateItemsBarcode_BPIVClass,CreateItemsBarcode_BPI,modIN);// Edit ************************** BPI Ukraine - KramarAlexandr - 01, 28 05 2018 16:40:25
 

@@ -1651,8 +1651,8 @@ BEGIN
   if (GetPD(PDr)) then begin
     goto LSkipMainCL;
   end;
-   IVp.PayDeal = "";
-   goto LPastePDInInv;
+  IVp.PayDeal = "";
+  goto LPastePDInInv;
 
 LSkipMainCL:;
     BlockLoad(ARAccRec);
@@ -1672,7 +1672,7 @@ LSkipMainCL:;
 //    if ((blank(IVp.PriceList)) and (nonblank(PDr.PriceList))) then begin
     if (pastepdpricelistf) then begin
 //      if (((nonblank(IVp.PriceList)) or (nonblank(PDr.PriceList))) and (IVp.PriceList!=PDr.PriceList)) then begin
-      if ((nonblank(PDr.PriceList)) and (IVp.PriceList!=PDr.PriceList)) then begin
+      if ((nonblank(PDr.PriceList)) and (IVp.PriceList!=PDr.PriceList) or (PDr.PriceList!=prevPDr.PriceList)) then begin
         IVp.PriceList = PDr.PriceList;
         if (IVp.InvType!=kInvoiceTypeCredit) and (IVp.InvType!=kInvoiceTypeCreditSpecialSales) then begin
           IVVc_PastePriceList(IVp);

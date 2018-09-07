@@ -625,6 +625,8 @@ BEGIN
   ORp.DelCountry = QTp.DelCountry;
   ORp.InvoiceToCode = QTp.InvoiceToCode;
   ORp.VATNr = QTp.VATNr;
+  ORp.RecipientGLN = QTp.RecipientGLN;
+  ORp.DelRecipientGLN = QTp.DelRecipientGLN;
   ORp.RvrsVAT = QTp.RvrsVAT;
   ORp.Phone = QTp.Phone;
   ORp.Fax = QTp.Fax;
@@ -652,12 +654,16 @@ BEGIN
       ORp.VATNr = CUr.VATNr;
       ORp.Phone = CUr.Phone;
       ORp.Fax = CUr.Fax;
-      ORp.RecipientGLN = CUr.RecipientGLN;
+      if (blank(ORp.RecipientGLN)) then begin
+        ORp.RecipientGLN = CUr.RecipientGLN;
+      end;
     end;
   end else begin
     CUr.Code = QTp.CustCode;
     if (ReadFirstMain(CUr,1,true)) then begin
-      ORp.RecipientGLN = CUr.RecipientGLN;
+      if (blank(ORp.RecipientGLN)) then begin
+        ORp.RecipientGLN = CUr.RecipientGLN;
+      end;
     end;    
   end;
 
@@ -927,6 +933,7 @@ begin
   end;
   IVp.Prntdf = 0;
   IVp.RecipientGLN = QTp.RecipientGLN;
+  IVp.DelRecipientGLN = QTp.DelRecipientGLN;
   IVp.PayDeal = QTp.PayDeal;
   PastePDInInv(IVp,"",false);
   IVp.CustCat = QTp.CustCat;
@@ -1169,7 +1176,7 @@ BEGIN
   string 255 tstr;
   record QTVc oldQTr;
   
-  res = 1;
+  res = 40301;
   if (ReadFirstMain(QTp,0,true)) then begin end;  
   RecordCopy(oldQTr,QTp);
   RecordNew(IVp);
@@ -1197,7 +1204,8 @@ BEGIN
       FindNextIVVcOfficialSerialNr(IVp);
     end;
     if (RecordStore(IVp,false)) then begin //QT has changed
-//      ReadFirstMain(QTp,0,true);
+      ReadFirstMain(QTp,0,true);
+      RecordCopy(oldQTr,QTp);
       CreateRecordLink(IVp,CurrentCompany,QTp,CurrentCompany);  
       CreateRecordLink(QTp,CurrentCompany,IVp,CurrentCompany);  
       if (blankdate(QTp.RejectDate)) then begin

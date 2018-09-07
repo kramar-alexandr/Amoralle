@@ -277,3 +277,26 @@ begin
   EndWindow;
 
 end;
+
+window ShopifyNewCustTClass:1// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 13 June 2018 10:15:51
+  wtag("language","ENG"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real h,v,vm,vs;
+  v = 6; vs = 20; h = 90;
+
+  WindowBegin("Amoralle - Shopify: New customer creation",ShopifyNewCustTClass,CGSbl,-);
+  SetWRect(20,80,400,480);
+  SetBlid(ShopifyNewCustBlock);
+  Sizeable(-1,-1,0,0);
+  	h = 50;
+  	EditField(h=100,v=30,150,"CustCatDOM",Normal,CustCatDOM,false,CCatSClass);
+  	EditField(h=100,v+=vs,150,"CustCatEU",Normal,CustCatEU,false,CCatSClass);
+  	EditField(h=100,v+=vs,150,"CustCatEXP",Normal,CustCatEXP,false,CCatSClass);
+		EditField(h=100,v+=vs,150,"Classification",Normal,Classification,false,CClassSClass);
+		EditField(h=100,v+=vs,150,"VATNr",Normal,VATNr,false,0);
+		EditField(h=100,v+=vs,150,"RegNr1",Normal,RegNr1,false,0);
+		EditField(h=100,v+=vs,150,"PayDeal",Normal,PayDeal,false,PDSClass);
+
+  EndWindow;
+
+end;
