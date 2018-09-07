@@ -135,7 +135,7 @@ begin
 			CUr.Code = OrgId;
 			TrHs = true;
 			while(loopkey("Code",CUr,1,TrHs))begin
-				if(CUr.Name==cuname)then begin
+				if(CUr.Code==OrgId)then begin
 					TrHs = false;
 					cufnd = true;
 					cucode = CUr.Code;
@@ -157,9 +157,10 @@ begin
 	boolean installmentf;
 	val chk;
 	record ARVc ARr;
-	boolean TrHs;
+	boolean TrHs,testf;
 	record CUVc CUr;
 	LongInt error;
+	vector boolean invused;
 		
 	if(nonblank(cucode))then begin
 		ARr.CustCode = cucode;
@@ -175,6 +176,7 @@ begin
 						matrowput(IPr,k,IPrw);
 						PasteInvIn2IPr(IPr,k,IPr.TransDate,chk,false,installmentf);
 						matrowget(IPr,k,IPrw);
+						invused[IPrw.InvoiceNr] = true;
 						IPrw.CustName = RecName;
 						IPrw.RecCurncy = CurncyCode;
 						IPrw.BankCurncy = CurncyCode;
@@ -213,6 +215,7 @@ begin
 						matrowput(IPr,k,IPrw);
 						PasteInvIn2IPr(IPr,k,IPr.TransDate,chk,false,installmentf);
 						matrowget(IPr,k,IPrw);
+						invused[IPrw.InvoiceNr] = true;
 						IPrw.CustName = RecName;
 						IPrw.RecCurncy = CurncyCode;
 						IPrw.BankCurncy = CurncyCode;
@@ -249,6 +252,59 @@ begin
 			end;
 		end;
 		resetloop(ARr);
+		
+		if(remsum>0)then begin
+			ARr.CustCode = cucode;
+			TrHs = true;
+			while(loopkey("CustCode",ARr,1,TrHs))begin
+				testf = true;
+				if(ARr.CustCode!=cucode)then begin TrHs = false; testf = false; end;
+				if(invused[ARr.InvoiceNr]==true)then begin testf = false; end;
+							
+				if(testf)then begin
+					if(remsum>0)then begin
+						clearrow(IPr,IPrw,1);
+						IPrw.InvoiceNr = ARr.InvoiceNr;
+						matrowput(IPr,k,IPrw);
+						PasteInvIn2IPr(IPr,k,IPr.TransDate,chk,false,installmentf);
+						matrowget(IPr,k,IPrw);
+						invused[IPrw.InvoiceNr] = true;
+						IPrw.CustName = RecName;
+						IPrw.RecCurncy = CurncyCode;
+						IPrw.BankCurncy = CurncyCode;
+						IPrw.PayDate = IPr.TransDate;
+						matrowput(IPr,k,IPrw);
+						IPVc_PasteBankCurncy(IPr,k);
+						matrowget(IPr,k,IPrw);
+						if(IPrw.BankVal>=remsum)then begin
+							IPrw.BankVal = remsum;
+							IPrw.RecVal = remsum;
+							IPrw.RecCurncy = CurncyCode;
+							IPrw.BankCurncy = CurncyCode;
+							IPrw.PayDate = IPr.TransDate;
+							matrowput(IPr,k,IPrw);
+							IPVc_PasteRecVal(IPr,k);
+							matrowget(IPr,k,IPrw);
+							remsum = 0;
+						end;
+						if(IPrw.RecVal<remsum)then begin
+							IPrw.BankVal = IPrw.RecVal;
+							IPrw.RecVal = IPrw.RecVal;
+							IPrw.RecCurncy = CurncyCode;
+							IPrw.BankCurncy = CurncyCode;
+							IPrw.PayDate = IPr.TransDate;
+							matrowput(IPr,k,IPrw);
+							IPVc_PasteRecVal(IPr,k);
+							matrowget(IPr,k,IPrw);
+							remsum = remsum - IPrw.RecVal;
+						end;
+						k=k+1;
+					end;
+				end;
+			end;
+			resetloop(ARr);
+		end;
+		
 	end else begin
 		TrHs = true;
 		ARr.CustCode = "";

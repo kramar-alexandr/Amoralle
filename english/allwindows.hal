@@ -679,7 +679,7 @@ begin
   UseView(BarcodeVc);
   EditField(120,v=6,-40,"Barcode",Normal,Barcode,false,0);
   EditField(120,v+=20,-40,"Item",Normal,Itemcode,false,INSClass);
-  EditField(120,v+=20,-40,"Item without var.",Normal,OriginItemcode,false,INSClass);//payout-21; edz
+  EditField(120,v+=20,-40,"Item without var.",Normal,OrigItemcode,false,INSClass);//payout-21; edz
   EditField(120,v+=20,-40,"Customer",Normal,CustCode,false,CUSClass);
   EditField(120,v+=20,-40,"Comment",Normal,Comment,false,0);
   EndWindow;
