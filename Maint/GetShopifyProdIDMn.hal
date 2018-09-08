@@ -1,3 +1,4 @@
+//<halrule>server-only</halrule>
 external inner function Boolean PasteCustInOrder(var record ORVc,string,string,var string,var string);
 //external procedure DOLMakeWebRequest(string , string , area , var area );
 external inner function string 50 TimeToString(time,string,boolean);
@@ -13,7 +14,7 @@ external inner procedure ORSumup(var record ORVc);
 external inner procedure CUVc_PasteInvAddr(var record CUVc,Integer);//-
 external inner function Boolean CUVc_PasteName(var record CUVc);//-
 external inner procedure CUVc_PasteCountryCode(var record CUVc,string);//-
-external function Boolean GetNextCustNr(var string);
+external inner function Boolean GetNextCustNr(var string);
 
 
 global procedure DOLMakeWebRequest(string method,string apipath,var area areq,var area areply)
