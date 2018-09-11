@@ -1,3 +1,4 @@
+//<halrule>server-only</halrule>
 external inner function Boolean PasteCustInOrder(var record ORVc,string,string,var string,var string);
 //external procedure DOLMakeWebRequest(string , string , area , var area );
 external inner function string 50 TimeToString(time,string,boolean);
@@ -9,6 +10,12 @@ external inner procedure ORVc_PastePrice(var record ORVc,Integer,var Boolean);
 external inner procedure ORVc_PasteSum(var record ORVc,Integer,var Boolean);
 external inner procedure ORDchsum(var record ORVc,Integer);
 external inner procedure ORSumup(var record ORVc);
+
+external inner procedure CUVc_PasteInvAddr(var record CUVc,Integer);//-
+external inner function Boolean CUVc_PasteName(var record CUVc);//-
+external inner procedure CUVc_PasteCountryCode(var record CUVc,string);//-
+external inner function Boolean GetNextCustNr(var string);
+
 
 global procedure DOLMakeWebRequest(string method,string apipath,var area areq,var area areply)
 begin
@@ -390,6 +397,97 @@ begin
 return;
 end;
 
+global updating procedure CreateShopifyCustomer(json jdata,var record CUVc CUr,integer order)
+begin
+	record ShopifyNewCustBlock SNCb;
+	string 255 acclang,tstr;
+	record LetVc Letr;
+	record CUVc lCUr;
+	
+	blockload(SNCb);
+	
+	if(nonblank(SNCb.CustCatDOM))then begin
+		recordnew(CUr);	
+		CUr.Name = JSONGet(jdata,"orders/[" & order & "]/customer/default_address/first_name");
+		CUr.Name  = CUr.Name & " " & JSONGet(jdata,"orders/[" & order & "]/customer/default_address/last_name");
+		CUVc_PasteName(CUr);
+		CUr.InvAddr0 = JSONGet(jdata,"orders/[" & order & "]/customer/default_address/address1");//Street
+		if(nonblank(CUr.InvAddr0))then begin
+			CUVc_PasteInvAddr(CUr,0);
+		end;
+		CUr.InvAddr1 = JSONGet(jdata,"orders/[" & order & "]/customer/default_address/address2");//Street 2
+		if(nonblank(CUr.InvAddr1))then begin
+			CUVc_PasteInvAddr(CUr,1);
+		end;
+		CUr.InvAddr2 = JSONGet(jdata,"orders/[" & order & "]/customer/default_address/city");//City
+		if(nonblank(CUr.InvAddr2))then begin
+			CUVc_PasteInvAddr(CUr,2);
+		end;
+		CUr.InvAddr3 = JSONGet(jdata,"orders/[" & order & "]/customer/default_address/country");//Counrty
+		if(nonblank(CUr.InvAddr3))then begin
+			CUVc_PasteInvAddr(CUr,3);
+		end;
+		CUr.InvAddr4 = JSONGet(jdata,"orders/[" & order & "]/customer/default_address/zip");//ZIP
+		if(nonblank(CUr.InvAddr4))then begin
+			CUVc_PasteInvAddr(CUr,4);
+		end;
+		CUr.eMail = JSONGet(jdata,"orders/[" & order & "]/customer/email");
+		CUr.Phone = JSONGet(jdata,"orders/[" & order & "]/customer/default_address/phone");
+		CUr.CountryCode = JSONGet(jdata,"orders/[" & order & "]/customer/default_address/country_code");
+		CUVc_PasteCountryCode(CUr,"");
+		CUr.Comment = JSONGet(jdata,"orders/[" & order & "]/customer/default_address/company");
+	
+		switch(CUr.ExportFlag)begin
+			case 0:CUr.CustCat = SNCb.CustCatDOM;
+			case 1:CUr.CustCat = SNCb.CustCatEU;
+			case 2:CUr.CustCat = SNCb.CustCatEXP;
+			case 3:CUr.CustCat = SNCb.CustCatEU;
+			case 4:CUr.CustCat = SNCb.CustCatEXP;
+		end;
+	
+		acclang = JSONGet(jdata,"orders/[" & order & "]/client_details/accept_language");
+		acclang = acclang & "," & JSONGet(jdata,"orders/[" & order & "]/customer_locale");
+		AddToText(acclang,Letr);
+	
+		if(StringInText("en-us",Letr))then begin
+			CUr.LangCode = "ENG";
+		end;
+		if(StringInText("en",Letr))then begin
+			CUr.LangCode = "ENG";
+		end;
+		if(StringInText("lv",Letr))then begin
+			CUr.LangCode = "LAT";
+		end;
+		if(StringInText("ru",Letr))then begin
+			CUr.LangCode = "RUS";
+		end;
+
+
+		CUr.Classification = SNCb.Classification;
+		CUR.VATNr = SNCb.VATNr;
+		CUr.RegNr1 = SNCb.RegNr1;
+		CUr.PayDeal = SNCb.PayDeal;
+	
+		CUr.CustType = 1;
+		if(nonblank(CUr.Comment))then begin
+			CUr.CustType = 0;
+		end;
+		
+		if (blank(CUr.Code)) then begin
+			if (GetNextCustNr(tstr)) then begin end;
+			CUr.Code = tstr;
+			lCUr.Code = CUr.Code;
+			if (ReadFirstMain(lCUr,1,true)) then begin
+				goto LCreateCU;
+			end;
+		end;
+		
+		recordstore(CUr,true);
+	LCreateCU:;
+		logtext(0,"CreateShopifyCustomer " & CUr.Code);
+	end;
+return;
+end;
 
 global
 updating procedure DOLGetShopifyOrdersMn(record RcVc RepSpec)
@@ -408,14 +506,14 @@ begin
 	string 50 created_at;
 	record CUVc CUr;
 	string 255 warning,errstr,itemid,varid,sku;
-	boolean chsum;
+	boolean chsum,custfound;
 	
   BlockLoad(DOLShopifyBl);
   
   
   
   if (nonblank(DOLShopifyBl.APIUser) and nonblank(DOLShopifyBl.APIPass)) then begin
-  	DOLMakeWebRequest("GET","/admin/orders.json?fields=name,email,created_at,line_items,customer&status=any&created_at_min=" & DateToString(RepSpec.sStartDate,"YYYY-MM-DD") & "T00:00:00-00:00" & "&created_at_max=" & DateToString(addday(RepSpec.sEndDate,1),"YYYY-MM-DD") & "T00:00:00-00:00",a_req,a_reply);
+  	DOLMakeWebRequest("GET","/admin/orders.json?fields=name,email,created_at,line_items,customer,client_details,customer_locale&status=any&created_at_min=" & DateToString(RepSpec.sStartDate,"YYYY-MM-DD") & "T00:00:00-00:00" & "&created_at_max=" & DateToString(addday(RepSpec.sEndDate,1),"YYYY-MM-DD") & "T00:00:00-00:00",a_req,a_reply);
 		PreparePostArea(a_reply);
 		
 		//addfiletoarea("Shopify.txt",a_reply,0);
@@ -444,15 +542,24 @@ begin
 							ORr.CustCode = DOLShopifyBl.DefWebUserCode;
 							ORr.PlanShip = addday(ORr.OrdDate,DOLShopifyBl.DeliveryAfter);
 							
+							custfound = false;
 							CUr.eMail = JSONGet(jdata,"orders/[" & i & "]/customer/email");
 							if(readfirstkey("eMail",CUr,1,true))then begin
 								ORr.CustCode = CUr.Code;
+								custfound = true;
 							end else begin
 								CUr.Name = JSONGet(jdata,"orders/[" & i & "]/customer/first_name") & " " & JSONGet(jdata,"orders/[" & i & "]/customer/last_name");;
 								if(readfirstkey("Name",CUr,1,true))then begin
 									ORr.CustCode = CUr.Code;
+									custfound = true;
 								end;
 							end;
+							
+							if(custfound==false)then begin
+								CreateShopifyCustomer(jdata,CUr,i);
+								ORr.CustCode = CUr.Code;
+							end;
+							
 							PasteCustInOrder(ORr,ORr.CustCode,"",warning,errstr);
 							ORr.Addr0 = JSONGet(jdata,"orders/[" & i & "]/customer/first_name") & " " & JSONGet(jdata,"orders/[" & i & "]/customer/last_name");
 							
@@ -469,7 +576,7 @@ begin
 								matrowput(ORr,k,ORrw);
 								ORVc_PasteArtCode(ORr,k,warning,warning,false)
 								matrowget(ORr,k,ORrw);
-								ORrw.Spec = JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/title");
+								//ORrw.Spec = JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/title");
 								ORrw.Price = evaltoval(JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/price"));
 								ORrw.Quant = evaltoval(JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/quantity"));
 								ORrw.Sum = ORrw.Price * ORrw.Quant;

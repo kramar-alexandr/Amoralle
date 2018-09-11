@@ -163,6 +163,7 @@ begin
 		RecordField(ImpCharges,M4Int,0,0);
 	EndBlock;
 	
+<<<<<<< HEAD
 	
 	
 	BlockBegin(AccBlock,-,"AccBlock2");// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 11 September 2018 09:37:38
@@ -334,6 +335,17 @@ begin
 		RecordField(PhysEUVAT,M4Code,20,0);
 		RecordField(PhysExpVAT,M4Code,20,0);
   EndRecordAdd;*/
+=======
+	BlockBegin(ShopifyNewCustBlock,-,"");// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 13 June 2018 10:12:18
+		RecordField(CustCatDOM,M4Code,20,0);
+		RecordField(CustCatEU,M4Code,20,0);
+		RecordField(CustCatEXP,M4Code,20,0);
+		RecordField(Classification,M4UStr,200,0);
+		RecordField(VATNr,M4UStr,50,0);
+		RecordField(RegNr1,M4UStr,50,0);
+		RecordField(PayDeal,M4Code,50,0);
+	EndBlock;
+>>>>>>> 3b5ec1c067846d95ce2db3c32fd79fd9987b979c
 	
   return;
 end;

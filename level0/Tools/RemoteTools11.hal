@@ -908,6 +908,7 @@ begin
     goto LPasteCust2InInv;
   end;
   end;
+
   BlockLoad(GOb);
   BlockLoad(CLb);
   if ((efstr!=IVp.CustCode) and (nonblank(efstr))) then begin

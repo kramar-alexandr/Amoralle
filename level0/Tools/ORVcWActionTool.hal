@@ -1087,7 +1087,7 @@ BEGIN
   record CCatVc CCatr;
   Boolean limitdaysf;
   string 5 oldpricelist,oldvatcode,oldcurrency;
-
+  
   warning = "";
   errstr = "";
   if ((efstr!=custcode) and (nonblank(efstr))) then begin
@@ -1189,7 +1189,7 @@ BEGIN
     ORp.Phone = CUr.Phone;
     ORp.Fax = CUr.Fax;
     ORVc_GetPriceList(ORp);
-    ORp.DelRecipientGLN = CUr.RecipientGLN;
+//    ORp.DelRecipientGLN = CUr.RecipientGLN;  //why ? it is already pasted above
     ORp.VATNr = CUr.VATNr;
     ORp.NoTax1 = CUr.NoTax1;
     ORp.NoTax2 = CUr.NoTax2;

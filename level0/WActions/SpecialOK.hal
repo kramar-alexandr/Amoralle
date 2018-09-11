@@ -1664,6 +1664,7 @@ begin
   wclass = GetWindowClass(wn);
   actfield = WindowActiveField(wn);
   FingVarMatrxEntryQuantitys(wn,wclass,actfield,itemcode,avariety,varsq);
+    
   if ((blank(itemcode)) or 
       (wclass=="VARMaskTClass") or 
       (wclass=="AvailVarsRClass")) then begin goto LPrepareAndOpenMatVARWind; end;//list of all windows where paste variety should not work, C - code!
@@ -1707,7 +1708,8 @@ begin
       (wclass=="VARMaskTClass") or 
       (wclass=="AvailVarsRClass")) then begin goto LTestForMATVARINS; end;//list of all windows where paste variety should not work, C - code!
   BlockLoad(VBr);  
-  if (UpdateExistingVarietyRowsf) then begin   
+  if (VBr.UseInfoFromRow!=0) then begin   
+    checkvarf = true;
     if (wclass=="NPTSIVCashDClass" or ((wclass=="IVDClass" or wclass=="IVCashDClass") and TouchScreenLook)) then begin 
       checkvarf = true;
     end;
@@ -1716,7 +1718,7 @@ begin
       if (FindStringInString(varsitemcode,".")) then begin goto LTestForMATVARINS; end;
     end;  
   end else begin
-    if (ReadFirstItem(varsitemcode,INr,true,true)) then begin goto LTestForMATVARINS; end;
+    if (ReadFirstItem(varsitemcode,INr,true,true)) then begin  goto LTestForMATVARINS; end;
     if (FindStringInString(varsitemcode,".")) then begin goto LTestForMATVARINS; end;
   end;
   if (VBr.OpenVarPaste==0) then begin goto LTestForMATVARINS; end;
@@ -1743,22 +1745,25 @@ BEGIN
   wclass = GetWindowClass(wn);
   if ((blank(varsitemcode)) or 
       (wclass=="VARMaskTClass") or 
-      (wclass=="AvailVarsRClass")) then begin goto LTestForMATVARINS; end;//list of all windows where paste variety should not work, C - code!
+      (wclass=="AvailVarsRClass")) then begin goto LTestForMATVARINSLocal; end;//list of all windows where paste variety should not work, C - code!
   if (UpdateExistingVarietyRowsf) then begin 
     if (wclass=="NPTSIVCashDClass" or ((wclass=="IVDClass" or wclass=="IVCashDClass") and WindowActiveField(wn)!="Quant")) then begin 
-      if (ReadFirstItem(varsitemcode,INr,true,true)) then begin goto LTestForMATVARINS; end;
-      //if (FindStringInString(varsitemcode,".")) then begin goto LTestForMATVARINS; end;
+      if (ReadFirstItem(varsitemcode,INr,true,true)) then begin goto LTestForMATVARINSLocal; end;
+      //if (FindStringInString(varsitemcode,".")) then begin goto LTestForMATVARINSLocal; end;
     end;  
+  end else begin
+    if (ReadFirstItem(varsitemcode,INr,true,true)) then begin  goto LTestForMATVARINSLocal; end;
+    if (FindStringInString(varsitemcode,".")) then begin goto LTestForMATVARINSLocal; end;
   end;
-  if (FindItemVAR2(varsitemcode,itemsize,mask,subsets)==false) then begin goto LTestForMATVARINS; end;
+  if (FindItemVAR2(varsitemcode,itemsize,mask,subsets)==false) then begin goto LTestForMATVARINSLocal; end;
   if (GetFirstItem(varsitemcode,INr)) then begin end;
   if (ReadFirstItem(varsitemcode,INr,true,false)==false) then begin //*** ReadFirstItem(varsitemcode,INr,true,true)
-    goto LTestForMATVARINS; 
+    goto LTestForMATVARINSLocal; 
   end else begin
     SetWindowNameArg(wn,INr.Code & ":" & location);
     res = PrepareAndOpenMatVARWind(wn,INr.Code,location,itemsize,mask,subsets);
   end;
-LTestForMATVARINS:;  
+LTestForMATVARINSLocal:;  
   TestForMATVARINSLocal = res;
   RETURN;
 END;
