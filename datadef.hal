@@ -105,6 +105,7 @@ begin
 	RecordField(GetOrdFrq,M4Long,0,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Wednesday, 16 May 2018 14:49:54
 	RecordField(LastTickOR,M4Long,0,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 18 May 2018 09:26:33
 	RecordField(LastTickIN,M4Long,0,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 18 May 2018 09:26:33
+  RecordField(DeliveryAfter,M4Int,0,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 11 September 2018 09:16:26
   EndBlock;
   
   RecordAddBegin(INVc,"dol_invc");// Edit ************************** BPI Ukraine - KramarAlexandr - Friday, 18 May 2018 09:26:58
@@ -161,6 +162,178 @@ begin
 		RecordField(ImpPaymOrd,M4Int,0,0);
 		RecordField(ImpCharges,M4Int,0,0);
 	EndBlock;
+	
+	
+	
+	BlockBegin(AccBlock,-,"AccBlock2");// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 11 September 2018 09:37:38
+  CacheBlockInClient;  
+  NewAutosyncBlock(kSyncDirectionToClient);
+  RecordField(ARAcc,M4Code,10,AccVc);
+  RecordField(RndAcc,M4Code,10,AccVc);
+  RecordField(CredAcc,M4Code,10,AccVc);
+  RecordField(ERebAcc,M4Code,10,AccVc);
+  RecordField(VATBAcc,M4Code,10,AccVc);
+  RecordField(CashAcc,M4Code,10,AccVc);
+  RecordField(VATERAcc,M4Code,10,AccVc);
+  RecordField(DoCosts,M4Int,0,0);
+  RecordField(IVRef,M4Str,5,0);
+  RecordField(IPRef,M4Str,5,0);
+  RecordField(RevInclVAT,M4Int,0,0);
+  RecordField(SLAccTest,M4Int,0,0);
+  RecordField(ExtraCostAcc,M4Code,10,AccVc);
+  RecordField(RateGainAcc,M4Code,10,AccVc);
+  RecordField(RateLossAcc,M4Code,10,AccVc);
+  RecordField(RateRndOffAcc,M4Code,10,AccVc);
+  RecordField(ARUseObj,M4Int,0,0);
+  RecordField(InvUpdStock,M4Int,0,0);
+  RecordField(CredUpdStockx,M4Int,0,0); /* Not used anymore */
+  RecordField(StockAcc,M4Code,10,AccVc);
+  RecordField(PurchAcc,M4Code,10,AccVc);
+  RecordField(StockCostAcc,M4Code,10,AccVc);
+  RecordField(DomSalesAcc,M4Code,10,AccVc);
+  RecordField(EUSalesAcc,M4Code,10,AccVc);
+  RecordField(ExpSalesAcc,M4Code,10,AccVc);
+  RecordField(OnAccAcc,M4Code,10,AccVc);
+  RecordField(VATCodeDom,M4Code,10,VATCodeBlock);
+  RecordField(VATCodeEU,M4Code,10,VATCodeBlock);
+  RecordField(VATCodeExp,M4Code,10,VATCodeBlock);
+  RecordField(StockGainAcc,M4Code,10,AccVc);
+  RecordField(VATCodeCtrl,M4Int,0,0);
+  RecordField(BasePriceInclVAT,M4Int,0,0);
+  RecordField(PUExtraAcc,M4Code,10,AccVc);
+  RecordField(PUFreightAcc,M4Code,10,AccVc);
+  RecordField(PUCustomsAcc,M4Code,10,AccVc);
+  RecordField(OnAccVATAcc,M4Code,10,AccVc); 
+  RecordField(ReturnedAcc,M4Code,10,AccVc);
+  RecordField(IPBookVAT,M4Int,0,0);
+  RecordField(DiscCashVAT,M4Int,0,0);
+  RecordField(ARonTR,M4Int,0,0);
+  RecordField(EMURndOffAcc,M4Code,10,AccVc);
+  RecordField(EMUWriteOffAcc,M4Code,10,AccVc);
+  RecordField(BaseRoundOffAcc,M4Code,10,AccVc);
+  RecordField(ProdICostAcc,M4Code,10,AccVc);
+  RecordField(ProdWCostAcc,M4Code,10,AccVc);
+  RecordField(CashBackAcc,M4Code,10,AccVc);//rename to ChangeAcc
+  RecordField(DemandPPNo,M4Int,0,0);
+  RecordField(CommisionAcc,M4Code,10,AccVc);
+  RecordField(IPCostObj,M4UStr,60,ObjVc);
+  RecordField(PUCost1,M4Code,10,AccVc);
+  RecordField(PUCost2,M4Code,10,AccVc);
+  RecordField(PUCost3,M4Code,10,AccVc);
+  RecordField(PUCost4,M4Code,10,AccVc);
+  RecordField(PUCost5,M4Code,10,AccVc);
+  RecordField(UpdBaseRate,M4Int,0,0);
+  RecordField(UpdForeginRate,M4Int,0,0);
+  RecordField(CorSalesAcc,M4Int,0,0);
+  RecordField(CredInvWithNo,M4Int,0,0);
+  RecordField(ForceUniquePP,M4Int,0,0);
+  RecordField(SalesVAT,M4Code,10,AccVc);
+  RecordField(SalesTAX,M4Code,10,AccVc);
+  RecordField(BadARAcc,M4Code,10,AccVc);
+  RecordField(CredDomSalesAcc,M4Code,10,AccVc);
+  RecordField(CredEUSalesAcc,M4Code,10,AccVc);
+  RecordField(CredExpSalesAcc,M4Code,10,AccVc);
+  RecordField(CredVATCodeDom,M4Code,10,VATCodeBlock);
+  RecordField(CredVATCodeEU,M4Code,10,VATCodeBlock);
+  RecordField(CredVATCodeExp,M4Code,10,VATCodeBlock);  
+  RecordField(CredSalesAccs,M4Int,0,0);
+  RecordField(INTransferAcc,M4Code,10,AccVc);
+  RecordField(IPTransBankRowPerCU,M4Int,0,0);
+  RecordField(BankRateGainAcc,M4Code,10,AccVc);
+  RecordField(BankRateLossAcc,M4Code,10,AccVc);
+  RecordField(PreIPVATAcc,M4Code,10,AccVc); 
+  RecordField(PreIPBookVAT,M4Int,0,0);
+  RecordField(BookCreditOnPurchAcc,M4Int,0,0);
+  RecordField(ObjectonBankAcc,M4Int,0,0);
+  RecordField(NoWarnOnDupVATnoOnCU,M4Int,0,0);
+  RecordField(NoTAXonVAT,M4Int,0,0);
+  RecordField(ChronologyforInvNo,M4Int,0,0);
+  RecordField(SkipObjectsOnIVFromHeader,M4Int,0,0);
+  RecordField(VATUseObj,M4Int,0,0);
+  RecordField(IntARAcc,M4Code,10,AccVc);
+  RecordField(IntDomSalesAcc,M4Code,10,AccVc);
+  RecordField(ItemPriceVar,M4Code,10,AccVc);
+  RecordField(Cost1PriceVar,M4Code,10,AccVc);
+  RecordField(Cost2PriceVar,M4Code,10,AccVc);
+  RecordField(Cost3PriceVar,M4Code,10,AccVc);
+  RecordField(Cost4PriceVar,M4Code,10,AccVc);
+  RecordField(Cost5PriceVar,M4Code,10,AccVc);
+  RecordField(CustomsPriceVar,M4Code,10,AccVc);
+  RecordField(FreightPriceVar,M4Code,10,AccVc);
+  RecordField(BookPriceVar,M4Int,0,0);
+  RecordField(RetPUAcc,M4Code,10,AccVc);
+  RecordField(UsePUAccInRetPU,M4Int,0,0); 
+  RecordField(BookedDiscount,M4Int,0,0);
+  RecordField(DiscountAcc,M4Code,10,AccVc);
+  RecordField(NoOverPayIV,M4Int,0,0);
+  RecordField(StockLossAcc,M4Code,10,AccVc);
+  RecordField(EUStockCostAcc,M4Code,10,AccVc); 
+  RecordField(ExpStockCostAcc,M4Code,10,AccVc); 
+  RecordField(EUPurchAcc,M4Code,10,AccVc); 
+  RecordField(ExpPurchAcc,M4Code,10,AccVc); 
+  RecordField(BookVATOnlyFromDownpayment,M4Int,0,0);
+  RecordField(BookVATonRateGain,M4Int,0,0);
+  RecordField(NoAutAutoTransOnCredIV,M4Int,0,0);
+  RecordField(SetDisputedFlagsOnCredIV,M4Int,0,0);
+  RecordField(PrintNegAmountsCredNote,M4Int,0,0);
+  RecordField(DueDateBasedOnServDelDate,M4Int,0,0);
+  RecordField(NoPasteVATToIP,M4Int,0,0);
+  RecordField(DiscardedAccount,M4Code,10,AccVc);
+  RecordField(BookRateGainPerIPRow,M4Int,0,0);
+  RecordField(RndLossAcc,M4Code,10,AccVc);
+  RecordField(WriteOffLossAcc,M4Code,10,AccVc);
+  RecordField(ConsigStockAcc,M4Code,10,AccVc);
+  RecordField(ConsigPurchAcc,M4Code,10,AccVc);
+  RecordField(TotalwoTAX,M4Int,0,0);
+  RecordField(QualityControl,M4Int,0,0);
+  RecordField(SRVarAcc,M4Code,10,AccVc);
+  RecordField(BBVarAcc,M4Code,10,AccVc);
+  RecordField(InPriceVarAcc,M4Code,10,AccVc);
+  RecordField(Tax1TmpAcc,M4Code,10,AccVc);
+  RecordField(AllowItemWOCommodity,M4Int,0,0);
+  RecordField(ConnectCreditNotetoVI,M4Int,0,0);
+  RecordField(PostIVVATonVATCorr,M4Int,0,0);
+  RecordField(RetPUVar,M4Code,10,AccVc);
+  RecordField(DisassembleProdVar,M4Code,10,AccVc);
+  RecordField(DropShipCOSAccrualAcc,M4Code,10,AccVc);
+  RecordField(DropSHVar,M4Code,10,AccVc);
+  RecordField(CashSalesToFiscalControlUnit,M4Int,0,0);
+  RecordField(PostWriteOffVAT,M4Int,0,0);
+  RecordField(TaxTemplateCode,M4Code,10,TaxTemplateVc);
+  RecordField(TaxTemplateCodeEU,M4Code,10,TaxTemplateVc);
+  RecordField(TaxTemplateCodeExp,M4Code,10,TaxTemplateVc);
+  RecordField(ForexTRAcc,M4Code,10,AccVc);
+  RecordField(DisallowNegativeTotalsonSales,M4Int,0,0);
+  RecordField(DonotFPPrintRowsNegativeSum,M4Int,0,0);
+  RecordField(CalculatePerceptionTaxes,M4Int,0,0);
+  RecordField(DisallowNegativeRowSumsonSales,M4Int,0,0);
+  RecordField(EUERebAcc,M4Code,10,AccVc);
+  RecordField(ExpERebAcc,M4Code,10,AccVc);
+  RecordField(IPbeforeIVDate,M4Int,0,0);
+  RecordField(COSAccrualAcc,M4Code,10,AccVc);
+  RecordField(CheckDosageKey,M4Int,0,0);
+  RecordField(ProjMaterialsUsageAcc,M4Code,10,AccVc);
+  RecordField(BookExtraCostPerRow,M4Int,0,0);
+  RecordField(ExportFlagfromDelAddr,M4Int,0,0);
+  RecordField(RequireCreditNoteReason,M4Int,0,0);
+  RecordField(CreditIVTotNotExceedInvCheck,M4Int,0,0);
+  
+  RecordField(PhysDomSaleAcc,M4Code,20,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 11 September 2018 09:37:49
+	RecordField(PhysEUSaleAcc,M4Code,20,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 11 September 2018 09:37:49
+	RecordField(PhysExpEUSaleAcc,M4Code,20,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 11 September 2018 09:37:50
+	RecordField(PhysDomVAT,M4Code,20,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 11 September 2018 09:37:51
+	RecordField(PhysEUVAT,M4Code,20,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 11 September 2018 09:37:51
+	RecordField(PhysExpVAT,M4Code,20,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 11 September 2018 09:37:52
+  EndBlock;
+	
+	/*RecordAddBegin(AccBlock,"BPI_AccBlock");// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 11 September 2018 09:31:09
+		RecordField(PhysDomSaleAcc,M4Code,20,0);
+		RecordField(PhysEUSaleAcc,M4Code,20,0);
+		RecordField(PhysExpEUSaleAcc,M4Code,20,0);
+		RecordField(PhysDomVAT,M4Code,20,0);
+		RecordField(PhysEUVAT,M4Code,20,0);
+		RecordField(PhysExpVAT,M4Code,20,0);
+  EndRecordAdd;*/
 	
   return;
 end;

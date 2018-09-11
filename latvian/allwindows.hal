@@ -2224,3 +2224,340 @@ end;
   end;
   EndWindow;
 end;
+
+
+window AccTClass:3
+  wtag("language","LAT"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real f,h,h2,h3,h4,h5,v,vm,vs;
+  if (HasModNL or IsEnterprise) then begin
+    if (HasModSL==false) then begin
+      WindowBegin("Kontïjumu sastÇd¥‰ana realizÇcijai",AccTClass,CGSbl,-);  
+    end else begin
+  WindowBegin("Kontïjumu sastÇd¥‰ana realizÇcijai",AccTClass,CGSbl,-);
+    end;
+  end else begin
+    WindowBegin("Rï˙ina parametri",AccTClass,CGSbl,-);
+  end;
+  SetBlid(AccBlock);
+  SetWRect(20,80,885,450);
+  if (IsEnterprise) then begin
+    Sizeable(-1,-1,0,0);
+    vs = 20; h = 160; f = 70; h2 = 400; h3 = 250; h4 = 535; h5 = 520;
+  Tile(0,30,false,"",ARAcc);
+  TileButton(1,"Debitori");
+  TileButton(2,"PVN un nod.");
+  TileButton(3,"Valtas");
+  TileButton(4,"Realiz.");
+  TileButton(5,"Sales Phys.");// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 11 September 2018 09:48:08
+  TileButton(6,"Kred.");
+  Tile(1,250,false,"1",ARAcc);
+  EditField(h,vm=(v=6),f,"Debitori",Normal,ARAcc,false,AccSClass); 
+  EditField(h,v+=vs,f,"·aub¥gie debitori",Normal,BadARAcc,false,AccSClass); 
+  EditField(h,v+=vs,f,"Kase",Normal,CashAcc,false,AccSClass);
+  EditField(h,v+=vs,f,"POS atlikums",Normal,CashBackAcc,false,AccSClass);
+  EditField(h,v+=vs,f,"Priek‰apmaksas",Normal,OnAccAcc,false,AccSClass);
+  EditField(h,v+=vs,f,"Pe∫¿a no noapa∫o‰.",Normal,RndAcc,false,AccSClass);
+  EditField(h,v+=vs,f,"Zaudïj. no noapa∫o‰.",Normal,RndLossAcc,false,AccSClass);
+  if (StandardHansa==false) then begin
+    EditField(h,v+=vs,f,"Komisija",Normal,CommisionAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"Rï˙ina atlaide",Normal,DiscountAcc,false,AccSClass);
+  end;
+  v = vm;
+  if (HasObjects) then begin
+    CheckBox(h3,v,0,"Objekti debitoru kontam",ARUseObj); v = v + 16;
+  end;
+  CheckBox(h3,v,0,"Kontu kontrole",SLAccTest); 
+  CheckBox(h3,v+=16,0,"Rï˙ini izmaina nol. atlikumu",InvUpdStock); 
+  CheckBox(h3,v+=16,0,"Rï˙inu numuri grÇmatojumos",ARonTR);
+  CheckBox(h3,v+=16,0,"PÇrrï˙inÇt bÇzes valtas summu rï˙inÇ",UpdBaseRate);
+  CheckBox(h3,v+=16,0,"PÇrrï˙inÇt valtas summu rï˙inÇ",UpdForeginRate);
+  CheckBox(h3,v+=16,0,"Izlaist ieraksta konta objekt. realizÇcijas kontos",SkipObjectsOnIVFromHeader);
+  CheckBox(h3,v+=16,0,"Piepras¥t hronoloÆiju rï˙inos",ChronologyforInvNo);
+  CheckBox(h3,v+=16,0,"Izmantot kred¥trï˙inu kontus",CredSalesAccs);
+  CheckBox(h3,v+=16,0,"ObligÇts priek‰apmaksas Nr.",DemandPPNo);
+  CheckBox(h3,v+=16,0,"Ne∫aut vienÇdus priek‰apmaksas numurus",ForceUniquePP);
+  CheckBox(h3,v+=16,0,"Sadal¥t bankas kontu pa ãeka rindÇm",IPTransBankRowPerCU);
+  if (StandardHansa==false) then begin
+    CheckBox(h3,v+=16,0,"Rï˙inÇt apmaksas datumu sÇkot ar pak. snieg‰anas laiku",DueDateBasedOnServDelDate);
+  end;
+  CheckBox(h4,v=vm,0,"Objekti bankas kontiem",ObjectonBankAcc);
+  if (StandardHansa==false) then begin
+    CheckBox(h4,v+=16,0,"GrÇmatot atlaidi",BookedDiscount);
+    CheckBox(h4,v+=16,0,"Ne∫aut pÇrmaksÇt rï˙inus",NoOverPayIV);
+//      CheckBox(h4,v+=16,0,"Do not Print rows with Negative Sums to Fiscal Printer",DonotFPPrintRowsNegativeSum); //  not used anywhere in the rest of the code
+  end;
+  CheckBox(h4,v+=16,0,"Neat∫aut negat¥vas kopsummas realizÇcijÇ",DisallowNegativeTotalsonSales);
+  CheckBox(h4,v+=16,0,"Neat∫aut negat¥vas rindu summas realizÇcijÇ",DisallowNegativeRowSumsonSales);
+//    CheckBox(h4,v+=16,0,"Allow Receipt Date before Invoice Date",IPbeforeIVDate);
+//this lovely checkbox leads to totoaly incorect SL and open inv cust stat and all other reports in SL
+//comenting out
+    if (HasLocalization("BOL")) then begin   
+      CheckBox(h4,v+=16,0,"Ne∫aut veidot rï˙inu, ja Devas atslïga ir beigusies",CheckDosageKey);  
+    end;
+  Tile(2,290,false,"2",VATBAcc);
+  EditField(h,vm=(v=6),f,"No priek‰apm. apr. PVN",Normal,VATBAcc,false,AccSClass);
+    if (StandardHansa==false) then begin
+  EditField(h,v+=vs,f,"Skonto atlaides PVN",Normal,VATERAcc,false,AccSClass);
+    end;
+  EditField(h,v+=vs,f,"Rï˙. priek‰apmaksas PVN",Normal,OnAccVATAcc,false,AccSClass);//as it was in 4.2
+//  EditField(h,v+=vs,f,"Maks. priek‰apmaksas PVN",Normal,PreIPVATAcc,false,AccSClass);//no code using it 
+  EditField(h,v+=vs,f,"PVN no realizÇcijas",Normal,SalesVAT,false,AccSClass);  
+  EditField(h,v+=vs,f,"Nodok∫i no realizÇcijas",Normal,SalesTAX,false,AccSClass);
+    if (StandardHansa==false) then begin
+  EditField(h,v+=vs,f,"Iek‰ïjais PVN konts",Normal,IntARAcc,false,AccSClass);
+    end;
+  EditField(h,v+=vs,f,"Nodok∫u starpkonts",Normal,Tax1TmpAcc,false,AccSClass);
+  ButtonFrame(h3,v=vm+10,380,3,"Atsk. nod.");
+  RadioButton(h3,v   ,0,0,"Aprï˙inÇt papildu nodokli no summas ar PVN",NoTAXonVAT);
+  RadioButton(h3,v+=16,1,0,"Aprï˙inÇt papildu nodokli no summas bez PVN",NoTAXonVAT);
+  RadioButton(h3,v+=16,2,0,"Aprï˙inÇt papildu nod. no summas bez PVN un aprï˙. PVN no nod.",NoTAXonVAT);
+
+  ButtonFrame(h3,vm=(v+=40),165,3,"Cena");
+    RadioButton(h3,v    ,kBasePriceNotInclVAT,0,"Bez PVN",BasePriceInclVAT);
+    RadioButton(h3,v+=16,kBasePriceInclVATandTax,0,"Ar PVN un papildu nodokli",BasePriceInclVAT);
+    RadioButton(h3,v+=16,kBasePriceInclVAT,0,"Ar PVN",BasePriceInclVAT);
+  
+    CheckBox(h4=500,vm,0,"KopÇ, bez papildu nodok∫a",TotalwoTAX);
+
+  CheckBox(h3,vm=(v+=24),0,"PVN koda kontrole",VATCodeCtrl);
+    if (HasLocalization("PRT")==false) then begin  
+  CheckBox(h3,v+=16,0,"GrÇmatot maksÇjumu PVN",IPBookVAT);
+    end;
+    if (StandardHansa==false) then begin
+  CheckBox(h3,v+=16,0,"Gr. PVN no val. kursa svÇrst.",BookVATonRateGain);
+  CheckBox(h3,v+=16,0,"GrÇmatot PVN uz PVN koda Ieej./St.",BookCreditOnPurchAcc);
+  CheckBox(h3,v+=16,0,"GrÇmatot PVN tikai no pïcapmaksÇm",BookVATOnlyFromDownpayment);
+  CheckBox(h3,v+=16,0,"Skonto atlaide bez PVN",DiscCashVAT);
+    end;
+  CheckBox(h3,v+=16,0,"Nebr¥dinÇt par vienÇdiem PVN reÆ. Nr.",NoWarnOnDupVATnoOnCU);
+  CheckBox(h3,v+=16,0,"Neievietot PVN kodu maksÇjumÇ",NoPasteVATToIP);
+    if (HasExtTax) then begin
+  CheckBox(h3,v+=16,0,"At∫aut artikulus bez patïri¿a koda priek‰ PVN2 aprï˙ina",AllowItemWOCommodity);
+    end;
+
+  CheckBox(h4,v=vm,0,"Objekti uz PVN kontu",VATUseObj);
+    if (StandardHansa==false) then begin
+  CheckBox(h4,v+=16,0,"Apgroz¥jums ar PVN",RevInclVAT); 
+    end;
+  CheckBox(h4,v+=16,0,"GrÇmatot priek‰apm. PVN",PreIPBookVAT);
+    if (StandardHansa==false and HasLocalization("HRV,POL,RUS,SLV,SVN,SRB,UKR")) then begin
+  CheckBox(h4,v+=16,0,"Gr. rï˙. PVN uz PVN koresp. kontu",PostIVVATonVATCorr);
+     end;
+  CheckBox(h4,v+=16,0,"Gr. PVN no norakst¥‰anÇm",PostWriteOffVAT);
+    if (HasExtTax) then begin
+  CheckBox(h4,v+=16,0,"Aprï˙inÇt ienÇkuma nodok∫us",CalculatePerceptionTaxes);
+    end;
+    CheckBox(h4,v+=16,0,"PVN zona no piegÇdes adreses",ExportFlagfromDelAddr);  
+  Tile(3,150,false,"3",CredAcc);
+  h2 = 400;
+  EditField(h,v=6,f,"Pe∫¿a no norakst.",Normal,CredAcc,false,AccSClass);
+  EditField(h,v+=vs,f,"Zaudïj. no norakst.",Normal,WriteOffLossAcc,false,AccSClass);
+  EditField(h,v+=vs,f,"Valtas pe∫¿a/zaudïjumi",Normal,RateRndOffAcc,false,AccSClass);
+    if (StandardHansa==false) then begin
+  EditField(h,v+=vs,f,"EMS valtu P/Z",Normal,EMURndOffAcc,false,AccSClass);
+  EditField(h,v+=vs,f,"EMS valtu rï˙. norakst.",Normal,EMUWriteOffAcc,false,AccSClass);
+    end;
+  EditField(h,v+=vs,f,"BÇzes valtas noap.",Normal,BaseRoundOffAcc,false,AccSClass);
+  EditField(h2,v=6,f,"Ie¿ no val. kursa",Normal,RateGainAcc,false,AccSClass);
+  EditField(h2,v+=vs,f,"Zaud. no val. kursa",Normal,RateLossAcc,false,AccSClass);
+  EditField(h2,v+=vs,f,"Ie¿. no v.k. starp.",Normal,BankRateGainAcc,false,AccSClass);
+  EditField(h2,v+=vs,f,"Zaud. no v.k. starp.",Normal,BankRateLossAcc,false,AccSClass);
+  EditField(h2,v+=vs,f,"Bankas komisija",Normal,ExtraCostAcc,false,AccSClass);
+  EditField(h2,v+=vs,f,"Forex grÇm. konts",Normal,ForexTRAcc,false,AccSClass);
+  CheckBox(h,v+=24,0,"GrÇmatot ie¿ïmumus/zaudïjumus no valtas kursu svÇrst¥bÇm par katru maks. rindu",BookRateGainPerIPRow);
+  Tile(4,150,false,"4",DomSalesAcc);
+  EditField(h,v=6,f,"Vietïjais realiz. konts",Normal,DomSalesAcc,false,AccSClass);
+    EditField(h,v+=vs,f,VATZoneEditFieldLabel_LAT(1) & "ES realizÇcijas konts",Normal,EUSalesAcc,false,AccSClass);
+  EditField(h,v+=vs,f,"Årpus ES realiz. konts",Normal,ExpSalesAcc,false,AccSClass);
+  EditField(h,v+=vs,f,"Viet. Skonto atlaide",Normal,ERebAcc,false,AccSClass);
+    EditField(h,v+=vs,f,VATZoneEditFieldLabel_LAT(1) & "ES realizÇcijas konts",Normal,EUERebAcc,false,AccSClass);
+  EditField(h,v+=vs,f,"Eksporta" & " Skonto atlaide",Normal,ExpERebAcc,false,AccSClass);  
+    if (StandardHansa==false) then begin
+  CheckBox(h,v+=22,0,"ReÆistrït kases ie¿ïmumus fiskÇlajÇ uzkaites vien¥bÇ",CashSalesToFiscalControlUnit);
+    end;
+//  EditField(h,v+=vs,f,"Iek‰ïjÇ realizÇcija",Normal,IntDomSalesAcc,false,AccSClass);
+  EditField(h2,v=6,20,"Vietïjais PVN kods",Normal,VATCodeDom,false,VATCodeSClass);
+    EditField(h2,v+=vs,20,VATZoneEditFieldLabel_LAT(1) & "ES realizÇcijas konts",Normal,VATCodeEU,false,VATCodeSClass);
+  EditField(h2,v+=vs,20,"Årpus ES PVN kods",Normal,VATCodeExp,false,VATCodeSClass);  
+    if (HasTaxMatrix) then begin
+  EditField(h2=540,v=6,50,"VietïjÇ nod.veidne",Normal,TaxTemplateCode,false,TaxTemplateSClass);
+      EditField(h2,v+=vs,50,VATZoneEditFieldLabel_LAT(1) & "ES realizÇcijas konts",Normal,TaxTemplateCodeEU,false,TaxTemplateSClass);
+  EditField(h2,v+=vs,50,"Årpus ES nod.veidne",Normal,TaxTemplateCodeExp,false,TaxTemplateSClass);
+    end;
+    
+    
+			// Edit Start ---------------------------------------------- Edit Start
+//Tuesday, 11 September 2018 09:34:17
+
+	
+	Tile(5,150,false,"5",PhysDomSaleAcc);
+	EditField(h,v=6,f,"Domestic Sales A/C",Normal,PhysDomSaleAcc,false,AccSClass);
+	EditField(h,v+=vs,f,"Inside EU Sales A/C",Normal,PhysEUSaleAcc,false,AccSClass);
+	EditField(h,v+=vs,f,"Export Sales A/C",Normal,PhysExpEUSaleAcc,false,AccSClass);
+	EditField(h,v+=vs,f,"Dom. VAT Code",Normal,PhysDomVAT,false,VATCodeSClass);
+	EditField(h,v+=vs,f,"Inside EU VAT Code",Normal,PhysEUVAT,false,VATCodeSClass);
+	EditField(h,v+=vs,f,"Export VAT Code",Normal,PhysExpVAT,false,VATCodeSClass);
+	
+// Edit End ---------------------------------------------- Edit End
+	
+
+    
+    
+  Tile(6,160,false,"6",CredDomSalesAcc);
+  h2 = 400;
+  StaticText(h,v=12,"Kred¥trï˙ini",false);
+  EditField(h,vm=(v+=16),55,"Real.konts",Normal,CredDomSalesAcc,false,AccSClass);
+    EditField(h,v+=vs,55,VATZoneEditFieldLabel_LAT(1)  & "ES realizÇcijas konts",Normal,CredEUSalesAcc,false,AccSClass);
+  EditField(h,v+=vs,55,"Årpus ES real.konts",Normal,CredExpSalesAcc,false,AccSClass);
+  EditField(h2,v=vm,20,"Vietïjais PVN kods",Normal,CredVATCodeDom,false,VATCodeSClass);
+    EditField(h2,v+=vs,20,VATZoneEditFieldLabel_LAT(1) & "ES realizÇcijas konts",Normal,CredVATCodeEU,false,VATCodeSClass);
+  EditField(h2,v+=vs,20,"Årpus ES PVN kods",Normal,CredVATCodeExp,false,VATCodeSClass);  
+  CheckBox(h,v+=32,0,"Neizmantot autogrÇmatojumus kred¥trï˙iniem",NoAutAutoTransOnCredIV);
+  CheckBox(h,v+=16,0,"Aut. atz¥mït kred¥trï˙inus kÇ apspriestus",SetDisputedFlagsOnCredIV);
+    CheckBox(h,v+=16,0,"Ne∫aut kred¥trï˙inus bez numura",CredInvWithNo);
+    CheckBox(h,v+=16,0,"Piepras¥t kreditï‰anas iemeslu",RequireCreditNoteReason);
+    CheckBox(h,v+=16,0,"Kred¥trï˙ina kopïjÇ vïrt¥ba nedr¥kst pÇrsniegt rï˙ina vïrt¥bu",CreditIVTotNotExceedInvCheck);
+    CheckBox(h,v+=16,0,"Piesaist¥t kred¥trï˙inu piegÇdes rï˙inam",ConnectCreditNotetoVI);
+  CheckBox(h,v+=16,0,"Negat¥vas summas kred¥trï˙inu izdrukÇs",PrintNegAmountsCredNote);
+  end else begin
+    if (HasModNL) then begin
+  SetWRect(20,80,520,300);
+      vs = 20; h = 130; f = 70; h2 = 260; h3 = 420;
+      if (HasMultiCurrency) then begin
+        h = 150;
+      end;
+  EditField(h,vm=(v=6),f,"Debitori",Normal,ARAcc,false,AccSClass);
+      if (HasLocalization("PRT,ZWE")) then begin  
+        EditField(h,v+=vs,f,"·aub¥gs debitoru konts",Normal,BadARAcc,false,AccSClass);   
+      end;
+  EditField(h,v+=vs,f,"Kase",Normal,CashAcc,false,AccSClass);
+  EditField(h,v+=vs,f,"Noapa∫o‰ana",Normal,RndAcc,false,AccSClass);
+//      EditField(h,v+=vs,f,"Bank Fee",Normal,ExtraCostAcc,false,AccSClass); // no fee option in Std
+      if (HasModSL) then begin
+  EditField(h,v+=vs,f,"Norakst¥‰ana",Normal,CredAcc,false,AccSClass);
+//        EditField(h,v+=vs,f,"On Account",Normal,OnAccAcc,false,AccSClass);//not in stdacc
+      end;
+      if (HasMultiCurrency) then begin
+        EditField(h,v+=vs,f,"BÇzes valtas noap.",Normal,BaseRoundOffAcc,false,AccSClass);  
+        EditField(h,v+=vs,f,"Ie¿. no val. kursa",Normal,RateGainAcc,false,AccSClass);  
+        EditField(h,v+=vs,f,"Zaud. no val. kursa",Normal,RateLossAcc,false,AccSClass);  
+      end;
+/*
+  if (HasMultiCurrency) then begin
+  EditField(h,v+=vs,f,"RealizÇcijas konts",Normal,DomSalesAcc,false,AccSClass);
+  EditField(h,v+=vs,f,"ES realiz. konts",Normal,EUSalesAcc,false,AccSClass);
+  EditField(h,v+=vs,f,"Eksporta realiz. konts",Normal,ExpSalesAcc,false,AccSClass);
+  EditField(h3,v=6,20,"Vietïjais realiz. konts",Normal,VATCodeDom,false,VATCodeSClass);
+  EditField(h3,v+=vs,20,"ES PVN kods",Normal,VATCodeEU,false,VATCodeSClass);
+  EditField(h3,v+=vs,20,"Årpus ES PVN kods",Normal,VATCodeExp,false,VATCodeSClass);
+  end else begin
+*/
+      if (IsBooks and IsStandardProduct==false) then begin
+        EditField(h,v+=vs,f,"PVN (konts)",Normal,VATBAcc,false,AccSClass);  
+        EditField(h,v+=vs,f,"Bankas pakalp.",Normal,ExtraCostAcc,false,AccSClass);  
+        EditField(h,v+=vs,f,"Priek‰apmaksa",Normal,OnAccAcc,false,AccSClass);  
+      end;
+      if (HasSettlementDiscount) then begin
+        EditField(h,v+=vs,f,"Skonto atl.",Normal,ERebAcc,false,AccSClass);  
+      end;
+      if (HasRussianPrepayment or (HasLocalization("LVA") and HasPrepayments)) then begin
+        if (HasTaxMatrix==false) then begin
+        EditField(h,v+=vs,f,"Priek‰apm. PVN",Normal,OnAccVATAcc,false,AccSClass);  
+        end;
+      end;
+      if (HasSettlementDiscount) then begin
+        EditField(h,v+=vs,f,"Skonto atl. PVN",Normal,VATERAcc,false,AccSClass);  
+      end;
+      if (IsStandardProduct) then begin
+        if (HasVATZone==false) then begin
+          EditField(h,v+=vs,f,"RealizÇcija",Normal,DomSalesAcc,false,AccSClass);
+        if (HasTaxMatrix) then begin
+            EditField(h,v+=vs,50,"Nod. veid.",Normal,TaxTemplateCode,false,TaxTemplateSClass);
+        end else begin
+  EditField(h,v+=vs,20,"PVN kods",Normal,VATCodeDom,false,VATCodeSClass);
+        end;
+      end;
+      end;
+
+      if (HasRussianPrepayment or HasPrepayments) then begin
+        EditField(h,v+=vs,f,"Priek‰apm.",Normal,OnAccAcc,false,AccSClass);  
+      end;
+      if (HasLocalization("PRT")) then begin  
+        StaticText(h,v+=48,"Kred¥trï˙ini",false);  
+        CheckBox(h,v+=14,0,"Izmantot kred¥tkar‰u kontus un PVN kodus",CredSalesAccs);
+        EditField(h,v+=24,55,"Viet. real. konts",Normal,CredDomSalesAcc,false,AccSClass);  
+        EditField(h,v+=vs,20,"Viet. PVN kods",Normal,CredVATCodeDom,false,VATCodeSClass);  
+      end;
+      if (HasVATZone) then begin
+        EditField(h,vm=(v+=2*vs),f,"Vietïjais realiz. konts",Normal,DomSalesAcc,false,AccSClass);
+        EditField(h,v+=vs,f,VATZoneEditFieldLabel_LAT(1) & "ES realizÇcijas konts",Normal,EUSalesAcc,false,AccSClass);
+        EditField(h,v+=vs,f,VATZoneEditFieldLabel_LAT(2) & "ES realizÇcijas konts",Normal,ExpSalesAcc,false,AccSClass);
+        if (HasTaxMatrix) then begin
+          EditField(h2+100,v=vm,50,"Viet. nod. veidne",Normal,TaxTemplateCode,false,TaxTemplateSClass); 
+          EditField(h2+100,v+=vs,50,VATZoneEditFieldLabel_LAT(1) & "ES realizÇcijas konts",Normal,TaxTemplateCodeEU,false,TaxTemplateSClass);
+          EditField(h2+100,v+=vs,50,"Årpus ES nod.veidne",Normal,TaxTemplateCodeExp,false,TaxTemplateSClass); 
+        end else begin
+        if (HasLocalization("POL")) then begin
+          EditField(h,v+=vs,f,"Iek‰ïjais PVN konts",Normal,IntARAcc,false,AccSClass);
+        end;
+        EditField(h2+100,v=vm,20,"Viet. PVN kods",Normal,VATCodeDom,false,VATCodeSClass);
+          EditField(h2+100,v+=vs,20,VATZoneEditFieldLabel_LAT(1) & "ES realizÇcijas konts",Normal,VATCodeEU,false,VATCodeSClass);
+          EditField(h2+100,v+=vs,20,VATZoneEditFieldLabel_LAT(2) & "ES realizÇcijas konts",Normal,VATCodeExp,false,VATCodeSClass);
+        end;
+      end;
+      ButtonFrame(h2,v=22,120,2,"BÇzes cena");
+  RadioButton(h2,v,0,0,"Bez PVN",BasePriceInclVAT);
+  RadioButton(h2,v+=16,2,0,"Ar PVN",BasePriceInclVAT);
+      v = v + 24;
+      if (HasModIN) then begin
+        CheckBox(h2,v,0,"Rï˙ini izmaina nol. atlikumu",InvUpdStock); v = v + 16;
+      end;
+      if ((HasLocalization("HRV") and HasRussianPrepayment) or (HasLocalization("LVA") and HasPrepayments)) then begin
+ //       CheckBox(h2,v,0,"",IPBookVAT); v = v + 16; //we output this later
+        CheckBox(h2,v,0,"GrÇmatot priek‰apmaksas PVN",PreIPBookVAT); v = v + 16;  
+      end;
+      if (HasMultiCurrency) then begin
+        CheckBox(h2,v,0,"GrÇmatot ie¿ïmumus/zaudïjumus no valtas kursu svÇrst¥bÇm par katru maks. rindu",BookRateGainPerIPRow); v = v + 16;
+      end;
+        if (HasPrepayments) then begin 
+          CheckBox(h2,v,0,"ObligÇts priek‰apmaksas Nr.",DemandPPNo);  v = v + 16;     
+          CheckBox(h2,v,0,"Piepras¥t unikÇlu priek‰apmaksas Nr.",ForceUniquePP); v = v + 16;        
+      end;
+      if (HasLocalization("PRT")==false) then begin 
+        CheckBox(h2,v,0,"GrÇmatot maksÇjuma PVN",IPBookVAT); v = v + 16;  
+      end;
+  end else begin
+  SetWRect(64,80,470,190); 
+      vs = 20; h = 150; f = 70; h2 = 300; v = 6;
+      if (HasTaxMatrix) then begin
+        EditField(h,v,f,"Nod. veid.",Normal,TaxTemplateCode,false,TaxTemplateSClass);  
+      end else begin
+        if (HasVATZone) then begin
+          if (HasTaxMatrix) then begin
+            EditField(h,v,50,"Viet. nod. veidne",Normal,TaxTemplateCode,false,TaxTemplateSClass); 
+            EditField(h,v+=vs,60,VATZoneEditFieldLabel_LAT(1) & "Nodok∫u veidne",Normal,TaxTemplateCodeEU,false,TaxTemplateSClass); 
+            EditField(h,v+=vs,50,"Eksporta Nodok∫u veidne",Normal,TaxTemplateCodeExp,false,TaxTemplateSClass); 
+          end else begin
+            EditField(h,v,30,"Viet. PVN kods",Normal,VATCodeDom,false,VATCodeSClass); 
+            EditField(h,v+=vs,30,VATZoneEditFieldLabel_LAT(1) & "PVN kods",Normal,VATCodeEU,false,VATCodeSClass); 
+            EditField(h,v+=vs,30,VATZoneEditFieldLabel_LAT(2) & "PVN kods",Normal,VATCodeExp,false,VATCodeSClass); 
+          end;
+        end else begin
+      EditField(h,v,f,"PVN kods",Normal,VATCodeDom,false,VATCodeSClass);  
+        end;
+      end;
+      v = v + 42; 
+      ButtonFrame(h,v,120,2,"BÇzes cena");  
+  RadioButton(h,v,0,0,"Bez PVN",BasePriceInclVAT);
+  RadioButton(h,v+=16,2,0,"Ar PVN",BasePriceInclVAT);
+      if (HasModIN) then begin
+        CheckBox(h,v+=32,0,"Rï˙ini izmaina nol. atlikumu",InvUpdStock);  
+      end;
+      if (HasModSL and HasLocalization("PRT")==false) then begin 
+        CheckBox(h,v+=32,0,"Post Receipt VAT",IPBookVAT);  
+      end;
+    end;
+  end;
+  EndWindow;
+ end;

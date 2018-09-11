@@ -1330,3 +1330,335 @@ begin
   end;
   EndWindow;
 end;
+
+
+window AccTClass:3
+  wtag("language","ENG"), wtag("product","*"), wtag("productcode","*"), wtag("device","computer")
+begin
+  real f,h,h2,h3,h4,h5,v,vm,vs;
+  if (HasModNL or IsEnterprise) then begin
+    if (HasModSL==false) then begin
+      WindowBegin("Account Usage",AccTClass,CGSbl,-);
+    end else begin
+      WindowBegin("Account Usage #S/L#",AccTClass,CGSbl,-);
+    end;
+  end else begin
+    WindowBegin("Invoice Settings",AccTClass,CGSbl,-);
+  end;
+  SetBlid(AccBlock);
+  SetWRect(20,80,885,450);
+  if (IsEnterprise) then begin
+    Sizeable(-1,-1,0,0);
+    vs = 20; h = 160; f = 70; h2 = 400; h3 = 250; h4 = 535; h5 = 520;
+    Tile(0,30,false,"",ARAcc);
+    TileButton(1,"Debtors");
+    TileButton(2,"#VAT / Tax#");
+    TileButton(3,"Exchange Rate");
+    TileButton(4,"Sales");
+    TileButton(5,"Sales Phys.");// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 11 September 2018 09:48:08
+    TileButton(6,"Credit");
+    Tile(1,250,false,"1",ARAcc);
+    EditField(h,vm=(v=6),f,"Debtors",Normal,ARAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"Bad Debtors",Normal,BadARAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"Cash",Normal,CashAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"POS Change",Normal,CashBackAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"On Account A/C",Normal,OnAccAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"Round Off Gain",Normal,RndAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"Round Off Loss",Normal,RndLossAcc,false,AccSClass);
+    if (StandardHansa==false) then begin
+      EditField(h,v+=vs,f,"Commission",Normal,CommisionAcc,false,AccSClass);
+      EditField(h,v+=vs,f,"Invoice Discount",Normal,DiscountAcc,false,AccSClass);
+    end;
+    v = vm;
+    if (HasObjects) then begin
+      CheckBox(h3,v,0,"Tags/Objects on Debtors A/C",ARUseObj); v = v + 16;      
+    end;
+    CheckBox(h3,v,0,"Sub-ledger Checking",SLAccTest);
+    CheckBox(h3,v+=16,0,"Invoices Update #Stock#",InvUpdStock);
+    CheckBox(h3,v+=16,0,"I_nvoice info on #N/L# Transaction",ARonTR);
+    CheckBox(h3,v+=16,0,"Update Base Currency when Invoicing",UpdBaseRate);
+    CheckBox(h3,v+=16,0,"Update Foreign Currency when Invoicing",UpdForeginRate);
+    CheckBox(h3,v+=16,0,"Skip Header A/C Tags/Objects on Sales and COS A/C",SkipObjectsOnIVFromHeader);
+    CheckBox(h3,v+=16,0,"Force Chronology for Invoice",ChronologyforInvNo);
+    CheckBox(h3,v+=16,0,"Use Credit Sales Accounts",CredSalesAccs);
+    CheckBox(h3,v+=16,0,"Use Prepayments, not On Account",DemandPPNo);
+    CheckBox(h3,v+=16,0,"Force Unique Prepayment Numbers",ForceUniquePP);
+    CheckBox(h3,v+=16,0,"Separate Row per Receipt Row on Bank A/C",IPTransBankRowPerCU);
+    if (StandardHansa==false) then begin
+      CheckBox(h3,v+=16,0,"Calculate Due Date from Service Delivery Date",DueDateBasedOnServDelDate);
+    end;
+    CheckBox(h4,v=vm,0,"Tags/Objects on Bank A/C",ObjectonBankAcc);
+    if (StandardHansa==false) then begin
+      CheckBox(h4,v+=16,0,"Post Discount",BookedDiscount);
+      CheckBox(h4,v+=16,0,"Disallow over-receive Invoice",NoOverPayIV);
+//      CheckBox(h4,v+=16,0,"Do not Print rows with Negative Sums to Fiscal Printer",DonotFPPrintRowsNegativeSum); //  not used anywhere in the rest of the code
+    end;
+    CheckBox(h4,v+=16,0,"Disallow Negative Totals on Sales",DisallowNegativeTotalsonSales);
+    CheckBox(h4,v+=16,0,"Disallow Negative Row Sums on Sales",DisallowNegativeRowSumsonSales);
+//    CheckBox(h4,v+=16,0,"Allow Receipt Date before Invoice Date",IPbeforeIVDate);
+//this lovely checkbox leads to totoaly incorect SL and open inv cust stat and all other reports in SL
+//comenting out
+    if (HasLocalization("BOL")) then begin 
+      CheckBox(h4,v+=16,0,"Disallow create invoice if the Dosage Key has expired",CheckDosageKey);
+    end;
+    Tile(2,290,false,"2",VATBAcc);
+    EditField(h,vm=(v=6),f,"#VAT# (A/C)",Normal,VATBAcc,false,AccSClass);
+    if (StandardHansa==false) then begin
+      EditField(h,v+=vs,f,"Settl. Discount #VAT#",Normal,VATERAcc,false,AccSClass);
+    end;
+    EditField(h,v+=vs,f,"Prepayment #VAT#",Normal,OnAccVATAcc,false,AccSClass);//as it was in 4.2
+  //  EditField(h,v+=vs,f,"Prepayment #VAT#",Normal,PreIPVATAcc,false,AccSClass);//no code using it
+    EditField(h,v+=vs,f,"#VAT# on Sales Account",Normal,SalesVAT,false,AccSClass);
+    EditField(h,v+=vs,f,"Tax on Sales Account",Normal,SalesTAX,false,AccSClass);
+    if (StandardHansa==false) then begin
+      EditField(h,v+=vs,f,"Internal #VAT# A/C",Normal,IntARAcc,false,AccSClass);
+    end;
+    EditField(h,v+=vs,f,"Tax Accrual A/C",Normal,Tax1TmpAcc,false,AccSClass);
+    ButtonFrame(h3,v=vm+10,380,3,"Ext. Tax");
+    RadioButton(h3,v   ,0,0,"Calculate Ext. Tax on Sum incl. #VAT#",NoTAXonVAT);
+    RadioButton(h3,v+=16,1,0,"Calculate Ext. Tax on Sum excl. #VAT#",NoTAXonVAT);
+    RadioButton(h3,v+=16,2,0,"Calculate Ext. Tax on Sum excl. #VAT# and calculate #VAT# on Ext. Tax",NoTAXonVAT);
+
+    ButtonFrame(h3,vm=(v+=40),165,3,"Base Price");
+    RadioButton(h3,v    ,kBasePriceNotInclVAT,0,"Not Including #VAT#",BasePriceInclVAT);
+    RadioButton(h3,v+=16,kBasePriceInclVATandTax,0,"Including #VAT# and Ext. Tax",BasePriceInclVAT);
+    RadioButton(h3,v+=16,kBasePriceInclVAT,0,"Including #VAT#",BasePriceInclVAT);
+
+    CheckBox(h4=500,vm,0,"Total not including Ext. Tax",TotalwoTAX);
+
+    CheckBox(h3,vm=(v+=24),0,"#VAT# Code Control",VATCodeCtrl);
+    if (HasLocalization("PRT")==false) then begin
+      CheckBox(h3,v+=16,0,"Post Receipt #VAT#",IPBookVAT);
+    end;
+    if (StandardHansa==false) then begin
+      CheckBox(h3,v+=16,0,"Post #VAT# on Rate Gain",BookVATonRateGain);
+      CheckBox(h3,v+=16,0,"Post #VAT# of Credit Inv. to #VAT# Inp. A/C",BookCreditOnPurchAcc);
+      CheckBox(h3,v+=16,0,"Post #VAT# Only from Down Payments",BookVATOnlyFromDownpayment);
+      CheckBox(h3,v+=16,0,"Exclude #VAT# on Settl. Discount",DiscCashVAT);
+    end;
+    CheckBox(h3,v+=16,0,"No warning for duplicate #VAT Reg. No.#",NoWarnOnDupVATnoOnCU);
+    CheckBox(h3,v+=16,0,"Do not paste #VAT# Code to Receipts",NoPasteVATToIP);
+    if (HasExtTax) then begin
+      CheckBox(h3,v+=16,0,"Allow Items without Commodity Code for Tax2 Calculation",AllowItemWOCommodity);
+    end;
+
+    CheckBox(h4,v=vm,0,"Tags/Objects on #VAT# Account",VATUseObj);
+    if (StandardHansa==false) then begin
+      CheckBox(h4,v+=16,0,"Turnover Incl. #VAT#",RevInclVAT);
+    end;
+    CheckBox(h4,v+=16,0,"Post Prepayment #VAT#",PreIPBookVAT);
+    if (StandardHansa==false and HasLocalization("HRV,POL,RUS,SLV,SVN,SRB,UKR")) then begin
+      CheckBox(h4,v+=16,0,"Post Inv. #VAT# to #VAT# Corr. A/C",PostIVVATonVATCorr);
+    end;
+    CheckBox(h4,v+=16,0,"Post #VAT# from Receipts Write Offs",PostWriteOffVAT);
+    if (HasExtTax) then begin
+      CheckBox(h4,v+=16,0,"Calculate Perception Taxes",CalculatePerceptionTaxes);
+    end;
+    CheckBox(h4,v+=16,0,"#VAT# Zone from Delivery Address",ExportFlagfromDelAddr);
+    Tile(3,150,false,"3",CredAcc);
+    h2 = 400;
+    EditField(h,v=6,f,"Write Offs Gain",Normal,CredAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"Write Offs Loss",Normal,WriteOffLossAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"Rate Round Off",Normal,RateRndOffAcc,false,AccSClass);
+    if (StandardHansa==false) then begin
+      EditField(h,v+=vs,f,"EMU Rate Round Off",Normal,EMURndOffAcc,false,AccSClass);
+      EditField(h,v+=vs,f,"EMU Rate Write Off",Normal,EMUWriteOffAcc,false,AccSClass);
+    end;
+    EditField(h,v+=vs,f,"Base Currency Round Off",Normal,BaseRoundOffAcc,false,AccSClass);
+    EditField(h2,v=6,f,"Rate Gain",Normal,RateGainAcc,false,AccSClass);
+    EditField(h2,v+=vs,f,"Rate Loss",Normal,RateLossAcc,false,AccSClass);
+    EditField(h2,v+=vs,f,"Bank Rate Gain",Normal,BankRateGainAcc,false,AccSClass);
+    EditField(h2,v+=vs,f,"Bank Rate Loss",Normal,BankRateLossAcc,false,AccSClass);
+    EditField(h2,v+=vs,f,"Bank Fee",Normal,ExtraCostAcc,false,AccSClass);
+    EditField(h2,v+=vs,f,"Forex Trans. A/C",Normal,ForexTRAcc,false,AccSClass);
+    CheckBox(h,v+=24,0,"Post Rate Gain/Loss per Receipt Line",BookRateGainPerIPRow);
+    Tile(4,150,false,"4",DomSalesAcc);
+    EditField(h,v=6,f,"#Domestic# Sales A/C",Normal,DomSalesAcc,false,AccSClass);
+    EditField(h,v+=vs,f,VATZoneEditFieldLabel_ENG(1) & "Sales A/C",Normal,EUSalesAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"Export Sales A/C",Normal,ExpSalesAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"#Dom.# Settl. Discount",Normal,ERebAcc,false,AccSClass);
+    EditField(h,v+=vs,f,VATZoneEditFieldLabel_ENG(1) & " Settl. Discount",Normal,EUERebAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"Export" & " Settl. Discount",Normal,ExpERebAcc,false,AccSClass);
+    if (StandardHansa==false) then begin
+      CheckBox(h,v+=22,0,"Register Cash Sales in Fiscal Control Unit",CashSalesToFiscalControlUnit);
+    end;
+  //  EditField(h,v+=vs,f,"Internal Sales A/C",Normal,IntDomSalesAcc,false,AccSClass);
+    EditField(h2,v=6,20,"#Dom.# #VAT# Code",Normal,VATCodeDom,false,VATCodeSClass);
+    EditField(h2,v+=vs,20,VATZoneEditFieldLabel_ENG(1) & "#VAT# Code",Normal,VATCodeEU,false,VATCodeSClass);
+    EditField(h2,v+=vs,20,"Export #VAT# Code",Normal,VATCodeExp,false,VATCodeSClass);
+    if (HasTaxMatrix) then begin
+      EditField(h2=540,v=6,50,"#Dom.# Tax Temp.",Normal,TaxTemplateCode,false,TaxTemplateSClass);
+      EditField(h2,v+=vs,50,VATZoneEditFieldLabel_ENG(1) & "Tax Temp.",Normal,TaxTemplateCodeEU,false,TaxTemplateSClass);
+      EditField(h2,v+=vs,50,"Export Tax Temp.",Normal,TaxTemplateCodeExp,false,TaxTemplateSClass);
+    end;
+    // Edit Start ---------------------------------------------- Edit Start
+	//Tuesday, 11 September 2018 09:34:17
+	
+    
+    Tile(5,150,false,"5",PhysDomSaleAcc);
+    EditField(h,v=6,f,"Domestic Sales A/C",Normal,PhysDomSaleAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"Inside EU Sales A/C",Normal,PhysEUSaleAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"Export Sales A/C",Normal,PhysExpEUSaleAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"Dom. VAT Code",Normal,PhysDomVAT,false,VATCodeSClass);
+    EditField(h,v+=vs,f,"Inside EU VAT Code",Normal,PhysEUVAT,false,VATCodeSClass);
+    EditField(h,v+=vs,f,"Export VAT Code",Normal,PhysExpVAT,false,VATCodeSClass);
+    
+	// Edit End ---------------------------------------------- Edit End
+	
+    Tile(6,160,false,"6",CredDomSalesAcc);
+    h2 = 400;
+    StaticText(h,v=12,"#Credit Notes#",false);
+    EditField(h,vm=(v+=16),55,"#Domestic# Sales A/C",Normal,CredDomSalesAcc,false,AccSClass);
+    EditField(h,v+=vs,55,VATZoneEditFieldLabel_ENG(1)  & "Sales A/C",Normal,CredEUSalesAcc,false,AccSClass);
+    EditField(h,v+=vs,55,"Export Sales A/C",Normal,CredExpSalesAcc,false,AccSClass);
+    EditField(h2,v=vm,20,"#Domestic# #VAT# Code",Normal,CredVATCodeDom,false,VATCodeSClass);
+    EditField(h2,v+=vs,20,VATZoneEditFieldLabel_ENG(1) & "#VAT# Code",Normal,CredVATCodeEU,false,VATCodeSClass);
+    EditField(h2,v+=vs,20,"Export #VAT# Code",Normal,CredVATCodeExp,false,VATCodeSClass);
+    CheckBox(h,v+=32,0,"Don't use Automatic Autotransactions on #Credit Notes#",NoAutAutoTransOnCredIV);
+    CheckBox(h,v+=16,0,"Automatically set Disputed Flag on #Credit Notes#",SetDisputedFlagsOnCredIV);
+    CheckBox(h,v+=16,0,"Do not allow Credit Invoices without No.",CredInvWithNo);
+    CheckBox(h,v+=16,0,"Require #Credit Note# Reason",RequireCreditNoteReason);
+    CheckBox(h,v+=16,0,"#Credit Notes# Total value may not exceed Invoice value",CreditIVTotNotExceedInvCheck);
+    CheckBox(h,v+=16,0,"Create #Purchase Invoice# from #Credit Note#",ConnectCreditNotetoVI);
+    CheckBox(h,v+=16,0,"Negative Amounts on #Credit Notes# Printout",PrintNegAmountsCredNote);
+  end else begin
+    if (HasModNL) then begin
+      SetWRect(20,80,520,300);
+      vs = 20; h = 130; f = 70; h2 = 260; h3 = 420;
+      if (HasMultiCurrency) then begin
+        h = 150;
+      end;
+      EditField(h,vm=(v=6),f,"Debtors",Normal,ARAcc,false,AccSClass);
+      if (HasLocalization("PRT,ZWE")) then begin
+        EditField(h,v+=vs,f,"Bad Debtors",Normal,BadARAcc,false,AccSClass);
+      end;
+      EditField(h,v+=vs,f,"Cash",Normal,CashAcc,false,AccSClass);
+      EditField(h,v+=vs,f,"Round Off",Normal,RndAcc,false,AccSClass);
+//      EditField(h,v+=vs,f,"Bank Fee",Normal,ExtraCostAcc,false,AccSClass); // no fee option in Std
+      if (HasModSL) then begin
+        EditField(h,v+=vs,f,"Write Off",Normal,CredAcc,false,AccSClass);
+//        EditField(h,v+=vs,f,"On Account",Normal,OnAccAcc,false,AccSClass);//not in stdacc
+      end;
+      if (HasMultiCurrency) then begin
+        EditField(h,v+=vs,f,"Base Currency Round Off",Normal,BaseRoundOffAcc,false,AccSClass);
+        EditField(h,v+=vs,f,"Rate Gain",Normal,RateGainAcc,false,AccSClass);
+        EditField(h,v+=vs,f,"Rate Loss",Normal,RateLossAcc,false,AccSClass);
+      end;
+  /*
+    if (HasMultiCurrency) then begin
+    EditField(h,v+=vs,f,"Domestic Sales A/C",Normal,DomSalesAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"EU Sales A/C",Normal,EUSalesAcc,false,AccSClass);
+    EditField(h,v+=vs,f,"Export Sales A/C",Normal,ExpSalesAcc,false,AccSClass);
+    EditField(h3,v=6,20,"Domestic #VAT Code#",Normal,VATCodeDom,false,VATCodeSClass);
+    EditField(h3,v+=vs,20,"EU #VAT Code#",Normal,VATCodeEU,false,VATCodeSClass);
+    EditField(h3,v+=vs,20,"Export #VAT Code#",Normal,VATCodeExp,false,VATCodeSClass);
+    end else begin
+  */
+      if (IsBooks and IsStandardProduct==false) then begin
+        EditField(h,v+=vs,f,"#VAT# (A/C)",Normal,VATBAcc,false,AccSClass);
+        EditField(h,v+=vs,f,"Bank Fee",Normal,ExtraCostAcc,false,AccSClass);
+        EditField(h,v+=vs,f,"On Account",Normal,OnAccAcc,false,AccSClass);
+      end;
+      if (HasSettlementDiscount) then begin
+        EditField(h,v+=vs,f,"Settl. Discount",Normal,ERebAcc,false,AccSClass);
+      end;
+      if (HasRussianPrepayment or (HasLocalization("LVA") and HasPrepayments)) then begin
+        if (HasTaxMatrix==false) then begin
+          EditField(h,v+=vs,f,"Prepayment #VAT#",Normal,OnAccVATAcc,false,AccSClass);
+        end;
+      end;
+      if (HasSettlementDiscount) then begin
+        EditField(h,v+=vs,f,"Settl. Discount #VAT#",Normal,VATERAcc,false,AccSClass);
+      end;
+      if (IsStandardProduct) then begin
+        if (HasVATZone==false) then begin
+          EditField(h,v+=vs,f,"Sales",Normal,DomSalesAcc,false,AccSClass);
+          if (HasTaxMatrix) then begin
+            EditField(h,v+=vs,50,"Tax Temp.",Normal,TaxTemplateCode,false,TaxTemplateSClass);
+          end else begin
+            EditField(h,v+=vs,20,"#VAT# Code",Normal,VATCodeDom,false,VATCodeSClass);
+          end;
+        end;
+      end;
+  //  end;
+      if (HasRussianPrepayment or HasPrepayments) then begin
+        EditField(h,v+=vs,f,"On Account",Normal,OnAccAcc,false,AccSClass);
+      end;
+      if (HasLocalization("PRT")) then begin
+        StaticText(h,v+=48,"#Credit Notes#",false);
+        CheckBox(h,v+=14,0,"Use Credit Sales Account and #VAT# Code",CredSalesAccs);
+        EditField(h,v+=24,55,"Sales",Normal,CredDomSalesAcc,false,AccSClass);
+        EditField(h,v+=vs,20,"#VAT# Code",Normal,CredVATCodeDom,false,VATCodeSClass);
+      end;
+      if (HasVATZone) then begin
+        EditField(h,vm=(v+=2*vs),f,"#Domestic# Sales A/C",Normal,DomSalesAcc,false,AccSClass);
+        EditField(h,v+=vs,f,VATZoneEditFieldLabel_ENG(1) & " Sales A/C",Normal,EUSalesAcc,false,AccSClass);
+        EditField(h,v+=vs,f,VATZoneEditFieldLabel_ENG(2) & " Sales A/C",Normal,ExpSalesAcc,false,AccSClass);
+        if (HasTaxMatrix) then begin
+          EditField(h2+100,v=vm,50,"#Dom.# Tax Temp.",Normal,TaxTemplateCode,false,TaxTemplateSClass);
+          EditField(h2+100,v+=vs,50,VATZoneEditFieldLabel_ENG(1) & "Tax Temp.",Normal,TaxTemplateCodeEU,false,TaxTemplateSClass);
+          EditField(h2+100,v+=vs,50,"Export Tax Temp.",Normal,TaxTemplateCodeExp,false,TaxTemplateSClass);
+        end else begin
+          if (HasLocalization("POL")) then begin
+            EditField(h,v+=vs,f,"Internal #VAT# A/C",Normal,IntARAcc,false,AccSClass);
+          end;
+          EditField(h2+100,v=vm,20,"#Domestic# #VAT# Code",Normal,VATCodeDom,false,VATCodeSClass);
+          EditField(h2+100,v+=vs,20,VATZoneEditFieldLabel_ENG(1) & "#VAT# Code",Normal,VATCodeEU,false,VATCodeSClass);
+          EditField(h2+100,v+=vs,20,VATZoneEditFieldLabel_ENG(2) & "#VAT# Code",Normal,VATCodeExp,false,VATCodeSClass);
+        end;
+      end;
+      ButtonFrame(h2,v=22,120,2,"Base Price");
+      RadioButton(h2,v,0,0,"Not Including #VAT#",BasePriceInclVAT);
+      RadioButton(h2,v+=16,2,0,"Including #VAT#",BasePriceInclVAT);
+      v = v + 24;
+      if (HasModIN) then begin
+        CheckBox(h2,v,0,"Invoices Update #Stock#",InvUpdStock); v = v + 16;
+      end;
+      if ((HasLocalization("HRV") and HasRussianPrepayment) or (HasLocalization("LVA") and HasPrepayments)) then begin
+ //       CheckBox(h2,v,0,"Post Receipt #VAT#",IPBookVAT); v = v + 16; //we output this later
+        CheckBox(h2,v,0,"Post Prepayment #VAT#",PreIPBookVAT); v = v + 16;
+      end;
+      if (HasMultiCurrency) then begin
+        CheckBox(h2,v,0,"Post Rate Gain/Loss per Receipt Line",BookRateGainPerIPRow); v = v + 16;
+      end;
+      if (HasPrepayments) then begin
+        CheckBox(h2,v,0,"Use Prepayments, not On Account",DemandPPNo);  v = v + 16;    
+        CheckBox(h2,v,0,"Force Unique Prepayment Numbers",ForceUniquePP); v = v + 16;       
+      end;
+      if (HasLocalization("PRT")==false) then begin
+        CheckBox(h2,v,0,"Post Receipt #VAT#",IPBookVAT); v = v + 16;
+      end;
+    end else begin
+      SetWRect(64,80,470,190);
+      vs = 20; h = 150; f = 70; h2 = 300; v = 6;
+      if (HasTaxMatrix) then begin
+        EditField(h,v,f,"Tax Temp.",Normal,TaxTemplateCode,false,TaxTemplateSClass);
+      end else begin
+        if (HasVATZone) then begin
+          if (HasTaxMatrix) then begin
+            EditField(h,v,50,"#Dom.# Tax Temp.",Normal,TaxTemplateCode,false,TaxTemplateSClass);
+            EditField(h,v+=vs,60,VATZoneEditFieldLabel_ENG(1) & "Tax Temp.",Normal,TaxTemplateCodeEU,false,TaxTemplateSClass);
+            EditField(h,v+=vs,50,"Export Tax Temp.",Normal,TaxTemplateCodeExp,false,TaxTemplateSClass);
+          end else begin
+            EditField(h,v,30,"#Domestic# #VAT# Code",Normal,VATCodeDom,false,VATCodeSClass);
+            EditField(h,v+=vs,30,VATZoneEditFieldLabel_ENG(1) & "#VAT# Code",Normal,VATCodeEU,false,VATCodeSClass);
+            EditField(h,v+=vs,30,VATZoneEditFieldLabel_ENG(2) & "#VAT# Code",Normal,VATCodeExp,false,VATCodeSClass);
+          end;
+        end else begin
+          EditField(h,v,f,"#VAT# Code",Normal,VATCodeDom,false,VATCodeSClass);
+        end;
+      end;
+      v = v + 42; 
+      ButtonFrame(h,v,120,2,"Base Price");
+      RadioButton(h,v,0,0,"Not Including #VAT#",BasePriceInclVAT);
+      RadioButton(h,v+=16,2,0,"Including #VAT#",BasePriceInclVAT);
+      if (HasModIN) then begin
+        CheckBox(h,v+=32,0,"Invoices Update #Stock#",InvUpdStock);
+      end;
+      if (HasModSL and HasLocalization("PRT")==false) then begin 
+        CheckBox(h,v+=32,0,"Post Receipt #VAT#",IPBookVAT);
+      end;  
+    end;
+  end;
+  EndWindow;
+end;

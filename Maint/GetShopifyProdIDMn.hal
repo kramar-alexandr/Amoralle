@@ -442,6 +442,7 @@ begin
 							ORr.OrderClass = DOLShopifyBl.DefWebOrdClass;
 							ORr.Location = DOLShopifyBl.DefWebLocation;
 							ORr.CustCode = DOLShopifyBl.DefWebUserCode;
+							ORr.PlanShip = addday(ORr.OrdDate,DOLShopifyBl.DeliveryAfter);
 							
 							CUr.eMail = JSONGet(jdata,"orders/[" & i & "]/customer/email");
 							if(readfirstkey("eMail",CUr,1,true))then begin

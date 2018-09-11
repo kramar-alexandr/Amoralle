@@ -132,6 +132,7 @@ begin
   EditField(h,v += vs,80,"Def. Order Class",Normal,DefWebOrdClass,false,OrderClassSClass);
   EditField(h,v += vs,80,"Shopify Location Id",Normal,ShpifyLocId,false,ShopifyLocSClass);
   EditField(h,v += vs,80,"Get Orders every minutes",Normal,GetOrdFrq,false,0);
+  EditField(h,v += vs,80,"Deliver after",Normal,DeliveryAfter,false,0);// Edit ************************** BPI Ukraine - KramarAlexandr - Tuesday, 11 September 2018 09:18:00
   Tile(4,120,true,"",SaveReqResp);
   StaticText(h,v=20,"NOTE: Do not change anything unless insctructed",false);
   CheckBox(h,v+=20,0,"Save request and response data",SaveReqResp);
