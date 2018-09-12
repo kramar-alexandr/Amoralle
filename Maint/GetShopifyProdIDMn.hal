@@ -507,13 +507,20 @@ begin
 	record CUVc CUr;
 	string 255 warning,errstr,itemid,varid,sku;
 	boolean chsum,custfound;
+	integer page,orders;
 	
   BlockLoad(DOLShopifyBl);
   
-  
+  page = 0;
+  orders = 0;
   
   if (nonblank(DOLShopifyBl.APIUser) and nonblank(DOLShopifyBl.APIPass)) then begin
-  	DOLMakeWebRequest("GET","/admin/orders.json?fields=name,email,created_at,line_items,customer,client_details,customer_locale&status=any&created_at_min=" & DateToString(RepSpec.sStartDate,"YYYY-MM-DD") & "T00:00:00-00:00" & "&created_at_max=" & DateToString(addday(RepSpec.sEndDate,1),"YYYY-MM-DD") & "T00:00:00-00:00",a_req,a_reply);
+LHetNextOrders:;
+		setareazerosize(a_reply);
+		setareazerosize(a_req);
+  	orders = 0;
+  	page = page + 1;
+  	DOLMakeWebRequest("GET","/admin/orders.json?fields=name,email,created_at,line_items,customer,client_details,customer_locale&status=any&created_at_min=" & DateToString(RepSpec.sStartDate,"YYYY-MM-DD") & "T00:00:00-00:00" & "&created_at_max=" & DateToString(addday(RepSpec.sEndDate,1),"YYYY-MM-DD") & "T00:00:00-00:00&limit=250&page=" & page,a_req,a_reply);
 		PreparePostArea(a_reply);
 		
 		//addfiletoarea("Shopify.txt",a_reply,0);
@@ -523,7 +530,7 @@ begin
 
 			i = 0;
 			while (JSONNodeExists(jdata,"orders/[" & i & "]/name")) begin
-				
+					orders = orders + 1;
 					data = JSONGet(jdata,"orders/[" & i & "]/name");
 					
 					if(nonblank(data))then begin
@@ -571,7 +578,6 @@ begin
 								itemid = JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/id");
 								varid = JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/variant_id");
 								sku = JSONGet(jdata,"orders/[" & i & "]/line_items/[" & linit & "]/sku");
-								logtext(0,sku);
 								ORrw.ArtCode = sku;
 								matrowput(ORr,k,ORrw);
 								ORVc_PasteArtCode(ORr,k,warning,warning,false)
@@ -597,6 +603,12 @@ begin
 					end;
 					
 				i = i + 1;
+			end;
+			logtext(0,"i " & i);
+			if(orders>=250)then begin
+				setareazerosize(a_reply);
+				logtext(0,"Nextpage " & page);
+				goto LHetNextOrders;
 			end;
 		end;
 		
