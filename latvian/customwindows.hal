@@ -173,7 +173,12 @@ begin
 
   WindowBegin("Dolita - Load Shopify Product IDs",DOLGetShopifyOrdersVClass,CGMnt,RcType);
   SetWRect(20,80,350,240);
-  PeriodField(h=160,v=6,"Planned Period");
+  PeriodField(h=50,v=6,"Status");
+  ButtonFrame(h,vm=(v+=41),123,4,"Filter");
+  RadioButton(h,v,0,0,"Open",flags[2]);
+  RadioButton(h,v+=16,1,0,"Closed",flags[2]);
+  RadioButton(h,v+=16,2,0,"Canceled",flags[2]);
+  RadioButton(h,v+=16,3,0,"Any",flags[2]);
   EndWindow;
 
   return;
